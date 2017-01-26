@@ -1,3 +1,4 @@
 /* Simple test with only ASSIGN, VAR, ID, INT and comment testing. */
 var easy_int := 1
 /* this is a comment */
+var longer_int := 123321
