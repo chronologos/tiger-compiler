@@ -31,11 +31,10 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
   alpha=[A-Za-z];
   digit=[0-9];
   ws = [\ \t];
-  identifier=[A-Za-z0-9_]*
+  identifier=[A-Za-z0-9_]*;
 %%
-
 <INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
-<INITIAL>type	=> => (Tokens.TYPE(yypos,yypos+4))
+<INITIAL>"type"	=> (Tokens.TYPE(yypos,yypos+4));
 <INITIAL>"("	=> (Tokens.LPAREN(yypos,yypos+1));
 <INITIAL>")"	=> (Tokens.RPAREN(yypos,yypos+1));
 <INITIAL>";"	=> (continue());
@@ -45,7 +44,20 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
 <INITIAL>"123"	=> (Tokens.INT(123,yypos,yypos+3));
-<INITIAL>identifier => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
+<INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
+<INITIAL>"break" => (Tokens.BREAK(yypos, yypos + size yytext));
+<INITIAL>"of" => (Tokens.OF(yypos, yypos + size yytext));
+<INITIAL>"end" => (Tokens.END(yypos, yypos + size yytext));
+<INITIAL>"in" => (Tokens.IN(yypos, yypos + size yytext));
+<INITIAL>"nil" => (Tokens.NIL(yypos, yypos + size yytext));
+<INITIAL>"let" => (Tokens.LET(yypos, yypos + size yytext));
+<INITIAL>"do" => (Tokens.DO(yypos, yypos + size yytext));
+<INITIAL>"to" => (Tokens.TO(yypos, yypos + size yytext));
+<INITIAL>"for" => (Tokens.FOR(yypos, yypos + size yytext));
+<INITIAL>"while" => (Tokens.WHILE(yypos, yypos + size yytext));
+<INITIAL>"else" => (Tokens.ELSE(yypos, yypos + size yytext));
+<INITIAL>"then" => (Tokens.THEN(yypos, yypos + size yytext));
+<INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
 <INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n";incrNest(); continue());
 <COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; incrNest();continue());
 <COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL);print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
