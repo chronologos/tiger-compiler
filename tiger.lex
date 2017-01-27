@@ -1,11 +1,22 @@
 type pos = int
 type lexresult = Tokens.token
 
+exception LexError of int
+
+fun raiseLexError(pos:int) =
+  raise LexError(pos)
+
+fun lexErrorWithPrint(str:string, pos: int) =
+  let val dummy = print("[ABOUT TO THROW AN ERROR GG] "^str)
+  in
+    raiseLexError(pos)
+  end
+
 val lineNum = ErrorMsg.lineNum
 val linePos = ErrorMsg.linePos
 
-  val inString = ref false;
-  val inComment = ref false;
+val inString = ref false;
+val inComment = ref false;
 
 fun err(p1,p2) = ErrorMsg.error p1
 fun eof() = let val pos = hd(!linePos) in
@@ -78,7 +89,7 @@ nonprintable=(\n | \t | " " | \f)+;
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
-<IGNORESEQ>{nonprintable} => (print "Got non-printable character from IGNORESEQ, staying in IGNORESEQ."; continue());
+<IGNORESEQ>{nonprintable} => (lexErrorWithPrint("nonprintable character between slashes in string",yypos));
 <IGNORESEQ>. => (print "Printable character received from IGNORESEQ"; ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
 <INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
