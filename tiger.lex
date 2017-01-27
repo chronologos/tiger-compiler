@@ -66,6 +66,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
 <INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n"; inComment := true; incrNest(); continue());
 <COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; inComment := true; incrNest();continue());
+<COMMENT>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
 <COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false; print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
 <COMMENT>. => (continue());
 <INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
