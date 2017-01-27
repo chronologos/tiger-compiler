@@ -71,7 +71,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <IGNORESEQ>. => (print "STAYING IN IGNORESEQ\n"; continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
 <INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
-<INITIAL> "&" => (Tokens.ANDD(yypos,yypos+2));
+<INITIAL> "&" => (Tokens.AND(yypos,yypos+2));
 <INITIAL> ">=" => (Tokens.GE(yypos,yypos+2));
 <INITIAL> "<=" => (Tokens.LE(yypos,yypos+2));
 <INITIAL> ">" => (Tokens.GT(yypos,yypos+1));
