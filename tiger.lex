@@ -4,8 +4,14 @@ type lexresult = Tokens.token
 val lineNum = ErrorMsg.lineNum
 val linePos = ErrorMsg.linePos
 
-  val inString = ref false;
-  val inComment = ref false;
+fun printLineNum () = 
+  let val ln = !lineNum
+  in
+    print("lineNum is " ^(Int.toString(ln)) ^"\n")
+  end
+
+val inString = ref false;
+val inComment = ref false;
 
 fun err(p1,p2) = ErrorMsg.error p1
 fun eof() = let val pos = hd(!linePos) in
@@ -39,14 +45,14 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
   digit=[0-9];
   ws = [\ \t];
   identifier=[A-Za-z0-9_]*;
-nonprintable=(\n | \t | " " | \f)+;
+  nonprintable=(\n | \t | " " | \f)+;
 %%
-<INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
+<INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; print("newline detected \n"); continue());
 <INITIAL>type	=> (Tokens.TYPE(yypos,yypos+4));
 <INITIAL>";"	=> (continue());
 <INITIAL>{ws}+ => (continue());
 <INITIAL>","	=> (Tokens.COMMA(yypos,yypos+1));
-<INITIAL>var  	=> (Tokens.VAR(yypos,yypos+3));
+<INITIAL>var	=> (printLineNum(); Tokens.VAR(yypos,yypos+3));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
 <INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
@@ -67,17 +73,19 @@ nonprintable=(\n | \t | " " | \f)+;
 <INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
 <INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n"; inComment := true; incrNest(); continue());
 <COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; inComment := true; incrNest();continue());
-<COMMENT>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
+<COMMENT>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; print("newline detected \n"); continue());
 <COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false; print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
 <COMMENT>. => (continue());
 <INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
 <STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
-<STRING>"\\"{nonprintable} => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
+<STRING>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; print("newline detected \n"); continue());
+<STRING>"\\" => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
-<STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
+<STRING>. => (addToBuffer yytext; continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
+<IGNORESEQ>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; print("newline detected \n"); continue());
 <IGNORESEQ>{nonprintable} => (print "Got non-printable character from IGNORESEQ, staying in IGNORESEQ."; continue());
 <IGNORESEQ>. => (print "Printable character received from IGNORESEQ"; ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
