@@ -4,8 +4,15 @@ type lexresult = Tokens.token
 val lineNum = ErrorMsg.lineNum
 val linePos = ErrorMsg.linePos
 
+  val inString = ref false;
+  val inComment = ref false;
+
 fun err(p1,p2) = ErrorMsg.error p1
-fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
+fun eof() = let val pos = hd(!linePos) in 
+  if !inString then ErrorMsg.error pos ("Unclosed string at EOF") else (); 
+  if !inComment then ErrorMsg.error pos ("Unclosed comment at EOF") else ();
+  Tokens.EOF(pos,pos) 
+end
 
 val strBuffer = ref ""
 
@@ -58,12 +65,12 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>"else" => (Tokens.ELSE(yypos, yypos + size yytext));
 <INITIAL>"then" => (Tokens.THEN(yypos, yypos + size yytext));
 <INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
-<INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n";incrNest(); continue());
-<COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; incrNest();continue());
-<COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL);print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
+<INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n"; inComment := true; incrNest(); continue());
+<COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; inComment := true; incrNest();continue());
+<COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false; print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
 <COMMENT>. => (continue());
-<INITIAL>"\""=> (YYBEGIN STRING;print "String starting\n"; continue());
-<STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
+<INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
+<STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
 <STRING>"\\"(\n | \t | " " | \f)+ => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
