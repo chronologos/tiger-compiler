@@ -11,14 +11,14 @@ val strBuffer = ref ""
 
 fun addToBuffer ch = let val oldStr = !strBuffer in strBuffer := oldStr ^ ch end
 
-fun clearBuffer() = 
-  let val cleared:string = "" 
-  in 
+fun clearBuffer() =
+  let val cleared:string = ""
+  in
     let
-      val strSize = size (!strBuffer) 
+      val strSize = size (!strBuffer)
     in
-      strBuffer := cleared; 
-      strSize 
+      strBuffer := cleared;
+      strSize
     end
   end
 
@@ -69,6 +69,9 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
 <IGNORESEQ>. => (print "STAYING IN IGNORESEQ\n"; continue());
+<INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
+<INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
+<INITIAL> "&" => (Tokens.ANDD(yypos,yypos+2));
 <INITIAL> ">=" => (Tokens.GE(yypos,yypos+2));
 <INITIAL> "<=" => (Tokens.LE(yypos,yypos+2));
 <INITIAL> ">" => (Tokens.GT(yypos,yypos+1));
