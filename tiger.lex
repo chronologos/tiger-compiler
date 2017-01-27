@@ -8,10 +8,10 @@ val linePos = ErrorMsg.linePos
   val inComment = ref false;
 
 fun err(p1,p2) = ErrorMsg.error p1
-fun eof() = let val pos = hd(!linePos) in 
-  if !inString then ErrorMsg.error pos ("Unclosed string at EOF") else (); 
+fun eof() = let val pos = hd(!linePos) in
+  if !inString then ErrorMsg.error pos ("Unclosed string at EOF") else ();
   if !inComment then ErrorMsg.error pos ("Unclosed comment at EOF") else ();
-  Tokens.EOF(pos,pos) 
+  Tokens.EOF(pos,pos)
 end
 
 val strBuffer = ref ""
@@ -48,7 +48,6 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>var  	=> (Tokens.VAR(yypos,yypos+3));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
-<INITIAL>"123"	=> (Tokens.INT(123,yypos,yypos+3));
 <INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
 <INITIAL>"break" => (Tokens.BREAK(yypos, yypos + size yytext));
 <INITIAL>"of" => (Tokens.OF(yypos, yypos + size yytext));
@@ -59,6 +58,8 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>"do" => (Tokens.DO(yypos, yypos + size yytext));
 <INITIAL>"to" => (Tokens.TO(yypos, yypos + size yytext));
 <INITIAL>"for" => (Tokens.FOR(yypos, yypos + size yytext));
+<INITIAL>"if" => (Tokens.IF(yypos,yypos+2));
+<INITIAL>"array" => (Tokens.ARRAY(yypos,yypos+5));
 <INITIAL>"while" => (Tokens.WHILE(yypos, yypos + size yytext));
 <INITIAL>"else" => (Tokens.ELSE(yypos, yypos + size yytext));
 <INITIAL>"then" => (Tokens.THEN(yypos, yypos + size yytext));
