@@ -25,6 +25,7 @@ fun clearBuffer() =
 val commNest = ref 0;
 fun incrNest() = (commNest := !commNest + 1);
 fun decrNest() = (commNest := !commNest - 1; !commNest)
+
 %%
   %s COMMENT STRING IGNORESEQ;
   alpha=[A-Za-z];
@@ -40,6 +41,20 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>var  	=> (Tokens.VAR(yypos,yypos+3));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
+<INITIAL>"123"	=> (Tokens.INT(123,yypos,yypos+3));
+<INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
+<INITIAL>"break" => (Tokens.BREAK(yypos, yypos + size yytext));
+<INITIAL>"of" => (Tokens.OF(yypos, yypos + size yytext));
+<INITIAL>"end" => (Tokens.END(yypos, yypos + size yytext));
+<INITIAL>"in" => (Tokens.IN(yypos, yypos + size yytext));
+<INITIAL>"nil" => (Tokens.NIL(yypos, yypos + size yytext));
+<INITIAL>"let" => (Tokens.LET(yypos, yypos + size yytext));
+<INITIAL>"do" => (Tokens.DO(yypos, yypos + size yytext));
+<INITIAL>"to" => (Tokens.TO(yypos, yypos + size yytext));
+<INITIAL>"for" => (Tokens.FOR(yypos, yypos + size yytext));
+<INITIAL>"while" => (Tokens.WHILE(yypos, yypos + size yytext));
+<INITIAL>"else" => (Tokens.ELSE(yypos, yypos + size yytext));
+<INITIAL>"then" => (Tokens.THEN(yypos, yypos + size yytext));
 <INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
 <INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n";incrNest(); continue());
 <COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; incrNest();continue());
