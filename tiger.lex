@@ -15,8 +15,13 @@ fun lexErrorWithPrint(str:string, pos: int) =
 val lineNum = ErrorMsg.lineNum
 val linePos = ErrorMsg.linePos
 
-val inString = ref false;
-val inComment = ref false;
+fun printLineNum () = 
+  let val ln = !lineNum in
+  print ("line num is " ^(Int.toString(ln)) ^"\n")
+  end
+
+val inString = ref false
+val inComment = ref false
 
 fun err(p1,p2) = ErrorMsg.error p1
 fun eof() = let val pos = hd(!linePos) in
@@ -48,16 +53,15 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
   %s COMMENT STRING IGNORESEQ;
   alpha=[A-Za-z];
   digit=[0-9];
-  ws = [\ \t];
+  ws=[\ \t];
   identifier=[A-Za-z0-9_]*;
-nonprintable=(\n | \t | " " | \f)+;
+  nonprintable=(\t | " " | \f);
 %%
 <INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
 <INITIAL>type	=> (Tokens.TYPE(yypos,yypos+4));
-<INITIAL>";"	=> (continue());
 <INITIAL>{ws}+ => (continue());
 <INITIAL>","	=> (Tokens.COMMA(yypos,yypos+1));
-<INITIAL>var  	=> (Tokens.VAR(yypos,yypos+3));
+<INITIAL>var  	=> (printLineNum(); Tokens.VAR(yypos,yypos+3));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
 <INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
@@ -83,13 +87,14 @@ nonprintable=(\n | \t | " " | \f)+;
 <COMMENT>. => (continue());
 <INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
 <STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
-<STRING>"\\"{nonprintable} => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
+<STRING>"\\" => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
-<IGNORESEQ>{nonprintable} => (lexErrorWithPrint("nonprintable character between slashes in string",yypos));
+<IGNORESEQ>(\n) => (lineNum := !lineNum+1; print "incrementing lineNum in IGNORESEQ\n"; linePos := yypos :: !linePos; continue());
+<IGNORESEQ>{nonprintable} => (print "got nonprintable in IGNORESEQ\n";continue());
 <IGNORESEQ>. => (print "Printable character received from IGNORESEQ"; ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
 <INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
