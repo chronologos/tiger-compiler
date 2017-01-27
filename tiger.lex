@@ -39,6 +39,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
   digit=[0-9];
   ws = [\ \t];
   identifier=[A-Za-z0-9_]*;
+nonprintable=(\n | \t | " " | \f)+;
 %%
 <INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
 <INITIAL>type	=> (Tokens.TYPE(yypos,yypos+4));
@@ -70,13 +71,14 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <COMMENT>. => (continue());
 <INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
 <STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
-<STRING>"\\"(\n | \t | " " | \f)+ => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
+<STRING>"\\"{nonprintable} => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
-<IGNORESEQ>. => (print "STAYING IN IGNORESEQ\n"; continue());
+<IGNORESEQ>{nonprintable} => (print "Got non-printable character from IGNORESEQ, staying in IGNORESEQ."; continue());
+<IGNORESEQ>. => (print "Printable character received from IGNORESEQ"; ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
 <INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
 <INITIAL> "&" => (Tokens.AND(yypos,yypos+2));
