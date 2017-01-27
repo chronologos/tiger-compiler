@@ -18,14 +18,14 @@ val strBuffer = ref ""
 
 fun addToBuffer ch = let val oldStr = !strBuffer in strBuffer := oldStr ^ ch end
 
-fun clearBuffer() = 
-  let val cleared:string = "" 
-  in 
+fun clearBuffer() =
+  let val cleared:string = ""
+  in
     let
-      val strSize = size (!strBuffer) 
+      val strSize = size (!strBuffer)
     in
-      strBuffer := cleared; 
-      strSize 
+      strBuffer := cleared;
+      strSize
     end
   end
 
@@ -41,9 +41,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
   identifier=[A-Za-z0-9_]*;
 %%
 <INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
-<INITIAL>"type"	=> (Tokens.TYPE(yypos,yypos+4));
-<INITIAL>"("	=> (Tokens.LPAREN(yypos,yypos+1));
-<INITIAL>")"	=> (Tokens.RPAREN(yypos,yypos+1));
+<INITIAL>type	=> (Tokens.TYPE(yypos,yypos+4));
 <INITIAL>";"	=> (continue());
 <INITIAL>{ws}+ => (continue());
 <INITIAL>","	=> (Tokens.COMMA(yypos,yypos+1));
@@ -78,4 +76,26 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
 <IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
 <IGNORESEQ>. => (print "STAYING IN IGNORESEQ\n"; continue());
+<INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
+<INITIAL> "|" => (Tokens.OR(yypos,yypos+2));
+<INITIAL> "&" => (Tokens.AND(yypos,yypos+2));
+<INITIAL> ">=" => (Tokens.GE(yypos,yypos+2));
+<INITIAL> "<=" => (Tokens.LE(yypos,yypos+2));
+<INITIAL> ">" => (Tokens.GT(yypos,yypos+1));
+<INITIAL> "<" => (Tokens.LT(yypos,yypos+1));
+<INITIAL> "=" => (Tokens.EQ(yypos,yypos+1));
+<INITIAL> "/" => (Tokens.DIVIDE(yypos,yypos+1));
+<INITIAL> "*" => (Tokens.TIMES(yypos,yypos+1));
+<INITIAL> "-" => (Tokens.MINUS(yypos,yypos+1));
+<INITIAL> "+" => (Tokens.PLUS(yypos,yypos+1));
+<INITIAL> "." => (Tokens.DOT(yypos,yypos+1));
+<INITIAL> "}" => (Tokens.RBRACE(yypos,yypos+1));
+<INITIAL> "{" => (Tokens.LBRACE(yypos,yypos+1));
+<INITIAL> "]" => (Tokens.RBRACK(yypos,yypos+1));
+<INITIAL> "[" => (Tokens.LBRACK(yypos,yypos+1));
+<INITIAL> ")" => (Tokens.RPAREN(yypos,yypos+1));
+<INITIAL> "(" => (Tokens.LPAREN(yypos,yypos+1));
+<INITIAL> ";" => (Tokens.SEMICOLON(yypos,yypos+1));
+<INITIAL> ":" => (Tokens.COLON(yypos,yypos+1));
+<INITIAL> "," => (Tokens.COMMA(yypos,yypos+1));
 .       => (ErrorMsg.error yypos ("illegal character " ^ yytext); continue());
