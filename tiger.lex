@@ -89,6 +89,8 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
 <STRING>"\\" => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
+<STRING>"\\""\"" => (print "Printing literal \" character within string\n"; addToBuffer "\""; continue());
+<STRING>"\\^". => (print "Escaping control character"; addToBuffer(String.extract(yytext, 1, NONE)); continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
