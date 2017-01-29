@@ -49,6 +49,16 @@ val commNest = ref 0;
 fun incrNest() = (commNest := !commNest + 1);
 fun decrNest() = (commNest := !commNest - 1; !commNest)
 
+fun strFromCtrl str =
+    let val charOpt = Char.fromString(str)
+    in
+    if isSome(charOpt) then 
+    (addToBuffer(Char.toString(valOf charOpt));
+     print "Added escaped control character to string buffer\n")
+    else
+      (print "Illegal control character sequence. Ignoring.\n")
+    end  
+
 %%
   %s COMMENT STRING IGNORESEQ;
   alpha=[A-Za-z];
@@ -90,7 +100,8 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <STRING>"\\" => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
 <STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
 <STRING>"\\""\"" => (print "Printing literal \" character within string\n"; addToBuffer "\""; continue());
-<STRING>"\\^". => (print "Escaping control character"; addToBuffer(String.extract(yytext, 1, NONE)); continue());
+<STRING>"\\^". => (print "Escaping control character\n"; strFromCtrl(yytext); continue());
+<STRING>"\\"{digit}{digit}{digit} => (print("Interpreting ascii character sequence " ^ yytext ^ "\n"); addToBuffer(Char.toString(chr(valOf (Int.fromString(String.extract(yytext, 1, NONE)))))); continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
 <STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());

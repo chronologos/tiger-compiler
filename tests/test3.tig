@@ -7,5 +7,8 @@
       printable
 \ end the string"   
 "literal \"quote\" within string"
-"test if control character \^A works"
+"test if control character \^K works"
+"what about a weird control character like \^E ?"
+"and what about an illegal 'control' character like \^x ?"
+"test if ascii code for letter A \065 works"
 "success")
