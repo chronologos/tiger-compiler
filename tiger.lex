@@ -64,7 +64,7 @@ fun strFromCtrl str =
   alpha=[A-Za-z];
   digit=[0-9];
   ws=[\ \t];
-  identifier=[A-Za-z0-9_]*;
+  identifier={alpha}[A-Za-z0-9_]*;
   nonprintable=(\t | " " | \f);
 %%
 <INITIAL>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
