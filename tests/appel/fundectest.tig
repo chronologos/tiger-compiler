@@ -1,0 +1,2 @@
+function fish (id: int, name: string) = 1
+function dish (id: int): int = 1

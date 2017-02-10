@@ -1,0 +1,5 @@
+var i := 1
+var j : int := 1
+type fish = int
+type dish = fish
+type somerec = {hi: fish, bye: dish}
