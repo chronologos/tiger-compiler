@@ -1,4 +1,4 @@
-structure A = Absyn
+structure a = Absyn
 %%
 %term
     EOF 
@@ -12,7 +12,7 @@ structure A = Absyn
   | BREAK | NIL
   | FUNCTION | VAR | TYPE 
 
-%nonterm  exp | program | decs | dec | decsOpt | tydec | vardec | fundec | ty | tyfields | tyfieldsOne |  tyfieldscommaOpt | varDecOpt | fundecOpts | lvalue | lvalueOpt
+%nonterm  exp | program | decs | dec | decsOpt | tydec | vardec | fundec | ty | tyfields | tyfieldsOne |  tyfieldscommaOpt | varDecOpt | fundecOpts | lvalue | lvalueOpt | fundecs | tydecs
 
 %pos int
 %verbose
@@ -37,34 +37,44 @@ structure A = Absyn
  * declarations are necessary above the %% mark.  Students are expected
  *  to replace the two dummy productions below with an actual grammar. 
  *)
+decs: dec decs (dec :: decs)
+     | ([])
 
-decs: dec decsOpt ()
-decsOpt: decs ()
-	 | ()
-dec: tydec ()
-   | vardec ()
-   | fundec ()
+dec: tydecs (a.TypeDec(tydecs)) 
+   | vardec (a.VarDec(vardec))
+   | fundecs (a.FunctionDec(fundecs))
 
-tydec: TYPE ID EQ ty ()
 
-ty : ID ()
-   | LBRACE tyfields RBRACE ()
-   | ARRAY OF ID ()
+tydecs: tydec tydecs (tydec::tydecs)
+	| ([])
 
-tyfieldsOne : ID COLON ID ()
-tyfields : tyfieldsOne tyfieldscommaOpt ()
-	   | () 
-tyfieldscommaOpt: COMMA tyfieldsOne tyfieldscommaOpt ()
-             | ()
+tydec: TYPE ID EQ ty ({name=a.symbol(ID), ty=ty, pos=0})
 
-vardec : VAR ID varDecOpt ()
-varDecOpt:  ASSIGN exp ()
-          | COLON ID ASSIGN exp ()
+ty : ID (a.NameTy(a.symbol(ID), 0))
+   | LBRACE tyfields RBRACE (a.RecordTy(tyfields))
+   | ARRAY OF ID (a.symbol(ID), 0)
 
-fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts ()
+tyfieldsOne : ID COLON ID([{name = a.symbol(ID1), escape = ref false, typ = a.symbol(ID2), pos = 0}] )
 
-fundecOpts : EQ exp ()
-	     | COLON ID EQ exp ()
+tyfields : tyfieldsOne tyfieldscommaOpt ( tyfieldsOne :: tyfieldscommaOpt)
+	   | ([]) 
+
+tyfieldscommaOpt: COMMA tyfieldsOne tyfieldscommaOpt (tyfieldsOne :: tyfieldscommaOpt)
+             | ([])
+
+
+vardec : VAR ID varDecOpt ({name = a.symbol(ID), escape = ref false, typ = #typ varDecOpt, init = #init varDecOpt, pos = 0})
+
+varDecOpt:  ASSIGN exp ({typ = NONE, init = exp})
+          | COLON ID ASSIGN exp ({typ = SOME(a.symbol(ID), 0), init = exp })
+
+fundecs : fundec fundecs ( fundec :: fundecs )
+   | ([])
+
+fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts ({name= a.symbol(ID), params=tyfields, result = #result fundecOpts, body = #body fundecOpts, pos = 0})
+
+fundecOpts : EQ exp ({body = exp, result = NONE})
+	     | COLON ID EQ exp ({body = exp, result = SOME(a.symbol(ID), 0)})
 
 
 lvalue : ID lvalueOpt ()
@@ -73,8 +83,8 @@ lvalueOpt : DOT ID lvalueOpt ()
           | LBRACK exp RBRACK lvalueOpt ()
 	    | ()
 
-exp : lvalue ()
-    | INT ()
 
-program: exp ()
-       | decs ()
+exp : INT (a.IntExp(INT))
+    | decs (a.LetExp(decs,body=a.IntExp(1),pos=0))
+
+program: exp (exp)

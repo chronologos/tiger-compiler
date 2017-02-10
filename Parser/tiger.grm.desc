@@ -1,112 +1,213 @@
+45 reduce/reduce conflicts
+20 shift/reduce conflicts
+4 rules not reduced
+
+warning: rule <lvalue : ID lvalueOpt > will never be reduced
+warning: rule <lvalueOpt : DOT ID lvalueOpt > will never be reduced
+warning: rule <lvalueOpt : LBRACK exp RBRACK lvalueOpt > will never be reduced
+warning: rule <lvalueOpt : > will never be reduced
+error:  state 0: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 0: shift/reduce conflict (shift TYPE, reduce by rule 6)
+error:  state 0: shift/reduce conflict (shift VAR, reduce by rule 6)
+error:  state 0: shift/reduce conflict (shift FUNCTION, reduce by rule 6)
+error:  state 3: shift/reduce conflict (shift FUNCTION, reduce by rule 20)
+error:  state 5: shift/reduce conflict (shift TYPE, reduce by rule 6)
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 6: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 6: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 6: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 21: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 21: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 21: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 35: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 35: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 35: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 45: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 45: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 45: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 51: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 51: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 51: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+error:  state 0: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 0: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 0: shift/reduce conflict (shift TYPE, reduce by rule 6)
+error:  state 0: shift/reduce conflict (shift VAR, reduce by rule 6)
+error:  state 0: shift/reduce conflict (shift FUNCTION, reduce by rule 6)
 
 state 0:
 
 	program : . exp 
-	program : . decs 
 
-	ID	shift 12
-	INT	shift 11
-	FUNCTION	shift 10
-	VAR	shift 9
-	TYPE	shift 8
+	EOF	reduce by rule 1
+	INT	shift 12
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
 
-	exp	goto 7
-	program	goto 60
-	decs	goto 6
-	dec	goto 5
-	tydec	goto 4
-	vardec	goto 3
-	fundec	goto 2
-	lvalue	goto 1
+	exp	goto 8
+	program	goto 53
+	decs	goto 7
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
 
 	.	error
 
 
 state 1:
 
-	exp : lvalue .  (reduce by rule 25)
+	dec : tydecs .  (reduce by rule 2)
 
 
 
-	.	reduce by rule 25
+	.	reduce by rule 2
 
 
 state 2:
 
-	dec : fundec .  (reduce by rule 5)
-
-
-
-	.	reduce by rule 5
-
-
-state 3:
-
-	dec : vardec .  (reduce by rule 4)
+	dec : fundecs .  (reduce by rule 4)
 
 
 
 	.	reduce by rule 4
 
+error:  state 3: shift/reduce conflict (shift FUNCTION, reduce by rule 20)
+
+state 3:
+
+	fundecs : fundec . fundecs 
+
+	FUNCTION	shift 11
+
+	fundec	goto 3
+	fundecs	goto 13
+
+	.	reduce by rule 20
+
 
 state 4:
 
-	dec : tydec .  (reduce by rule 3)
+	dec : vardec .  (reduce by rule 3)
 
 
 
 	.	reduce by rule 3
 
+error:  state 5: shift/reduce conflict (shift TYPE, reduce by rule 6)
 
 state 5:
 
-	decs : dec . decsOpt 
+	tydecs : tydec . tydecs 
 
-	FUNCTION	shift 10
-	VAR	shift 9
-	TYPE	shift 8
+	TYPE	shift 9
 
-	decs	goto 14
-	dec	goto 5
-	decsOpt	goto 13
-	tydec	goto 4
-	vardec	goto 3
-	fundec	goto 2
+	tydec	goto 5
+	tydecs	goto 14
 
-	.	reduce by rule 2
+	.	reduce by rule 6
 
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 6: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 6: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 6: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 6: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 6: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
 
 state 6:
 
-	program : decs .  (reduce by rule 28)
+	decs : dec . decs 
 
+	EOF	reduce by rule 1
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
 
-
-	.	reduce by rule 28
-
-
-state 7:
-
-	program : exp .  (reduce by rule 27)
-
-
-
-	.	reduce by rule 27
-
-
-state 8:
-
-	tydec : TYPE . ID EQ ty 
-
-	ID	shift 15
-
+	decs	goto 15
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
 
 	.	error
 
 
+state 7:
+
+	exp : decs .  (reduce by rule 29)
+
+
+
+	.	reduce by rule 29
+
+
+state 8:
+
+	program : exp .  (reduce by rule 30)
+
+
+
+	.	reduce by rule 30
+
+
 state 9:
 
-	vardec : VAR . ID varDecOpt 
+	tydec : TYPE . ID EQ ty 
 
 	ID	shift 16
 
@@ -116,7 +217,7 @@ state 9:
 
 state 10:
 
-	fundec : FUNCTION . ID LPAREN tyfields RPAREN fundecOpts 
+	vardec : VAR . ID varDecOpt 
 
 	ID	shift 17
 
@@ -126,200 +227,213 @@ state 10:
 
 state 11:
 
-	exp : INT .  (reduce by rule 26)
+	fundec : FUNCTION . ID LPAREN tyfields RPAREN fundecOpts 
+
+	ID	shift 18
 
 
-
-	.	reduce by rule 26
+	.	error
 
 
 state 12:
 
-	lvalue : ID . lvalueOpt 
+	exp : INT .  (reduce by rule 28)
 
-	LBRACK	shift 20
-	DOT	shift 19
 
-	lvalueOpt	goto 18
 
-	.	reduce by rule 24
+	.	reduce by rule 28
 
 
 state 13:
 
-	decs : dec decsOpt .  (reduce by rule 0)
+	fundecs : fundec fundecs .  (reduce by rule 19)
+
+
+
+	.	reduce by rule 19
+
+
+state 14:
+
+	tydecs : tydec tydecs .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 15:
+
+	decs : dec decs .  (reduce by rule 0)
 
 
 
 	.	reduce by rule 0
 
 
-state 14:
-
-	decsOpt : decs .  (reduce by rule 1)
-
-
-
-	.	reduce by rule 1
-
-
-state 15:
+state 16:
 
 	tydec : TYPE ID . EQ ty 
 
-	EQ	shift 21
+	EQ	shift 19
 
-
-	.	error
-
-
-state 16:
-
-	vardec : VAR ID . varDecOpt 
-
-	COLON	shift 24
-	ASSIGN	shift 23
-
-	varDecOpt	goto 22
 
 	.	error
 
 
 state 17:
 
-	fundec : FUNCTION ID . LPAREN tyfields RPAREN fundecOpts 
+	vardec : VAR ID . varDecOpt 
 
-	LPAREN	shift 25
+	COLON	shift 22
+	ASSIGN	shift 21
 
+	varDecOpt	goto 20
 
 	.	error
 
 
 state 18:
 
-	lvalue : ID lvalueOpt .  (reduce by rule 21)
+	fundec : FUNCTION ID . LPAREN tyfields RPAREN fundecOpts 
+
+	LPAREN	shift 23
 
 
-
-	.	reduce by rule 21
+	.	error
 
 
 state 19:
 
-	lvalueOpt : DOT . ID lvalueOpt 
+	tydec : TYPE ID EQ . ty 
 
-	ID	shift 26
+	ID	shift 27
+	LBRACE	shift 26
+	ARRAY	shift 25
 
+	ty	goto 24
 
 	.	error
 
 
 state 20:
 
-	lvalueOpt : LBRACK . exp RBRACK lvalueOpt 
+	vardec : VAR ID varDecOpt .  (reduce by rule 16)
 
-	ID	shift 12
-	INT	shift 11
 
-	exp	goto 27
-	lvalue	goto 1
 
-	.	error
+	.	reduce by rule 16
 
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 21: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 21: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 21: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 21: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 21: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
 
 state 21:
 
-	tydec : TYPE ID EQ . ty 
+	varDecOpt : ASSIGN . exp 
 
-	ID	shift 31
-	LBRACE	shift 30
-	ARRAY	shift 29
+	EOF	reduce by rule 1
+	INT	shift 12
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
 
-	ty	goto 28
+	exp	goto 28
+	decs	goto 7
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
 
 	.	error
 
 
 state 22:
 
-	vardec : VAR ID varDecOpt .  (reduce by rule 15)
+	varDecOpt : COLON . ID ASSIGN exp 
+
+	ID	shift 29
 
 
-
-	.	reduce by rule 15
+	.	error
 
 
 state 23:
 
-	varDecOpt : ASSIGN . exp 
+	fundec : FUNCTION ID LPAREN . tyfields RPAREN fundecOpts 
 
-	ID	shift 12
-	INT	shift 11
+	ID	shift 32
 
-	exp	goto 32
-	lvalue	goto 1
+	tyfields	goto 31
+	tyfieldsOne	goto 30
 
-	.	error
+	.	reduce by rule 13
 
 
 state 24:
 
-	varDecOpt : COLON . ID ASSIGN exp 
-
-	ID	shift 33
+	tydec : TYPE ID EQ ty .  (reduce by rule 7)
 
 
-	.	error
+
+	.	reduce by rule 7
 
 
 state 25:
 
-	fundec : FUNCTION ID LPAREN . tyfields RPAREN fundecOpts 
+	ty : ARRAY . OF ID 
 
-	ID	shift 36
-
-	tyfields	goto 35
-	tyfieldsOne	goto 34
-
-	.	reduce by rule 12
-
-
-state 26:
-
-	lvalueOpt : DOT ID . lvalueOpt 
-
-	LBRACK	shift 20
-	DOT	shift 19
-
-	lvalueOpt	goto 37
-
-	.	reduce by rule 24
-
-
-state 27:
-
-	lvalueOpt : LBRACK exp . RBRACK lvalueOpt 
-
-	RBRACK	shift 38
+	OF	shift 33
 
 
 	.	error
 
 
+state 26:
+
+	ty : LBRACE . tyfields RBRACE 
+
+	ID	shift 32
+
+	tyfields	goto 34
+	tyfieldsOne	goto 30
+
+	.	reduce by rule 13
+
+
+state 27:
+
+	ty : ID .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
 state 28:
 
-	tydec : TYPE ID EQ ty .  (reduce by rule 6)
+	varDecOpt : ASSIGN exp .  (reduce by rule 17)
 
 
 
-	.	reduce by rule 6
+	.	reduce by rule 17
 
 
 state 29:
 
-	ty : ARRAY . OF ID 
+	varDecOpt : COLON ID . ASSIGN exp 
 
-	OF	shift 39
+	ASSIGN	shift 35
 
 
 	.	error
@@ -327,39 +441,40 @@ state 29:
 
 state 30:
 
-	ty : LBRACE . tyfields RBRACE 
+	tyfields : tyfieldsOne . tyfieldscommaOpt 
 
-	ID	shift 36
+	COMMA	shift 37
 
-	tyfields	goto 40
-	tyfieldsOne	goto 34
+	tyfieldscommaOpt	goto 36
 
-	.	reduce by rule 12
+	.	reduce by rule 15
 
 
 state 31:
 
-	ty : ID .  (reduce by rule 7)
+	fundec : FUNCTION ID LPAREN tyfields . RPAREN fundecOpts 
+
+	RPAREN	shift 38
 
 
-
-	.	reduce by rule 7
+	.	error
 
 
 state 32:
 
-	varDecOpt : ASSIGN exp .  (reduce by rule 16)
+	tyfieldsOne : ID . COLON ID 
+
+	COLON	shift 39
 
 
-
-	.	reduce by rule 16
+	.	error
 
 
 state 33:
 
-	varDecOpt : COLON ID . ASSIGN exp 
+	ty : ARRAY OF . ID 
 
-	ASSIGN	shift 41
+	ID	shift 40
 
 
 	.	error
@@ -367,59 +482,82 @@ state 33:
 
 state 34:
 
-	tyfields : tyfieldsOne . tyfieldscommaOpt 
+	ty : LBRACE tyfields . RBRACE 
 
-	COMMA	shift 43
+	RBRACE	shift 41
 
-	tyfieldscommaOpt	goto 42
 
-	.	reduce by rule 14
+	.	error
 
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 35: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 35: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 35: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 35: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 35: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
 
 state 35:
 
-	fundec : FUNCTION ID LPAREN tyfields . RPAREN fundecOpts 
+	varDecOpt : COLON ID ASSIGN . exp 
 
-	RPAREN	shift 44
+	EOF	reduce by rule 1
+	INT	shift 12
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
 
+	exp	goto 42
+	decs	goto 7
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
 
 	.	error
 
 
 state 36:
 
-	tyfieldsOne : ID . COLON ID 
-
-	COLON	shift 45
+	tyfields : tyfieldsOne tyfieldscommaOpt .  (reduce by rule 12)
 
 
-	.	error
+
+	.	reduce by rule 12
 
 
 state 37:
 
-	lvalueOpt : DOT ID lvalueOpt .  (reduce by rule 22)
+	tyfieldscommaOpt : COMMA . tyfieldsOne tyfieldscommaOpt 
 
+	ID	shift 32
 
+	tyfieldsOne	goto 43
 
-	.	reduce by rule 22
+	.	error
 
 
 state 38:
 
-	lvalueOpt : LBRACK exp RBRACK . lvalueOpt 
+	fundec : FUNCTION ID LPAREN tyfields RPAREN . fundecOpts 
 
-	LBRACK	shift 20
-	DOT	shift 19
+	COLON	shift 46
+	EQ	shift 45
 
-	lvalueOpt	goto 46
+	fundecOpts	goto 44
 
-	.	reduce by rule 24
+	.	error
 
 
 state 39:
 
-	ty : ARRAY OF . ID 
+	tyfieldsOne : ID COLON . ID 
 
 	ID	shift 47
 
@@ -429,208 +567,174 @@ state 39:
 
 state 40:
 
-	ty : LBRACE tyfields . RBRACE 
-
-	RBRACE	shift 48
-
-
-	.	error
-
-
-state 41:
-
-	varDecOpt : COLON ID ASSIGN . exp 
-
-	ID	shift 12
-	INT	shift 11
-
-	exp	goto 49
-	lvalue	goto 1
-
-	.	error
-
-
-state 42:
-
-	tyfields : tyfieldsOne tyfieldscommaOpt .  (reduce by rule 11)
-
-
-
-	.	reduce by rule 11
-
-
-state 43:
-
-	tyfieldscommaOpt : COMMA . tyfieldsOne tyfieldscommaOpt 
-
-	ID	shift 36
-
-	tyfieldsOne	goto 50
-
-	.	error
-
-
-state 44:
-
-	fundec : FUNCTION ID LPAREN tyfields RPAREN . fundecOpts 
-
-	COLON	shift 53
-	EQ	shift 52
-
-	fundecOpts	goto 51
-
-	.	error
-
-
-state 45:
-
-	tyfieldsOne : ID COLON . ID 
-
-	ID	shift 54
-
-
-	.	error
-
-
-state 46:
-
-	lvalueOpt : LBRACK exp RBRACK lvalueOpt .  (reduce by rule 23)
-
-
-
-	.	reduce by rule 23
-
-
-state 47:
-
-	ty : ARRAY OF ID .  (reduce by rule 9)
-
-
-
-	.	reduce by rule 9
-
-
-state 48:
-
-	ty : LBRACE tyfields RBRACE .  (reduce by rule 8)
-
-
-
-	.	reduce by rule 8
-
-
-state 49:
-
-	varDecOpt : COLON ID ASSIGN exp .  (reduce by rule 17)
-
-
-
-	.	reduce by rule 17
-
-
-state 50:
-
-	tyfieldscommaOpt : COMMA tyfieldsOne . tyfieldscommaOpt 
-
-	COMMA	shift 43
-
-	tyfieldscommaOpt	goto 55
-
-	.	reduce by rule 14
-
-
-state 51:
-
-	fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts .  (reduce by rule 18)
-
-
-
-	.	reduce by rule 18
-
-
-state 52:
-
-	fundecOpts : EQ . exp 
-
-	ID	shift 12
-	INT	shift 11
-
-	exp	goto 56
-	lvalue	goto 1
-
-	.	error
-
-
-state 53:
-
-	fundecOpts : COLON . ID EQ exp 
-
-	ID	shift 57
-
-
-	.	error
-
-
-state 54:
-
-	tyfieldsOne : ID COLON ID .  (reduce by rule 10)
+	ty : ARRAY OF ID .  (reduce by rule 10)
 
 
 
 	.	reduce by rule 10
 
 
-state 55:
+state 41:
 
-	tyfieldscommaOpt : COMMA tyfieldsOne tyfieldscommaOpt .  (reduce by rule 13)
-
-
-
-	.	reduce by rule 13
-
-
-state 56:
-
-	fundecOpts : EQ exp .  (reduce by rule 19)
+	ty : LBRACE tyfields RBRACE .  (reduce by rule 9)
 
 
 
-	.	reduce by rule 19
+	.	reduce by rule 9
 
 
-state 57:
+state 42:
+
+	varDecOpt : COLON ID ASSIGN exp .  (reduce by rule 18)
+
+
+
+	.	reduce by rule 18
+
+
+state 43:
+
+	tyfieldscommaOpt : COMMA tyfieldsOne . tyfieldscommaOpt 
+
+	COMMA	shift 37
+
+	tyfieldscommaOpt	goto 48
+
+	.	reduce by rule 15
+
+
+state 44:
+
+	fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts .  (reduce by rule 21)
+
+
+
+	.	reduce by rule 21
+
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 45: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 45: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 45: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 45: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 45: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
+
+state 45:
+
+	fundecOpts : EQ . exp 
+
+	EOF	reduce by rule 1
+	INT	shift 12
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
+
+	exp	goto 49
+	decs	goto 7
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
+
+	.	error
+
+
+state 46:
+
+	fundecOpts : COLON . ID EQ exp 
+
+	ID	shift 50
+
+
+	.	error
+
+
+state 47:
+
+	tyfieldsOne : ID COLON ID .  (reduce by rule 11)
+
+
+
+	.	reduce by rule 11
+
+
+state 48:
+
+	tyfieldscommaOpt : COMMA tyfieldsOne tyfieldscommaOpt .  (reduce by rule 14)
+
+
+
+	.	reduce by rule 14
+
+
+state 49:
+
+	fundecOpts : EQ exp .  (reduce by rule 22)
+
+
+
+	.	reduce by rule 22
+
+
+state 50:
 
 	fundecOpts : COLON ID . EQ exp 
 
-	EQ	shift 58
+	EQ	shift 51
 
 
 	.	error
 
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on TYPE
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on VAR
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on FUNCTION
+error:  state 51: reduce/reduce conflict between rule 6 and rule 1 on EOF
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on TYPE
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on VAR
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on FUNCTION
+error:  state 51: reduce/reduce conflict between rule 6 and rule 20 on EOF
+error:  state 51: shift/reduce conflict (shift TYPE, reduce by rule 1)
+error:  state 51: shift/reduce conflict (shift VAR, reduce by rule 1)
+error:  state 51: shift/reduce conflict (shift FUNCTION, reduce by rule 1)
 
-state 58:
+state 51:
 
 	fundecOpts : COLON ID EQ . exp 
 
-	ID	shift 12
-	INT	shift 11
+	EOF	reduce by rule 1
+	INT	shift 12
+	FUNCTION	shift 11
+	VAR	shift 10
+	TYPE	shift 9
 
-	exp	goto 59
-	lvalue	goto 1
+	exp	goto 52
+	decs	goto 7
+	dec	goto 6
+	tydec	goto 5
+	vardec	goto 4
+	fundec	goto 3
+	fundecs	goto 2
+	tydecs	goto 1
 
 	.	error
 
 
-state 59:
+state 52:
 
-	fundecOpts : COLON ID EQ exp .  (reduce by rule 20)
-
-
-
-	.	reduce by rule 20
+	fundecOpts : COLON ID EQ exp .  (reduce by rule 23)
 
 
-state 60:
+
+	.	reduce by rule 23
+
+
+state 53:
 
 
 	EOF	accept
@@ -638,5 +742,5 @@ state 60:
 
 	.	error
 
-40 of 115 action table entries left after compaction
-37 goto table entries
+37 of 113 action table entries left after compaction
+62 goto table entries
