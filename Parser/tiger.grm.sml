@@ -8,6 +8,7 @@ structure ParserData=
 struct
 structure Header = 
 struct
+structure A = Absyn
 
 end
 structure LrTable = Token.LrTable
