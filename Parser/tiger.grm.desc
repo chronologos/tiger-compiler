@@ -1,17 +1,18 @@
-7 shift/reduce conflicts
-4 rules not reduced
+1 reduce/reduce conflict
+2 shift/reduce conflicts
+8 rules not reduced
 
-warning: rule <lvalue : ID lvalueOpt > will never be reduced
-warning: rule <lvalueOpt : DOT ID lvalueOpt > will never be reduced
-warning: rule <lvalueOpt : LBRACK exp RBRACK lvalueOpt > will never be reduced
-warning: rule <lvalueOpt : > will never be reduced
-error:  state 4: shift/reduce conflict (shift TYPE, reduce by rule 2)
-error:  state 5: shift/reduce conflict (shift FUNCTION, reduce by rule 4)
-error:  state 47: shift/reduce conflict (shift RPAREN, reduce by rule 32)
-error:  state 47: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
-error:  state 56: shift/reduce conflict (shift RPAREN, reduce by rule 32)
-error:  state 56: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
-error:  state 64: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
+warning: rule <lvalue : ID > will never be reduced
+warning: rule <lvalue : lvalue DOT ID > will never be reduced
+warning: rule <lvalue : lvalue LBRACK exp RBRACK > will never be reduced
+warning: rule <seqexp : LPAREN exp SEMICOLON exp seqexpOpt > will never be reduced
+warning: rule <seqexpOpt : RPAREN > will never be reduced
+warning: rule <seqexpOpt : seqexpOpt2 seqexpOpt > will never be reduced
+warning: rule <seqexpOpt2 : SEMICOLON exp seqexpOpt2 > will never be reduced
+warning: rule <seqexpOpt2 : > will never be reduced
+error:  state 4: shift/reduce conflict (shift FUNCTION, reduce by rule 4)
+error:  state 7: shift/reduce conflict (shift TYPE, reduce by rule 2)
+error:  state 22: reduce/reduce conflict between rule 34 and rule 32 on END
 
 state 0:
 
@@ -21,23 +22,23 @@ state 0:
 	LET	shift 2
 
 	exp	goto 1
-	program	goto 68
+	program	goto 59
 
 	.	error
 
 
 state 1:
 
-	program : exp .  (reduce by rule 35)
+	program : exp .  (reduce by rule 37)
 
 
 
-	.	reduce by rule 35
+	.	reduce by rule 37
 
 
 state 2:
 
-	exp : LET . decs IN seqexp END 
+	exp : LET . decs IN letSeqExp END 
 
 	FUNCTION	shift 13
 	VAR	shift 12
@@ -46,50 +47,37 @@ state 2:
 	decs	goto 10
 	dec	goto 9
 	tydec	goto 8
-	vardec	goto 7
-	fundec	goto 6
-	fundecs	goto 5
-	tydecs	goto 4
+	tydecs	goto 7
+	vardec	goto 6
+	fundec	goto 5
+	fundecs	goto 4
 
 	.	reduce by rule 1
 
 
 state 3:
 
-	exp : INT .  (reduce by rule 33)
+	exp : INT .  (reduce by rule 35)
 
 
 
-	.	reduce by rule 33
+	.	reduce by rule 35
 
-error:  state 4: shift/reduce conflict (shift TYPE, reduce by rule 2)
+error:  state 4: shift/reduce conflict (shift FUNCTION, reduce by rule 4)
 
 state 4:
-
-	dec : tydecs .  (reduce by rule 2)
-	tydecs : tydecs . tydec 
-
-	TYPE	shift 11
-
-	tydec	goto 14
-
-	.	reduce by rule 2
-
-error:  state 5: shift/reduce conflict (shift FUNCTION, reduce by rule 4)
-
-state 5:
 
 	dec : fundecs .  (reduce by rule 4)
 	fundecs : fundecs . fundec 
 
 	FUNCTION	shift 13
 
-	fundec	goto 15
+	fundec	goto 14
 
 	.	reduce by rule 4
 
 
-state 6:
+state 5:
 
 	fundecs : fundec .  (reduce by rule 20)
 
@@ -98,13 +86,26 @@ state 6:
 	.	reduce by rule 20
 
 
-state 7:
+state 6:
 
 	dec : vardec .  (reduce by rule 3)
 
 
 
 	.	reduce by rule 3
+
+error:  state 7: shift/reduce conflict (shift TYPE, reduce by rule 2)
+
+state 7:
+
+	dec : tydecs .  (reduce by rule 2)
+	tydecs : tydecs . tydec 
+
+	TYPE	shift 11
+
+	tydec	goto 15
+
+	.	reduce by rule 2
 
 
 state 8:
@@ -127,17 +128,17 @@ state 9:
 	decs	goto 16
 	dec	goto 9
 	tydec	goto 8
-	vardec	goto 7
-	fundec	goto 6
-	fundecs	goto 5
-	tydecs	goto 4
+	tydecs	goto 7
+	vardec	goto 6
+	fundec	goto 5
+	fundecs	goto 4
 
 	.	reduce by rule 1
 
 
 state 10:
 
-	exp : LET decs . IN seqexp END 
+	exp : LET decs . IN letSeqExp END 
 
 	IN	shift 17
 
@@ -177,20 +178,20 @@ state 13:
 
 state 14:
 
-	tydecs : tydecs tydec .  (reduce by rule 5)
-
-
-
-	.	reduce by rule 5
-
-
-state 15:
-
 	fundecs : fundecs fundec .  (reduce by rule 19)
 
 
 
 	.	reduce by rule 19
+
+
+state 15:
+
+	tydecs : tydecs tydec .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
 
 
 state 16:
@@ -204,13 +205,15 @@ state 16:
 
 state 17:
 
-	exp : LET decs IN . seqexp END 
+	exp : LET decs IN . letSeqExp END 
 
-	LPAREN	shift 22
+	INT	shift 3
+	LET	shift 2
 
-	seqexp	goto 21
+	exp	goto 22
+	letSeqExp	goto 21
 
-	.	error
+	.	reduce by rule 34
 
 
 state 18:
@@ -247,22 +250,26 @@ state 20:
 
 state 21:
 
-	exp : LET decs IN seqexp . END 
+	exp : LET decs IN letSeqExp . END 
 
 	END	shift 28
 
 
 	.	error
 
+error:  state 22: reduce/reduce conflict between rule 34 and rule 32 on END
 
 state 22:
 
-	seqexp : LPAREN . exp SEMICOLON exp seqexpOpt 
+	letSeqExp : exp .  (reduce by rule 32)
+	letSeqExp : exp . letSeqExp 
 
 	INT	shift 3
 	LET	shift 2
+	END	reduce by rule 32
 
-	exp	goto 29
+	exp	goto 22
+	letSeqExp	goto 29
 
 	.	error
 
@@ -325,21 +332,20 @@ state 27:
 
 state 28:
 
-	exp : LET decs IN seqexp END .  (reduce by rule 34)
+	exp : LET decs IN letSeqExp END .  (reduce by rule 36)
 
 
 
-	.	reduce by rule 34
+	.	reduce by rule 36
 
 
 state 29:
 
-	seqexp : LPAREN exp . SEMICOLON exp seqexpOpt 
-
-	SEMICOLON	shift 39
+	letSeqExp : exp letSeqExp .  (reduce by rule 33)
 
 
-	.	error
+
+	.	reduce by rule 33
 
 
 state 30:
@@ -355,7 +361,7 @@ state 31:
 
 	ty : ARRAY . OF ID 
 
-	OF	shift 40
+	OF	shift 39
 
 
 	.	error
@@ -367,7 +373,7 @@ state 32:
 
 	ID	shift 38
 
-	tyfields	goto 41
+	tyfields	goto 40
 	tyfieldsOne	goto 36
 
 	.	reduce by rule 13
@@ -395,7 +401,7 @@ state 35:
 
 	varDecOpt : COLON ID . ASSIGN exp 
 
-	ASSIGN	shift 42
+	ASSIGN	shift 41
 
 
 	.	error
@@ -405,9 +411,9 @@ state 36:
 
 	tyfields : tyfieldsOne . tyfieldscommaOpt 
 
-	COMMA	shift 44
+	COMMA	shift 43
 
-	tyfieldscommaOpt	goto 43
+	tyfieldscommaOpt	goto 42
 
 	.	reduce by rule 15
 
@@ -416,7 +422,7 @@ state 37:
 
 	fundec : FUNCTION ID LPAREN tyfields . RPAREN fundecOpts 
 
-	RPAREN	shift 45
+	RPAREN	shift 44
 
 
 	.	error
@@ -426,7 +432,7 @@ state 38:
 
 	tyfieldsOne : ID . COLON ID 
 
-	COLON	shift 46
+	COLON	shift 45
 
 
 	.	error
@@ -434,21 +440,19 @@ state 38:
 
 state 39:
 
-	seqexp : LPAREN exp SEMICOLON . exp seqexpOpt 
+	ty : ARRAY OF . ID 
 
-	INT	shift 3
-	LET	shift 2
+	ID	shift 46
 
-	exp	goto 47
 
 	.	error
 
 
 state 40:
 
-	ty : ARRAY OF . ID 
+	ty : LBRACE tyfields . RBRACE 
 
-	ID	shift 48
+	RBRACE	shift 47
 
 
 	.	error
@@ -456,27 +460,17 @@ state 40:
 
 state 41:
 
-	ty : LBRACE tyfields . RBRACE 
-
-	RBRACE	shift 49
-
-
-	.	error
-
-
-state 42:
-
 	varDecOpt : COLON ID ASSIGN . exp 
 
 	INT	shift 3
 	LET	shift 2
 
-	exp	goto 50
+	exp	goto 48
 
 	.	error
 
 
-state 43:
+state 42:
 
 	tyfields : tyfieldsOne tyfieldscommaOpt .  (reduce by rule 12)
 
@@ -485,55 +479,40 @@ state 43:
 	.	reduce by rule 12
 
 
-state 44:
+state 43:
 
 	tyfieldscommaOpt : COMMA . tyfieldsOne tyfieldscommaOpt 
 
 	ID	shift 38
 
-	tyfieldsOne	goto 51
+	tyfieldsOne	goto 49
+
+	.	error
+
+
+state 44:
+
+	fundec : FUNCTION ID LPAREN tyfields RPAREN . fundecOpts 
+
+	COLON	shift 52
+	EQ	shift 51
+
+	fundecOpts	goto 50
 
 	.	error
 
 
 state 45:
 
-	fundec : FUNCTION ID LPAREN tyfields RPAREN . fundecOpts 
+	tyfieldsOne : ID COLON . ID 
 
-	COLON	shift 54
-	EQ	shift 53
+	ID	shift 53
 
-	fundecOpts	goto 52
 
 	.	error
 
 
 state 46:
-
-	tyfieldsOne : ID COLON . ID 
-
-	ID	shift 55
-
-
-	.	error
-
-error:  state 47: shift/reduce conflict (shift RPAREN, reduce by rule 32)
-error:  state 47: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
-
-state 47:
-
-	seqexp : LPAREN exp SEMICOLON exp . seqexpOpt 
-
-	SEMICOLON	shift 59
-	RPAREN	shift 58
-
-	seqexpOpt	goto 57
-	seqexpOpt2	goto 56
-
-	.	error
-
-
-state 48:
 
 	ty : ARRAY OF ID .  (reduce by rule 10)
 
@@ -542,7 +521,7 @@ state 48:
 	.	reduce by rule 10
 
 
-state 49:
+state 47:
 
 	ty : LBRACE tyfields RBRACE .  (reduce by rule 9)
 
@@ -551,7 +530,7 @@ state 49:
 	.	reduce by rule 9
 
 
-state 50:
+state 48:
 
 	varDecOpt : COLON ID ASSIGN exp .  (reduce by rule 18)
 
@@ -560,18 +539,18 @@ state 50:
 	.	reduce by rule 18
 
 
-state 51:
+state 49:
 
 	tyfieldscommaOpt : COMMA tyfieldsOne . tyfieldscommaOpt 
 
-	COMMA	shift 44
+	COMMA	shift 43
 
-	tyfieldscommaOpt	goto 60
+	tyfieldscommaOpt	goto 54
 
 	.	reduce by rule 15
 
 
-state 52:
+state 50:
 
 	fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts .  (reduce by rule 21)
 
@@ -580,29 +559,29 @@ state 52:
 	.	reduce by rule 21
 
 
-state 53:
+state 51:
 
 	fundecOpts : EQ . exp 
 
 	INT	shift 3
 	LET	shift 2
 
-	exp	goto 61
+	exp	goto 55
 
 	.	error
 
 
-state 54:
+state 52:
 
 	fundecOpts : COLON . ID EQ exp 
 
-	ID	shift 62
+	ID	shift 56
 
 
 	.	error
 
 
-state 55:
+state 53:
 
 	tyfieldsOne : ID COLON ID .  (reduce by rule 11)
 
@@ -610,53 +589,8 @@ state 55:
 
 	.	reduce by rule 11
 
-error:  state 56: shift/reduce conflict (shift RPAREN, reduce by rule 32)
-error:  state 56: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
 
-state 56:
-
-	seqexpOpt : seqexpOpt2 . seqexpOpt 
-
-	SEMICOLON	shift 59
-	RPAREN	shift 58
-
-	seqexpOpt	goto 63
-	seqexpOpt2	goto 56
-
-	.	error
-
-
-state 57:
-
-	seqexp : LPAREN exp SEMICOLON exp seqexpOpt .  (reduce by rule 28)
-
-
-
-	.	reduce by rule 28
-
-
-state 58:
-
-	seqexpOpt : RPAREN .  (reduce by rule 29)
-
-
-
-	.	reduce by rule 29
-
-
-state 59:
-
-	seqexpOpt2 : SEMICOLON . exp seqexpOpt2 
-
-	INT	shift 3
-	LET	shift 2
-
-	exp	goto 64
-
-	.	error
-
-
-state 60:
+state 54:
 
 	tyfieldscommaOpt : COMMA tyfieldsOne tyfieldscommaOpt .  (reduce by rule 14)
 
@@ -665,7 +599,7 @@ state 60:
 	.	reduce by rule 14
 
 
-state 61:
+state 55:
 
 	fundecOpts : EQ exp .  (reduce by rule 22)
 
@@ -674,59 +608,29 @@ state 61:
 	.	reduce by rule 22
 
 
-state 62:
+state 56:
 
 	fundecOpts : COLON ID . EQ exp 
 
-	EQ	shift 65
+	EQ	shift 57
 
 
 	.	error
 
 
-state 63:
-
-	seqexpOpt : seqexpOpt2 seqexpOpt .  (reduce by rule 30)
-
-
-
-	.	reduce by rule 30
-
-error:  state 64: shift/reduce conflict (shift SEMICOLON, reduce by rule 32)
-
-state 64:
-
-	seqexpOpt2 : SEMICOLON exp . seqexpOpt2 
-
-	SEMICOLON	shift 59
-
-	seqexpOpt2	goto 66
-
-	.	reduce by rule 32
-
-
-state 65:
+state 57:
 
 	fundecOpts : COLON ID EQ . exp 
 
 	INT	shift 3
 	LET	shift 2
 
-	exp	goto 67
+	exp	goto 58
 
 	.	error
 
 
-state 66:
-
-	seqexpOpt2 : SEMICOLON exp seqexpOpt2 .  (reduce by rule 31)
-
-
-
-	.	reduce by rule 31
-
-
-state 67:
+state 58:
 
 	fundecOpts : COLON ID EQ exp .  (reduce by rule 23)
 
@@ -735,7 +639,7 @@ state 67:
 	.	reduce by rule 23
 
 
-state 68:
+state 59:
 
 
 	EOF	accept
@@ -743,5 +647,5 @@ state 68:
 
 	.	error
 
-40 of 130 action table entries left after compaction
-41 goto table entries
+40 of 113 action table entries left after compaction
+36 goto table entries
