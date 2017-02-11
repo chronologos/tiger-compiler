@@ -1,11 +1,6 @@
 Group is
 
-<<<<<<< HEAD
-$/smlnj-lib.cm
-$/basis.cm
-=======
 $/ml-yacc-lib.cm
->>>>>>> c13ea761c67d331ac6e89788a110bddeaf3f91fb
 absyn.sml
 errormsg.sml
 table.sig
@@ -14,9 +9,5 @@ symbol.sml
 tiger.lex
 tiger.grm
 parse.sml
-<<<<<<< HEAD
-$/ml-yacc-lib.cm
-=======
 $/basis.cm
 $/smlnj-lib.cm
->>>>>>> c13ea761c67d331ac6e89788a110bddeaf3f91fb
