@@ -49,6 +49,4 @@ withtype field = {name: symbol, escape: bool ref,
 		   pos: pos}
      
 end
-
-    
         
