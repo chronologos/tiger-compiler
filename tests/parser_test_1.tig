@@ -1,0 +1,21 @@
+/* Interleaving fundecs, vardec, tydecs */
+let
+Function booya x = x + kasha(2)
+Function kasha x = x + yo(3)
+Function yo x = 5
+var a := 1
+var b := 2
+Function booya x = y + kasha(2)
+
+type arrayty = array of int
+type arrayty2 = array of int
+
+Function booya x = x + kasha(2)
+Function kasha x = x + yo(3)
+Function yo x = 5
+var a := 1
+var b := 2
+
+in
+1
+end
