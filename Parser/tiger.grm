@@ -1,18 +1,47 @@
-structure a = Absyn
+structure A = Absyn
+structure S = Symbol
+type symbol = S.symbol
+val symbol = S.symbol
+
+type field = {name: symbol, escape: bool ref, typ: symbol, pos: A.pos}
+type fundec = {name: symbol, params: field list, result: (symbol * A.pos) option, body: A.exp, pos: A.pos}
+type pos = A.pos
+type exp = A.exp
+
 %%
 %term
-    EOF 
+    EOF
   | ID of string
-  | INT of int | STRING of string 
-  | COMMA | COLON | SEMICOLON | LPAREN | RPAREN | LBRACK | RBRACK 
-  | LBRACE | RBRACE | DOT 
+  | INT of int | STRING of string
+  | COMMA | COLON | SEMICOLON | LPAREN | RPAREN | LBRACK | RBRACK
+  | LBRACE | RBRACE | DOT
   | PLUS | MINUS | TIMES | DIVIDE | EQ | NEQ | LT | LE | GT | GE
   | AND | OR | ASSIGN
-  | ARRAY | IF | THEN | ELSE | WHILE | FOR | TO | DO | LET | IN | END | OF 
+  | ARRAY | IF | THEN | ELSE | WHILE | FOR | TO | DO | LET | IN | END | OF
   | BREAK | NIL
-  | FUNCTION | VAR | TYPE 
+  | FUNCTION | VAR | TYPE
 
-%nonterm  exp | program | decs | dec | decsOpt | tydec | vardec | fundec | ty | tyfields | tyfieldsOne |  tyfieldscommaOpt | varDecOpt | fundecOpts | lvalue | lvalueOpt | fundecs | tydecs
+%nonterm
+  exp of A.exp
+| program of A.exp
+| decs of A.dec list
+| dec of A.dec
+| tydec of {name: symbol, ty: A.ty, pos: A.pos}
+| tydecs of {name: symbol, ty: A.ty, pos: A.pos} list
+| vardec of {name: symbol, escape: bool ref, typ: (symbol * A.pos) option, init: A.exp, pos: A.pos}
+| fundec of fundec
+| fundecs of fundec list
+| ty of A.ty
+| tyfields of field list
+| tyfieldsOne of field
+| tyfieldscommaOpt of field list
+| varDecOpt of {typ: (symbol * A.pos) option, init: A.exp}
+| fundecOpts of {body : A.exp, result : (symbol * pos) option}
+| lvalue of A.var
+| seqexp of A.exp
+| seqexpOpt of (A.exp * A.pos) list
+| seqexpOpt2 of (A.exp * A.pos) list
+| letSeqExp of (A.exp * A.pos) list
 
 %pos int
 %verbose
@@ -22,8 +51,7 @@ structure a = Absyn
 
 %name Tiger
 
-%keyword WHILE FOR TO BREAK LET IN END FUNCTION VAR TYPE ARRAY IF THEN ELSE 
-	DO OF NIL
+%keyword WHILE FOR TO BREAK LET IN END FUNCTION VAR TYPE ARRAY IF THEN ELSE DO OF NIL
 
 %prefer THEN ELSE LPAREN
 
@@ -32,59 +60,64 @@ structure a = Absyn
 %value STRING ("")
 
 %%
-
-(* This is a skeleton grammar file, meant to illustrate what kind of
- * declarations are necessary above the %% mark.  Students are expected
- *  to replace the two dummy productions below with an actual grammar. 
- *)
 decs: dec decs (dec :: decs)
      | ([])
 
-dec: tydecs (a.TypeDec(tydecs)) 
-   | vardec (a.VarDec(vardec))
-   | fundecs (a.FunctionDec(fundecs))
+dec: tydecs (A.TypeDec(tydecs))
+   | vardec (A.VarDec(vardec))
+   | fundecs (A.FunctionDec(fundecs))
 
 
-tydecs: tydec tydecs (tydec::tydecs)
-	| ([])
+tydecs: tydecs tydec (tydec::tydecs)
+	| tydec ([tydec])
 
-tydec: TYPE ID EQ ty ({name=a.symbol(ID), ty=ty, pos=0})
+tydec: TYPE ID EQ ty ({name=S.symbol(ID), ty=ty, pos=0})
 
-ty : ID (a.NameTy(a.symbol(ID), 0))
-   | LBRACE tyfields RBRACE (a.RecordTy(tyfields))
-   | ARRAY OF ID (a.symbol(ID), 0)
+ty : ID (A.NameTy(S.symbol(ID), 0))
+   | LBRACE tyfields RBRACE (A.RecordTy(tyfields))
+   | ARRAY OF ID (A.ArrayTy(S.symbol(ID), 0))
 
-tyfieldsOne : ID COLON ID([{name = a.symbol(ID1), escape = ref false, typ = a.symbol(ID2), pos = 0}] )
+tyfieldsOne : ID COLON ID({name = S.symbol(ID1), escape = ref false, typ = S.symbol(ID2), pos = 0})
 
 tyfields : tyfieldsOne tyfieldscommaOpt ( tyfieldsOne :: tyfieldscommaOpt)
-	   | ([]) 
+	   | ([])
 
 tyfieldscommaOpt: COMMA tyfieldsOne tyfieldscommaOpt (tyfieldsOne :: tyfieldscommaOpt)
              | ([])
 
 
-vardec : VAR ID varDecOpt ({name = a.symbol(ID), escape = ref false, typ = #typ varDecOpt, init = #init varDecOpt, pos = 0})
+vardec : VAR ID varDecOpt ({name = S.symbol(ID), escape = ref false, typ = #typ varDecOpt, init = #init varDecOpt, pos = 0})
 
 varDecOpt:  ASSIGN exp ({typ = NONE, init = exp})
-          | COLON ID ASSIGN exp ({typ = SOME(a.symbol(ID), 0), init = exp })
+          | COLON ID ASSIGN exp ({typ = SOME(S.symbol(ID), 0), init = exp })
 
-fundecs : fundec fundecs ( fundec :: fundecs )
-   | ([])
+fundecs : fundecs fundec ( fundecs @ [fundec] )
+   | fundec ([fundec])
 
-fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts ({name= a.symbol(ID), params=tyfields, result = #result fundecOpts, body = #body fundecOpts, pos = 0})
+fundec : FUNCTION ID LPAREN tyfields RPAREN fundecOpts ({name= S.symbol(ID), params=tyfields, result = #result fundecOpts, body = #body fundecOpts, pos = 0})
 
 fundecOpts : EQ exp ({body = exp, result = NONE})
-	     | COLON ID EQ exp ({body = exp, result = SOME(a.symbol(ID), 0)})
+	     | COLON ID EQ exp ({body = exp, result = SOME(S.symbol(ID), 0)})
 
 
-lvalue : ID lvalueOpt ()
-	
-lvalueOpt : DOT ID lvalueOpt ()
-          | LBRACK exp RBRACK lvalueOpt ()
-	    | ()
+lvalue: ID					           (A.SimpleVar(symbol(ID),0))
+	| lvalue DOT ID			         (A.FieldVar(lvalue,symbol(ID),0))
+	| lvalue LBRACK exp RBRACK	 (A.SubscriptVar(lvalue,exp,0))
 
 
-exp : INT (a.IntExp(INT))
-    | decs (a.LetExp(decs,body=a.IntExp(1),pos=0))
+seqexp: LPAREN exp SEMICOLON exp seqexpOpt (A.SeqExp((exp1, 0) :: (exp2, 0) :: seqexpOpt))
+seqexpOpt: RPAREN ([])
+     	    | seqexpOpt2 seqexpOpt (seqexpOpt2 @ seqexpOpt)
+seqexpOpt2: SEMICOLON exp seqexpOpt2 ((exp, 0) :: seqexpOpt2)
+		|  ([])
+
+letSeqExp: exp ([(exp, expleft)])
+          | exp letSeqExp ((exp, expleft) :: letSeqExp)
+	    | ([])
+
+
+exp : INT (A.IntExp(INT))
+    | LET decs IN letSeqExp END (A.LetExp({decs = decs, body = A.SeqExp(letSeqExp), pos = 0}))
+    | lvalue (A.VarExp(lvalue))
 
 program: exp (exp)
