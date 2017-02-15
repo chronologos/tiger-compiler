@@ -15,5 +15,8 @@ var a := 1
 var b := 2
 
 in
-1
+1;
+2;
+booya(1,2,3,4);
+kasha();
 end

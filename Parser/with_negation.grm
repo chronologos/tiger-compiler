@@ -1,0 +1,15 @@
+negExp: MINUS opExp (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=opExp,pos=MINUSleft}))
+      | MINUS intExp (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=intExp,pos=MINUSleft}))
+
+| negExp (negExp)
+
+amsOp: PLUS (A.PlusOp)
+     | MINUS (A.MinusOp)
+     | TIMES (A.TimesOp)
+     | DIVIDE (A.DivideOp)
+     | EQ (A.EqOp)
+     | NEQ (A.NeqOp)
+     | LT (A.LtOp)
+     | LE (A.LeOp)
+     | GT (A.GtOp)
+     | GE (A.GeOp)

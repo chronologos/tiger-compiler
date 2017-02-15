@@ -19,7 +19,7 @@ type exp = A.exp
   | AND | OR | ASSIGN
   | ARRAY | IF | THEN | ELSE | WHILE | FOR | TO | DO | LET | IN | END | OF
   | BREAK | NIL
-  | FUNCTION | VAR | TYPE
+  | FUNCTION | VAR | TYPE | UMINUS
 
 %nonterm
   exp of A.exp
@@ -42,7 +42,16 @@ type exp = A.exp
 | seqexpOpt of (A.exp * A.pos) list
 | seqexpOpt2 of (A.exp * A.pos) list
 | letSeqExp of (A.exp * A.pos) list
-
+| nilExp of A.exp
+| strExp of A.exp
+| opExp of A.exp
+| recordExp of A.exp
+| recordExpOpt of (symbol * exp * pos) list 
+| funCallExpList of A.exp list
+| assignExp of A.exp
+| ifExpOpt of A.exp option
+| ifExp of A.exp  
+     
 %pos int
 %verbose
 %start program
@@ -55,9 +64,17 @@ type exp = A.exp
 
 %prefer THEN ELSE LPAREN
 
+
 %value ID ("bogus")
 %value INT (1)
 %value STRING ("")
+
+%nonassoc IF THEN ELSE
+%nonassoc ASSIGN 
+%nonassoc EQ NEQ LE GE GT LT
+%left PLUS MINUS
+%left TIMES DIVIDE
+%left UMINUS
 
 %%
 decs: dec decs (dec :: decs)
@@ -100,23 +117,61 @@ fundecOpts : EQ exp ({body = exp, result = NONE})
 	     | COLON ID EQ exp ({body = exp, result = SOME(S.symbol(ID), 0)})
 
 
-lvalue: ID					           (A.SimpleVar(symbol(ID),0))
-	| lvalue DOT ID			         (A.FieldVar(lvalue,symbol(ID),0))
-	| lvalue LBRACK exp RBRACK	 (A.SubscriptVar(lvalue,exp,0))
+lvalue: ID			         (A.SimpleVar(symbol(ID),0))
+      | lvalue DOT ID			 (A.FieldVar(lvalue,symbol(ID),0))
+      | lvalue LBRACK exp RBRACK	 (A.SubscriptVar(lvalue,exp,0))
 
 
 seqexp: LPAREN exp SEMICOLON exp seqexpOpt (A.SeqExp((exp1, 0) :: (exp2, 0) :: seqexpOpt))
-seqexpOpt: RPAREN ([])
-     	    | seqexpOpt2 seqexpOpt (seqexpOpt2 @ seqexpOpt)
-seqexpOpt2: SEMICOLON exp seqexpOpt2 ((exp, 0) :: seqexpOpt2)
-		|  ([])
 
-letSeqExp: exp ([(exp, expleft)])
-          | exp letSeqExp ((exp, expleft) :: letSeqExp)
-	    | ([])
+seqexpOpt: RPAREN ([])
+     	 | seqexpOpt2 seqexpOpt (seqexpOpt2 @ seqexpOpt)
+seqexpOpt2: SEMICOLON exp seqexpOpt2 ((exp, 0) :: seqexpOpt2)
+	  |  ([])
+
+letSeqExp: exp SEMICOLON letSeqExp ((exp, expleft) :: letSeqExp)
+      | exp ([(exp, expleft)])
+      | ([])
 
 exp : INT (A.IntExp(INT))
+    | NIL (A.NilExp)
+    | STRING (A.StringExp(STRING, STRINGleft))
     | LET decs IN letSeqExp END (A.LetExp({decs = decs, body = A.SeqExp(letSeqExp), pos = 0}))
     | lvalue (A.VarExp(lvalue))
+    | ID LPAREN funCallExpList RPAREN (A.CallExp({func=symbol(ID), args=funCallExpList, pos=IDleft }))
+    | recordExp (recordExp)
+    | ifExp (ifExp)
+    | MINUS exp  %prec UMINUS (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=exp,pos=MINUSleft}))
+    | exp MINUS exp (A.OpExp({left=exp1, oper= A.MinusOp, right=exp2,pos=MINUSleft}))
+    | exp PLUS exp (A.OpExp({left=exp1, oper= A.PlusOp, right=exp2, pos=PLUSleft}))
+    | exp TIMES exp (A.OpExp({left=exp1, oper= A.TimesOp, right=exp2,pos=TIMESleft}))
+    | exp EQ exp (A.OpExp({left=exp1, oper= A.EqOp, right=exp2,pos=EQleft}))
+    | exp NEQ exp (A.OpExp({left=exp1, oper= A.NeqOp, right=exp2,pos=NEQleft}))
+    | exp GT exp (A.OpExp({left=exp1, oper= A.GtOp, right=exp2,pos=GTleft}))
+    | exp GE exp (A.OpExp({left=exp1, oper= A.GeOp, right=exp2,pos=GEleft}))
+    | exp LE exp (A.OpExp({left=exp1, oper= A.LeOp, right=exp2,pos=LEleft}))
+    | exp LT exp (A.OpExp({left=exp1, oper= A.LtOp, right=exp2,pos=LTleft}))
+    | exp DIVIDE exp (A.OpExp({left=exp1, oper= A.DivideOp, right=exp2,pos=DIVIDEleft}))
+    | assignExp (assignExp)
 
-program: exp (exp)
+
+ifExp: IF exp THEN exp ifExpOpt (A.IfExp({test=exp1,then'=exp2,else'=ifExpOpt,pos=IFleft}))
+
+ifExpOpt: ELSE exp (SOME(exp))
+	| (NONE)
+		
+recordExp: ID LBRACE RBRACE (A.RecordExp({fields=[],typ=symbol(ID),pos=IDleft}))
+	 | ID LBRACE ID EQ exp recordExpOpt RBRACE (A.RecordExp({fields=(symbol(ID2),exp,ID2left)::recordExpOpt,typ=symbol(ID1),pos=ID1left}))
+
+recordExpOpt: ([])
+	    | COMMA ID EQ exp recordExpOpt ((symbol(ID),exp,IDleft)::recordExpOpt)
+	  
+assignExp: lvalue ASSIGN exp (A.AssignExp({var=lvalue,exp=exp,pos=ASSIGNleft}))
+
+
+	   	 
+funCallExpList: ([])
+          | exp funCallExpList (exp :: funCallExpList)
+          | COMMA exp funCallExpList (exp :: funCallExpList)
+
+program: exp EOF (exp)
