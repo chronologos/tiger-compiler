@@ -54,8 +54,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
     let val charOpt = Char.fromString(str)
     in
     if isSome(charOpt) then 
-    (addToBuffer(Char.toString(valOf charOpt));
-     print "Added escaped control character to string buffer\n")
+    addToBuffer(Char.toString(valOf charOpt))
     else
       (ErrorMsg.error pos "Illegal control character sequence. Ignoring.\n")
     end  
@@ -81,7 +80,7 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>type	=> (Tokens.TYPE(yypos,yypos+4));
 <INITIAL>{ws}+ => (continue());
 <INITIAL>","	=> (Tokens.COMMA(yypos,yypos+1));
-<INITIAL>var  	=> (printLineNum(); Tokens.VAR(yypos,yypos+3));
+<INITIAL>var  	=> (Tokens.VAR(yypos,yypos+3));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos,yypos+2));
 <INITIAL>{digit}+ => (Tokens.INT(Option.valOf(Int.fromString(yytext)), yypos, yypos+String.size(yytext) ));
 <INITIAL>function => (Tokens.FUNCTION(yypos, yypos + size yytext));
@@ -100,23 +99,23 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
 <INITIAL>"else" => (Tokens.ELSE(yypos, yypos + size yytext));
 <INITIAL>"then" => (Tokens.THEN(yypos, yypos + size yytext));
 <INITIAL>{identifier} => (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ));
-<INITIAL>"/*" => (YYBEGIN COMMENT; print "Entering COMMENT\n"; inComment := true; incrNest(); continue());
-<COMMENT> "/*" => (print "Incrementing comment nestedness.\n"; inComment := true; incrNest();continue());
+<INITIAL>"/*" => (YYBEGIN COMMENT; inComment := true; incrNest(); continue());
+<COMMENT> "/*" => (inComment := true; incrNest();continue());
 <COMMENT>\n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
-<COMMENT>"*/" => (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false; print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue());
+<COMMENT>"*/" => (if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false) else(); continue());
 <COMMENT>. => (continue());
-<INITIAL>"\""=> (YYBEGIN STRING; inString := true; print "String starting\n"; continue());
-<STRING>"\""=> (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
-<STRING>"\\" => (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue());
-<STRING>"\\""\\" => (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue());
-<STRING>"\\""\"" => (print "Printing literal \" character within string\n"; addToBuffer "\""; continue());
-<STRING>"\\^". => (print "Escaping control character\n"; strFromCtrl(yypos, yytext); continue());
-<STRING>"\\"{digit}{digit}{digit} => (print("Interpreting ascii character sequence " ^ yytext ^ "\n"); strFromAscii(yypos, yytext); continue());
+<INITIAL>"\""=> (YYBEGIN STRING; inString := true; continue());
+<STRING>"\""=> (YYBEGIN INITIAL;inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1));
+<STRING>"\\" => (YYBEGIN IGNORESEQ; continue());
+<STRING>"\\""\\" => (addToBuffer "\\"; continue());
+<STRING>"\\""\"" => (addToBuffer "\""; continue());
+<STRING>"\\^". => (strFromCtrl(yypos, yytext); continue());
+<STRING>"\\"{digit}{digit}{digit} => (strFromAscii(yypos, yytext); continue());
 <STRING>("\\n" | "\\t" | " " | "\\f" | [^"\\"]) => (addToBuffer yytext; continue());
-<STRING>{digit}+ => (print "Printing integer literal within string\n"; addToBuffer yytext; continue());
+<STRING>{digit}+ => (addToBuffer yytext; continue());
 <STRING>. => (ErrorMsg.error yypos ("Illegal use of \\ character."); continue());
-<IGNORESEQ>"\\" => (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue());
-<IGNORESEQ>(\n) => (lineNum := !lineNum+1; print "incrementing lineNum in IGNORESEQ\n"; linePos := yypos :: !linePos; continue());
+<IGNORESEQ>"\\" => (YYBEGIN STRING; continue());
+<IGNORESEQ>(\n) => (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
 <IGNORESEQ>{nonprintable} => (continue());
 <IGNORESEQ>. => (ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue());
 <INITIAL> "<>" => (Tokens.NEQ(yypos,yypos+2));
