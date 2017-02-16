@@ -85,6 +85,7 @@ fun toVarExp (head,list) =
 %nonassoc IFTHEN
 %nonassoc IF THEN ELSE
 %nonassoc ASSIGN 
+%nonassoc AND OR 
 %nonassoc EQ NEQ LE GE GT LT
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -106,6 +107,8 @@ exp : INT (A.IntExp(INT))
     | exp GE exp (A.OpExp({left=exp1, oper= A.GeOp, right=exp2,pos=GEleft}))
     | exp LE exp (A.OpExp({left=exp1, oper= A.LeOp, right=exp2,pos=LEleft}))
     | exp LT exp (A.OpExp({left=exp1, oper= A.LtOp, right=exp2,pos=LTleft}))
+    | exp AND exp (A.IfExp({test=exp1,then'=exp2,else'=SOME(A.IntExp(0)) ,pos=ANDleft}))
+    | exp OR exp (A.IfExp({test=exp1,then'=A.IntExp(1),else'=SOME(exp2) ,pos=ORleft}))
     | exp DIVIDE exp (A.OpExp({left=exp1, oper= A.DivideOp, right=exp2,pos=DIVIDEleft}))
     | exp MINUS exp (A.OpExp({left=exp1, oper= A.MinusOp, right=exp2,pos=MINUSleft})) 
     | MINUS exp %prec UMINUS (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=exp1,pos=MINUSleft}))
