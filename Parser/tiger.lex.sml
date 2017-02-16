@@ -1,4 +1,4 @@
-structure Mlex  = struct
+functor TigerLexFun(structure Tokens: Tiger_TOKENS)  = struct
 
     structure yyInput : sig
 
@@ -102,9 +102,10 @@ STRING | COMMENT | IGNORESEQ | INITIAL
     structure UserDeclarations = 
       struct
 
+type svalue = Tokens.svalue
 type pos = int
-type lexresult = Tokens.token
-
+type ('a, 'b) token = ('a, 'b) Tokens.token
+type lexresult = (svalue, pos) token
 exception LexError of int
 
 fun raiseLexError(pos:int) =
@@ -157,7 +158,8 @@ fun decrNest() = (commNest := !commNest - 1; !commNest)
     let val charOpt = Char.fromString(str)
     in
     if isSome(charOpt) then 
-    addToBuffer(Char.toString(valOf charOpt))
+    (addToBuffer(Char.toString(valOf charOpt));
+     print "Added escaped control character to string buffer\n")
     else
       (ErrorMsg.error pos "Illegal control character sequence. Ignoring.\n")
     end  
@@ -237,7 +239,7 @@ fun yyAction2 (strm, lastMatch : yymatch) = (yystrm := strm; (continue()))
 fun yyAction3 (strm, lastMatch : yymatch) = (yystrm := strm;
       (Tokens.COMMA(yypos,yypos+1)))
 fun yyAction4 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (Tokens.VAR(yypos,yypos+3)))
+      (printLineNum(); Tokens.VAR(yypos,yypos+3)))
 fun yyAction5 (strm, lastMatch : yymatch) = (yystrm := strm;
       (Tokens.ASSIGN(yypos,yypos+2)))
 fun yyAction6 (strm, lastMatch : yymatch) = let
@@ -322,33 +324,35 @@ fun yyAction22 (strm, lastMatch : yymatch) = let
         (Tokens.ID(yytext, yypos, (yypos + String.size(yytext)) ))
       end
 fun yyAction23 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN COMMENT; inComment := true; incrNest(); continue()))
+      (YYBEGIN COMMENT; print "Entering COMMENT\n"; inComment := true; incrNest(); continue()))
 fun yyAction24 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (inComment := true; incrNest();continue()))
+      (print "Incrementing comment nestedness.\n"; inComment := true; incrNest();continue()))
 fun yyAction25 (strm, lastMatch : yymatch) = (yystrm := strm;
       (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue()))
 fun yyAction26 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false) else(); continue()))
+      (print "Uncomment detected.\n"; if decrNest() = 0 then(YYBEGIN(INITIAL); inComment := false; print "Returning to INITIAL from COMMENT\n") else(print("Still in COMMENT, nesting: " ^ Int.toString(!commNest) ^ "\n")); continue()))
 fun yyAction27 (strm, lastMatch : yymatch) = (yystrm := strm; (continue()))
 fun yyAction28 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN STRING; inString := true; continue()))
+      (YYBEGIN STRING; inString := true; print "String starting\n"; continue()))
 fun yyAction29 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN INITIAL;inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1)))
+      (YYBEGIN INITIAL;print "String ending\n"; inString := false; Tokens.STRING(!strBuffer, yypos - 1 - clearBuffer(), yypos + 1)))
 fun yyAction30 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN IGNORESEQ; continue()))
+      (YYBEGIN IGNORESEQ; print "Entering IGNORESEQ state\n"; continue()))
 fun yyAction31 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (addToBuffer "\\"; continue()))
+      (print "Printing literal backslash character.\n"; addToBuffer "\\"; continue()))
 fun yyAction32 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (addToBuffer "\""; continue()))
+      (print "Printing literal \" character within string\n"; addToBuffer "\""; continue()))
 fun yyAction33 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
-        yystrm := strm; (strFromCtrl(yypos, yytext); continue())
+        yystrm := strm;
+        (print "Escaping control character\n"; strFromCtrl(yypos, yytext); continue())
       end
 fun yyAction34 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
-        yystrm := strm; (strFromAscii(yypos, yytext); continue())
+        yystrm := strm;
+        (print("Interpreting ascii character sequence " ^ yytext ^ "\n"); strFromAscii(yypos, yytext); continue())
       end
 fun yyAction35 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
@@ -358,14 +362,15 @@ fun yyAction35 (strm, lastMatch : yymatch) = let
 fun yyAction36 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
-        yystrm := strm; (addToBuffer yytext; continue())
+        yystrm := strm;
+        (print "Printing integer literal within string\n"; addToBuffer yytext; continue())
       end
 fun yyAction37 (strm, lastMatch : yymatch) = (yystrm := strm;
       (ErrorMsg.error yypos ("Illegal use of \\ character."); continue()))
 fun yyAction38 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN STRING; continue()))
+      (YYBEGIN STRING; print "Returning to STRING state from IGNORESEQ state\n"; continue()))
 fun yyAction39 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue()))
+      (lineNum := !lineNum+1; print "incrementing lineNum in IGNORESEQ\n"; linePos := yypos :: !linePos; continue()))
 fun yyAction40 (strm, lastMatch : yymatch) = (yystrm := strm; (continue()))
 fun yyAction41 (strm, lastMatch : yymatch) = (yystrm := strm;
       (ErrorMsg.error yypos ("illegal use of printable character from IGNORESEQ"); continue()))
