@@ -25,8 +25,6 @@ fun toVarExp (head,list) =
   case list of
       ((SOME exp, NONE, pos)::l) => toVarExp(toSubscriptVar(head,exp,pos),l)
      |((NONE,SOME id,pos)::l)  => toVarExp(toFieldVar(head,id,pos),l) 
-     | (SOME exp, NONE, pos) => toVarExp(A.SubscriptVar(head,exp,pos),[])
-     | (NONE, SOME id, pos) => toVarExp(A.VarExp(A.FieldVar(head,id,pos),[]))
      | [] => head 
 
 end
@@ -565,7 +563,7 @@ struct
 datatype svalue = VOID | ntVOID of unit ->  unit
  | STRING of unit ->  (string) | INT of unit ->  (int)
  | ID of unit ->  (string)
- | lvalueOpt of unit ->  ( ( A.exp option, string option, int )  list)
+ | lvalueOpt of unit ->  ( ( A.exp option * symbol option * int )  list)
  | arrayDecExp of unit ->  (A.exp) | breakExp of unit ->  (A.exp)
  | forExp of unit ->  (A.exp) | whileExp of unit ->  (A.exp)
  | funCallExpListOpt of unit ->  (A.exp list)
@@ -818,7 +816,7 @@ end
 |  ( 16, ( ( _, ( MlyValue.lvalue lvalue1, lvalue1left, lvalue1right))
  :: rest671)) => let val  result = MlyValue.exp (fn _ => let val  (
 lvalue as lvalue1) = lvalue1 ()
- in (lvalue)
+ in (A.VarExp(lvalue))
 end)
  in ( LrTable.NT 0, ( result, lvalue1left, lvalue1right), rest671)
 end

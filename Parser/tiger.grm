@@ -15,8 +15,6 @@ fun toVarExp (head,list) =
   case list of
       ((SOME exp, NONE, pos)::l) => toVarExp(toSubscriptVar(head,exp,pos),l)
      |((NONE,SOME id,pos)::l)  => toVarExp(toFieldVar(head,id,pos),l) 
-     | (SOME exp, NONE, pos) => toVarExp(A.SubscriptVar(head,exp,pos),[])
-     | (NONE, SOME id, pos) => toVarExp(A.VarExp(A.FieldVar(head,id,pos),[]))
      | [] => head 
 %%
 %term
@@ -62,7 +60,7 @@ fun toVarExp (head,list) =
 | forExp of A.exp
 | breakExp of A.exp
 | arrayDecExp of A.exp
-| lvalueOpt of (A.exp option, string option, int) list
+| lvalueOpt of (A.exp option * symbol option * int) list
      
 %pos int
 %verbose
@@ -112,7 +110,7 @@ exp : INT (A.IntExp(INT))
     | exp MINUS exp (A.OpExp({left=exp1, oper= A.MinusOp, right=exp2,pos=MINUSleft})) 
     | MINUS exp %prec UMINUS (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=exp1,pos=MINUSleft}))
     | recordExp (recordExp)
-    | lvalue (lvalue)
+    | lvalue (A.VarExp(lvalue))
     | ifExp (ifExp)
     | assignExp (assignExp)
     | ID LPAREN funCallExpList RPAREN (A.CallExp({func=symbol(ID), args=funCallExpList, pos=IDleft }))
