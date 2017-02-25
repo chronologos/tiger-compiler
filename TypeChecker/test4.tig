@@ -1,0 +1,8 @@
+let type a = int in 
+  1 <> "hello"; 
+  "abc" > "def";
+  5 <> 4;
+  6 = 7 - 1;
+  "blah" > 1
+end
+ 
