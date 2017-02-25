@@ -1,4 +1,4 @@
-structure TypeCheck : sig val tycheck : string -> unit  end =
+structure Main : sig val tycheck : string -> unit  end =
 struct 
   structure TigerLrVals = TigerLrValsFun(structure Token = LrParser.Token)
   structure Lex = TigerLexFun(structure Tokens = TigerLrVals.Tokens)
