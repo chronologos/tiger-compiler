@@ -8,7 +8,9 @@ let
        do (for j:= 0 to N-1
              do print(if col[i]=j then " 0" else ".");
 	   print("\n")
-
+	   )
+	   )
+     )	
 
    in
      try(0)

@@ -9,7 +9,6 @@ let
              do print(if col[i]=j then " 0" else ".");
 	   print("\n")
 	   )
-	   )
      )	
 
    in

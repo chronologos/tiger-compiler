@@ -1,15 +1,49 @@
+negExp: MINUS opExp
+
+%nonassoc EQ NEQ LE GE GT LT
+%left PLUS MINUS
+%left TIMES DIVIDE
+
+
 negExp: MINUS opExp (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=opExp,pos=MINUSleft}))
-      | MINUS intExp (A.OpExp({left=A.IntExp(0),oper=A.MinusOp,right=intExp,pos=MINUSleft}))
 
-| negExp (negExp)
 
-amsOp: PLUS (A.PlusOp)
-     | MINUS (A.MinusOp)
-     | TIMES (A.TimesOp)
-     | DIVIDE (A.DivideOp)
-     | EQ (A.EqOp)
-     | NEQ (A.NeqOp)
-     | LT (A.LtOp)
-     | LE (A.LeOp)
-     | GT (A.GtOp)
-     | GE (A.GeOp)
+	      opExp: opExp EQ opExpOpt (A.OpExp({left=opExpOpt1,oper=A.EqOp,right=opExpOpt,pos=EQleft}))
+     | opExp NEQ opExpOpt (A.OpExp({left=opExpOpt1,oper=A.NeqOp,right=opExpOpt,pos=NEQleft}))
+     | opExp GT opExpOpt (A.OpExp({left=opExpOpt1,oper=A.GtOp,right=opExpOpt,pos=GTleft}))
+     | opExp LE opExpOpt (A.OpExp({left=opExpOpt1,oper=A.LeOp,right=opExpOpt,pos=LEleft}))
+     | opExp GE opExpOpt (A.OpExp({left=opExpOpt1,oper=A.GeOp,right=opExpOpt,pos=GEleft}))
+     | opExp LT opExpOpt (A.OpExp({left=opExpOpt1,oper=A.LtOp,right=opExpOpt,pos=LTleft}))
+	     
+opExpOpt: opExpOpt PLUS opExpOptA (A.OpExp({left=opExpOptA,oper=A.PlusOp,right=opExpOptA,pos=PLUSleft}))
+	| opExpOpt MINUS opExpOptA (A.OpExp({left=opExpOptA,oper=A.MinusOp,right=opExpOptA,pos=MINUSleft}))
+	| opExpOptA (opExpOptA)
+
+opExpOptA: opExpOptA TIMES opExpOptB (A.OpExp({left=opExpOptA,oper=A.TimesOp,right=opExpOptB,pos=TIMESleft}))
+	 | opExpOptA DIVIDE opExpOptB (A.OpExp({left=opExpOptA,oper=A.DivideOp,right=opExpOptB,pos=DIVIDEleft}))
+	 | opExpOptB (opExpOptB)
+
+opExpOptB: LPAREN opExp RPAREN (opExp)
+	| negExp (negExp)
+	| intExp (intExp)
+
+
+
+
+
+		      | opExpOpt MINUS opExpOpt ()
+     | opExpOpt TIMES opExpOpt ()
+     | opExpOpt DIVIDE opExpOpt ()
+     | opExpOpt EQ opExpOpt ()
+     | opExpOpt NEQ opExpOpt ()
+     | opExpOpt GT opExpOpt ()
+     | opExpOpt GE opExpOpt ()
+     | opExpOpt LT opExpOpt ()
+     | opExpOpt LE opExpOpt ()
+
+ifExpOpt: ELSE exp (SOME(exp))
+	| (NONE)
+
+	| IF exp THEN exp (A.IfExp({test=exp1,then'=exp2,else'=NONE,pos=IFleft}))
+%nonassoc IF THEN ELSE
+A.IfExp({test=exp1,then'=exp2,else'=SOME(exp3),pos=IFleft}

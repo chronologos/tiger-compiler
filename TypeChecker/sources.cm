@@ -2,6 +2,9 @@ Group is
 
 $/ml-yacc-lib.cm
 absyn.sml
+semant.sml
+main.sml
+env.sig
 errormsg.sml
 table.sig
 table.sml
