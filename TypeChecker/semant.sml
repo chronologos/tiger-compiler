@@ -171,10 +171,6 @@ struct
              (*ErrorMsg.error 0 "gg";*)
           {venv=venv, tenv=tenv}
          
-                         in
-                           transExp(venv,tenv, e);
-                           print "jobs done!"
-                         end
     
   and
 
@@ -205,4 +201,9 @@ struct
                                      in
       Types.ARRAY(res, ref ())
                                      end
+
+                         in
+                           transExp(venv,tenv, e);
+                           print "jobs done!"
     end
+                         end
