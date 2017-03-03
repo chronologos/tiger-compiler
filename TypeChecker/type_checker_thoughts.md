@@ -65,13 +65,13 @@ ok so how about this, in the function get_fields we:
 
 ```
 R(type_symbol:Absyn.Symbol)
-``` 
+```
 - R has closure over typedec and tenv so it only takes one argument.
 - looks for what type_symbol maps to in typedec.
 - If it finds type_symbol maps to none of: int, string, record or array, it calls itself again. At some point, the recursion will bottom out.
 - In this case, either we have a type_symbol that is one of the base types, OR we cannot find the symbol in the typedec.
 - At this point, the recursive function looks at the outer tenv. If the symbol is in the outer tenv, it succeeds else we have something like **CASE 2** where we should rightly return a failure.
-- In successful cases we will add the mapping to the local_tenv 
+- In successful cases we will add the mapping to the local_tenv
 
 Let us test this idea on **CASE 7**.
 
@@ -86,7 +86,7 @@ Here we assume c was defined to be a string already.
 
 the typedec is
 ```
-[{name=r, ty=RecordTy(...)}, {name=r, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
+[{name=r, ty=RecordTy(...)}, {name=rr, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
 ```
 
 the tenv is:
@@ -129,7 +129,7 @@ foldl
     fun R = ....
     in
         case ty of NameTy(type_sym, pos) => S.enter(localtenv, sym, R(type_sym))
-        | RecordTy(fieldlist) => S.enter(localtenv, sym, Types.RECORD(get_fields, ref())) 
+        | RecordTy(fieldlist) => S.enter(localtenv, sym, Types.RECORD(get_fields, ref()))
         | ArrayTy(type_sym*pos) => S.enter(localtenv, sym, Types.ARRAY(R(type_sym), ref())
         | (_) => ???
         )
@@ -143,11 +143,26 @@ var someRecordTypeInstance: someRecordType = {a=1, b="somestring", c=someRecordT
 ```
 , we will look up the types of someRecordType as well as its third field, which is supposed to be itself. Both unique refs should be equal.
 
-In another case, we can have mutually recursive record types. 
+In another case, we can have mutually recursive record types.
 ```
 var a: someRecordType1 = {b:someRecordType2=nil}
 var b: someRecordType2 = {a:someRecordType1=a}
 ```
-Starting from the first vardec, our type checker will first add `a|->someRecordType1` to the venv. It then looks up `someRecordType1` in the tenv to find its fields types. nil is a member of every record type so this works. 
+Starting from the first vardec, our type checker will first add `a|->someRecordType1` to the venv. It then looks up `someRecordType1` in the tenv to find its fields types. nil is a member of every record type so this works.
 
-At the second vardec, we add `b|->someRecordType2` to the venv. We then look up `someRecordType2` in the tenv and see that it has one field with symbol `a` and type `someRecordType1`.The `someRecordType1` derived from the second line came from the closure of `someRecordType2`'s get_fields method. it does not have the same unit ref as the someRecordType1 in the tenv. 
+At the second vardec, we add `b|->someRecordType2` to the venv. We then look up `someRecordType2` in the tenv and see that it has one field with symbol `a` and type `someRecordType1`.The `someRecordType1` derived from the second line came from the closure of `someRecordType2`'s get_fields method. it does not have the same unit ref as the someRecordType1 in the tenv.
+
+Aha. So when we repeatedly call transty on typedec, the typedec was pass in has to be truncated from the currently processed element onwards. So, using **CASE 7** as an example again, if we have a typedec:
+```
+[{name=r, ty=RecordTy(...)}, {name=rr, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
+```
+
+and lets say we already added `r|->RecordTy` to tenv.
+
+Then when TransTy processes `rr`, we only pass in:
+
+```
+[{name=rr, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
+```
+
+This is so that our function `R`, when it doesn't find `r` in our truncated typedec, will find it in the tenv. When it does, it has to call get the unique ref of the `r|->RECORD(getfields, someref)` from the tenv and use that to initialize our `r`.
