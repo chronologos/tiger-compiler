@@ -103,7 +103,7 @@ local_tenv:
 ```
 r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() ), a|->int
 ```
-Back to the second iteration of the outer loop, we find the second NameTy b->int. This is added directly to local_tenv.
+On the fourth iteration of the loop, we find the second NameTy b->int. This is added directly to local_tenv.
 local_tenv:
 ```
 r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() ), a|->int, b|->int
@@ -120,7 +120,7 @@ r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() 
 so if `get_fields()` is called for `r`, it will find `a` in `local_tenv`, `rr` in `local_env` and `c` in `tenv`.
 
 # Okay
-So this seems to work, but there are no double for loops in SML. We need to do something like:
+So we need to do something like:
 ```
 foldl
     (fn(dec,localtenv => let
@@ -136,5 +136,18 @@ foldl
     end)
     localtenv, typedec
 ```
+## Let us think if our usage of ref() is correct.
+TransTy is called to generate types on TypeDecs. When we check array or record types in TransExp and TransDec, we will look up the symbol table to find the corresponding Types.RECORD or Types.ARRAY. These will have unique refs. When we do something like
+```
+var someRecordTypeInstance: someRecordType = {a=1, b="somestring", c=someRecordTypeInstance2)
+```
+, we will look up the types of someRecordType as well as its third field, which is supposed to be itself. Both unique refs should be equal.
 
-Now the problem is that between two get_fields functions created in the same typedec, the enclosed ref() for arrays and record are different because they are generated fresh for every TypeDec.
+In another case, we can have mutually recursive record types. 
+```
+var a: someRecordType1 = {b:someRecordType2=nil}
+var b: someRecordType2 = {a:someRecordType1=a}
+```
+Starting from the first vardec, our type checker will first add `a|->someRecordType1` to the venv. It then looks up `someRecordType1` in the tenv to find its fields types. nil is a member of every record type so this works. 
+
+At the second vardec, we add `b|->someRecordType2` to the venv. We then look up `someRecordType2` in the tenv and see that it has one field with symbol `a` and type `someRecordType1`.The `someRecordType1` derived from the second line came from the closure of `someRecordType2`'s get_fields method. it does not have the same unit ref as the someRecordType1 in the tenv. 
