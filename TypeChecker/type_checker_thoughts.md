@@ -43,8 +43,9 @@ type r = {A:a}
 ```
 with `a` already in the outer tenv but not in the typedec.
 
-**Idea**: so how bout we add everything in a typedec into a symbol table first.
-wait but how do we add things like:
+#Idea
+So how bout we add everything in a typedec into a symbol table first.
+...wait but how do we add things like:
 ## CASE 6
 ```
 type a = b
@@ -53,18 +54,26 @@ type b = int
 
 in this case we cannot add 'a' as we do not yet know b's type is int.
 
-**another idea** ok so how about this:
-in the function get_fields we:
-1. we add all record types to the local_tenv first. record types can be added as Types.RECORD(get_fields, ref() )
-2. we then add only Name types in a "double for loop".
-in the outer loop, we loop over the entire typedec. everytime we reach a new namety, which is basically symbol * type_symbol, we call a recursive function *R* if it is not an int or string.
-33. get_fields will then search local_tenv and tenv when it is called.
+#another idea
+ok so how about this, in the function get_fields we:
+1. Loop over the entire typedec.
+2. If we see a record type, we add it to the local_tenv first. record types can be added as `Types.RECORD(get_fields, ref() )`.
+2. If we see a name type, we call our special recursive function *R*, which will either report an error or return the base type of the name type.
+3. get_fields will then search local_tenv and tenv when it is eventually called.
 
-- *R(A.Typedec, type_symbol)* looks for what type_symbol maps to in typedec.
-- If it finds type_symbol maps to neither an int nor string, it calls itself again. At some point, the recursion will bottom out.
-- In this case, either we have a type_symbol that is a int or string OR we cannot find the symbol in the typedec.
+## So what is R?
+
+```
+R(type_symbol:Absyn.Symbol)
+``` 
+- R has closure over typedec and tenv so it only takes one argument.
+- looks for what type_symbol maps to in typedec.
+- If it finds type_symbol maps to none of: int, string, record or array, it calls itself again. At some point, the recursion will bottom out.
+- In this case, either we have a type_symbol that is one of the base types, OR we cannot find the symbol in the typedec.
 - At this point, the recursive function looks at the outer tenv. If the symbol is in the outer tenv, it succeeds else we have something like **CASE 2** where we should rightly return a failure.
-- In successful cases we will add the mapping to the local_tenv Let us test this idea on **CASE 7**.
+- In successful cases we will add the mapping to the local_tenv 
+
+Let us test this idea on **CASE 7**.
 
 ## CASE 7
 ```
@@ -75,19 +84,21 @@ type b = int
 ```
 Here we assume c was defined to be a string already.
 
-So at the beginning of **Case 7**, the local_tenv looks like:
-```
-r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() )
-```
 the typedec is
 ```
 [{name=r, ty=RecordTy(...)}, {name=r, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
 ```
+
 the tenv is:
 ```
 c|->string
 ```
-We now start with the first iteration of the outer loop over the typedec. We find the first NameTy, a|->b. b is not an int or string, so we call `R(typedec, b)`. R finds b|->int. Thus, we put the mapping a|->int into the local_tenv.
+
+So after two iterations, the local_tenv looks like:
+```
+r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() )
+```
+We now look at the third iteration of the 'loop' over the typedec. We find the first NameTy, `a|->b`. b is not one of the base types, so we call `R(typedec, b)`. R finds `b|->int`. Thus, we put the mapping `a|->int` into the local_tenv.
 local_tenv:
 ```
 r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() ), a|->int
@@ -110,15 +121,20 @@ so if `get_fields()` is called for `r`, it will find `a` in `local_tenv`, `rr` i
 
 # Okay
 So this seems to work, but there are no double for loops in SML. We need to do something like:
-```foldl
+```
+foldl
     (fn(dec,localtenv => let
     val sym = #name dec
     val ty = #ty dec
     fun R = ....
     in
         case ty of NameTy(type_sym, pos) => S.enter(localtenv, sym, R(type_sym))
+        | RecordTy(fieldlist) => S.enter(localtenv, sym, Types.RECORD(get_fields, ref())) 
+        | ArrayTy(type_sym*pos) => S.enter(localtenv, sym, Types.ARRAY(R(type_sym), ref())
         | (_) => ???
         )
     end)
     localtenv, typedec
 ```
+
+Now the problem is that between two get_fields functions created in the same typedec, the enclosed ref() for arrays and record are different because they are generated fresh for every TypeDec.
