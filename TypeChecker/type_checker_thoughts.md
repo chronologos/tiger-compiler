@@ -1,7 +1,7 @@
 # ian's random thoughts :(
 Type checking is hard when you have mutually recursive types.
 
-## CASE 1
+### CASE 1
 ```
 type r = {B:b, A:a}
 type a = b
@@ -11,7 +11,7 @@ type c = int
 
 This is legal. But how do we differentiate from this case:
 
-## CASE 2
+### CASE 2
 ```
 type r = {B:b, A:a}
 type a = b
@@ -22,7 +22,7 @@ This has no base type (assuming c is not defined elsewhere) and is illegal.
 So when we declare a record type, the types in the fields can be: 1) in the tenv already, 2) defined within the same TypeDec (mutually recursive) 3) in neither (illegal)
 
 We also need to check for illegal cycles, which are cycles with no record or array type.
-## CASE 3
+### CASE 3
 ```
 type r = {A:a}
 type a = b
@@ -30,23 +30,23 @@ type b = a
 ```
 
 On the other hand, this cycle is valid:
-## CASE 4
+### CASE 4
 ```
 type r = {A:a}
 type a = b
 type b = r
 ```
 we could also have
-## CASE 5
+### CASE 5
 ```
 type r = {A:a}
 ```
 with `a` already in the outer tenv but not in the typedec.
 
-#Idea
+##Idea
 So how bout we add everything in a typedec into a symbol table first.
 ...wait but how do we add things like:
-## CASE 6
+### CASE 6
 ```
 type a = b
 type b = int
@@ -54,7 +54,7 @@ type b = int
 
 in this case we cannot add 'a' as we do not yet know b's type is int.
 
-#another idea
+##another idea
 ok so how about this, in the function get_fields we:
 1. Loop over the entire typedec.
 2. If we see a record type, we add it to the local_tenv first. record types can be added as `Types.RECORD(get_fields, ref() )`.
@@ -75,7 +75,7 @@ R(type_symbol:Absyn.Symbol)
 
 Let us test this idea on **CASE 7**.
 
-## CASE 7
+### CASE 7
 ```
 type r = {A:a, RR:rr, C:c}
 type rr = {R:r}
@@ -119,7 +119,7 @@ r |-> Types.RECORD (get_fields, ref() ), rr |-> Types.RECORD (get_fields, ref() 
 ```
 so if `get_fields()` is called for `r`, it will find `a` in `local_tenv`, `rr` in `local_env` and `c` in `tenv`.
 
-# Okay
+## Okay
 So we need to do something like:
 ```
 foldl
@@ -136,7 +136,7 @@ foldl
     end)
     localtenv, typedec
 ```
-## Let us think if our usage of ref() is correct.
+## A problem with our unit refs...
 TransTy is called to generate types on TypeDecs. When we check array or record types in TransExp and TransDec, we will look up the symbol table to find the corresponding Types.RECORD or Types.ARRAY. These will have unique refs. When we do something like
 ```
 var someRecordTypeInstance: someRecordType = {a=1, b="somestring", c=someRecordTypeInstance2)
@@ -152,7 +152,10 @@ Starting from the first vardec, our type checker will first add `a|->someRecordT
 
 At the second vardec, we add `b|->someRecordType2` to the venv. We then look up `someRecordType2` in the tenv and see that it has one field with symbol `a` and type `someRecordType1`.The `someRecordType1` derived from the second line came from the closure of `someRecordType2`'s get_fields method. it does not have the same unit ref as the someRecordType1 in the tenv.
 
-Aha. So when we repeatedly call transty on typedec, the typedec was pass in has to be truncated from the currently processed element onwards. So, using **CASE 7** as an example again, if we have a typedec:
+*NOTE*: when we repeatedly call transty on typedec, the typedec was pass in has to be truncated from the currently processed element onwards.
+
+
+Why? Well, using **CASE 7** as an example again, if we have a typedec:
 ```
 [{name=r, ty=RecordTy(...)}, {name=rr, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
 ```
@@ -165,4 +168,23 @@ Then when TransTy processes `rr`, we only pass in:
 [{name=rr, ty=RecordTy(...)}, {name=a,ty=NameTy(...)}, {name=b,ty=NameTy(...)}]
 ```
 
-This is so that our function `R`, when it doesn't find `r` in our truncated typedec, will find it in the tenv. When it does, it has to call get the unique ref of the `r|->RECORD(getfields, someref)` from the tenv and use that to initialize our `r`.
+This is so that our function `R`, which has closure over the truncated typedec, won't find `r` in our truncated typedec. It will instead find it in the tenv.
+
+## Solving the unit ref problem...
+### CASE 8
+```
+type A = {b:B, c:C}
+type B = {c:C, a:A}
+type C = {b:B, a:A}
+```
+The last ingredient is to make get_fields handle unit refs properly. Now, when it finds a field in the tenv, it will return the unit ref from the tenv. If it doesn't, it can return the field from the local_tenv, which will have a newly initialized unit ref.
+
+###first tydec:
+B and C are in localenv with new unit refs. [self]A added to tenv with new unit ref.
+###second tydec:
+A in tenv, use that unit ref. [self]B in A.fields, use that unit ref. C in A.fields, use that unit ref.
+###third tydec:
+B in tenv, use that unit ref. A in tenv, use that unit ref. [self]C in A.fields, use that unit ref.
+
+so, every time we run get_fields, when find a field in the tenv and if the type of the field is a record, we need to add that field's fields to the search space. The search space is now, in order of priority, (related_search_space + tenv + localtenv +)
+```
