@@ -1,0 +1,11 @@
+let var x : int := 5
+var y := "booya"
+var z := 3
+in
+(y;
+y + z;
+x + z;
+y + 5;
+x + "booya"
+)
+end
