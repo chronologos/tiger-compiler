@@ -186,5 +186,12 @@ A in tenv, use that unit ref. [self]B in A.fields, use that unit ref. C in A.fie
 ###third tydec:
 B in tenv, use that unit ref. A in tenv, use that unit ref. [self]C in A.fields, use that unit ref.
 
-so, every time we run get_fields, when find a field in the tenv and if the type of the field is a record, we need to add that field's fields to the search space. The search space is now, in order of priority, (related_search_space + tenv + localtenv +)
-```
+so, every time we run get_fields, when find a field in the tenv and if the type of the field is a record, we need to add that field's fields to the search space. The search space is now, in order of priority, (related_search_space + localtenv + tenv)
+
+
+##last idea
+ok so how about this, in the function get_fields we:
+1. Loop over the entire typedec.
+2. If we see a record type, call our record/array search function R. R will search (related_search_space + localtenv + tenv). record types can be added as `Types.RECORD(get_fields, ref() )`.
+3. If we see a name type, we call our name search function N, N will call a DFS with visited list to search localtenv + tenv.
+4. If we see an array type, we call our record/array search function R.
