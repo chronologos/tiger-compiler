@@ -99,12 +99,10 @@ struct
   
   (* add record type symbols to someEnv and create unit ref *)
   fun unitRefFolder ({name=name, ty=Absyn.RecordTy(fieldList), pos=pos}, someEnv) =
-    Symbol.enter(someEnv, name, ref ())
-  | unitRefFolder (_, someEnv) =
-    someEnv
-    
-  fun unitRefFolder ({name=name, ty=Absyn.RecordTy(fieldList), pos=pos}, someEnv) =
-    Symbol.enter(someEnv, name, ref ())
+    ( print(Symbol.name(name));
+      print("\n");
+      Symbol.enter(someEnv, name, ref ())
+    )
   | unitRefFolder (_, someEnv) =
     someEnv
   
@@ -263,8 +261,6 @@ struct
               | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM})
             )
             end
-
-
         | (Absyn.OpExp({left, oper=Absyn.GeOp, right,pos}) | Absyn.OpExp({left,
         oper=Absyn.LeOp,
         right,pos}) | Absyn.OpExp({left, oper=Absyn.GtOp, right,pos}) |
@@ -312,6 +308,7 @@ struct
         case exp of Absyn.IntExp(_) => (
           {exp=(), ty=Types.INT}
         )
+          | (Absyn.NilExp) => (print("in nilexp\n"); {exp=(),ty=Types.NIL})
           | Absyn.StringExp(_) => {exp=(),ty=Types.STRING}
           | Absyn.OpExp(_) => transOpExp(venv, tenv, exp)
           | Absyn.ArrayExp({typ=t, size=s, init=i, pos=p}) => (
@@ -593,8 +590,7 @@ struct
                   {exp=(), ty=Types.UNIT}
                 )
               end
-          | Absyn.RecordExp({fields, typ: Symbol.symbol, pos: Absyn.pos}) =>
-
+          | Absyn.RecordExp({fields, typ: Symbol.symbol, pos: Absyn.pos} ) =>
               (* look up typ in tenv, get field list, tycheck each field *)
               let 
                 val found_tup_opt = Symbol.look(tenv, typ)
@@ -603,6 +599,7 @@ struct
                 val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x)))) sorted_fields
 
               in(
+                print("in record exp\n");
                   case found_tup_opt of 
                   SOME(Types.RECORD(get_fields_func, unique_ref)) =>
                     (
@@ -665,7 +662,7 @@ struct
                let fun foldFn (somety,tenv) =
                 case somety of {name=name, ty=ty, pos=pos} =>
                   ( print("folding transty over one typedec\n");
-                  Symbol.enter(tenv, name, transTy(name, tenv,ty,tydecList, symTable, unitRefTable, []))
+                    Symbol.enter(tenv, name, transTy(name, tenv,ty,tydecList, symTable, unitRefTable, []))
                   )
                in 
                   {venv=venv, tenv=foldl foldFn tenv tydecList}
@@ -793,24 +790,27 @@ struct
   and transTy(name, tenv, Absyn.RecordTy(fieldlist:{escape:bool ref, name:Symbol.symbol, pos:Absyn.pos,
                     typ:Symbol.symbol} list), decList, symTable ,unitRefList, currentPath: Symbol.symbol list): Types.ty = 
     let
-      fun get_fields () = (print("calling getfields");
+      fun get_fields () = (
+ 	                        print("in get_fields\n");
+ 
                            map (fn {name,escape,typ,pos} => 
                           let val nextTypOpt = getTyOfName(decList, typ)
                               val foundInTenvOpt = Symbol.look(tenv, typ)
                           in
                             if isSome nextTypOpt then
-  		                        (name, transTy(name, tenv, #ty (valOf nextTypOpt), decList, symTable, unitRefList, []))
+  		                        (name, transTy(typ, tenv, #ty (valOf nextTypOpt), decList, symTable, unitRefList, []))
   		                      else 
   		                        if isSome foundInTenvOpt then (name, (valOf foundInTenvOpt)) else (
   		                        print(Symbol.name(typ));
   		                        ErrorMsg.error pos "[GET FIELDS] Symbol is not found in local tenv or decList";
   		                        (name, Types.BOTTOM))
   		                    end
-		              ) fieldlist)
+		              ) fieldlist
+		              )
     in
     
       (print("in transty for recordty\n");
-      printGetFieldsOutput(get_fields());
+      print(Symbol.name(name));
       let val unitRef =
         let val unitRefOpt = Symbol.look(unitRefList, name) in
           case unitRefOpt of SOME(x) => x
