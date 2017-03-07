@@ -195,3 +195,33 @@ ok so how about this, in the function get_fields we:
 2. If we see a record type, call our record/array search function R. R will search (related_search_space + localtenv + tenv). record types can be added as `Types.RECORD(get_fields, ref() )`.
 3. If we see a name type, we call our name search function N, N will call a DFS with visited list to search localtenv + tenv.
 4. If we see an array type, we call our record/array search function R.
+
+
+ (* case dec of Absyn.TypeDec([{name, ty,pos}]) => (* change to match lists of all lengths for non-recursive case*)
+          let
+            val tenv = Symbol.enter(tenv, name, transTy(tenv, ty))
+            fun strIntFolder (Types.STRING, res) = 
+          in
+            (*inEnv(tenv, Symbol.symbol("intarray"));*)
+            print("inserting!!!");
+            {venv=venv, tenv=tenv}
+          end 
+          
+          *** ILLEGAL ***
+          type a = b
+          type b = a
+          
+          *** LEGAL ***
+          type intlist = {hd:int, tl:intlist}
+          
+          type tree = {key:int, children:treelist}
+          type treelist = {hd:tree, tl:treelist}
+          
+          *)
+          
+          case dec of Absyn.TypeDec(list) => {venv=venv, tenv=tenv}
+              (* TO-DO
+              case list of 
+                  [] => 
+                  [{name=name,ty=ty,pos=pos}::l] =>  
+              *)

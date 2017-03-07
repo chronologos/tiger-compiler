@@ -1,0 +1,6 @@
+let 
+    type intlist = {hd:int, tl:intlist}
+    var x:intlist := intlist{hd=0,tl=nil}
+in 
+   1+2
+end

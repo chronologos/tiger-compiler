@@ -5,22 +5,17 @@ struct
   datatype enventry = VarEntry of {ty: Types.ty}
                     | FunEntry of {formals: Types.ty list, result: Types.ty}
 
-
-                    (***** types ******)
-                    (* initialize all keywords? *)
-
+  (***** types ******)
   fun initTypes() = 
     let val emptyTable = Symbol.empty
       val int_init = Symbol.enter(emptyTable, Symbol.symbol("int"), Types.INT);
       val string_init = Symbol.enter(int_init,Symbol.symbol("string"),Types.STRING)
       val initialized = Symbol.enter(string_init, Symbol.symbol("nil"), Types.NIL)
-     
     in
       initialized
     end
 
-
-    (**** functions and vars *******)
+  (**** functions and vars *******)
   fun initValues() =
     let val emptyTable = Symbol.empty
       val printFunEntry = FunEntry({formals=[Types.STRING], result = Types.UNIT})
@@ -51,13 +46,10 @@ struct
     end
   val base_tenv = initTypes()
   val base_venv = initValues()
-    end
-    (****** JOBS DONE *****)
-
+  end
 
 structure Semant = 
 struct
-  (* open Absyn *)
   type venv = Env.enventry Symbol.table
   type tenv = Types.ty Symbol.table
   type expty = {exp: unit, ty: Types.ty}
@@ -80,10 +72,7 @@ struct
     
   fun inEnv(env, sym) =
     if isSome (Symbol.look(env, sym)) then print("inside\n") else print("not inside\n")
-    
-  fun getTyOfVarEntry(Env.VarEntry({ty=t})) = t
-  | getTyOfVarEntry(Env.FunEntry(_)) = Types.NIL
-  
+
   fun getTy(tenv, sym, pos) = 
     let
       val s = Symbol.look(tenv, sym)
@@ -91,39 +80,95 @@ struct
       case s of SOME(x:Types.ty) => valOf s
       | NONE => (
         ErrorMsg.error pos "Undeclared type.";
-        Types.NIL
+        Types.BOTTOM
       )
     end
     
+  fun printDatatype(Types.RECORD(_)) = print("RECORD")
+  | printDatatype(Types.INT) = print("INT")
+  | printDatatype(Types.STRING) = print("STRING")
+  | printDatatype(Types.UNIT) = print("UNIT")
+  | printDatatype(Types.BOTTOM) = print("BOTTOM")
+  | printDatatype(Types.ARRAY(_)) = print("ARRAY")
+  | printDatatype(Types.NIL) = print("NIL")
   
-  fun getArrayTy(tenv, sym, pos) =
-    let val arrayTy = getTy(tenv, sym, pos)
+  fun printGetFieldsOutput (out:(Symbol.symbol*Types.ty) list) = (
+    map (fn x => (print(Symbol.name(#1 x)); print(":"); printDatatype(#2 x); print("\n"))) out;
+    print("\n")
+  )
+  
+  (* add record type symbols to someEnv and create unit ref *)
+  fun unitRefFolder ({name=name, ty=Absyn.RecordTy(fieldList), pos=pos}, someEnv) =
+    Symbol.enter(someEnv, name, ref ())
+  | unitRefFolder (_, someEnv) =
+    someEnv
+    
+  fun unitRefFolder ({name=name, ty=Absyn.RecordTy(fieldList), pos=pos}, someEnv) =
+    Symbol.enter(someEnv, name, ref ())
+  | unitRefFolder (_, someEnv) =
+    someEnv
+  
+  (* return a table of symbol -> unit ref *)
+  fun createUnitRef decList =
+    let 
+      val firstPassTable = Symbol.empty
     in
-    case arrayTy of Types.NIL => (
-      ErrorMsg.error pos "GG arraytype not found";
-      Types.NIL
-    )
-    | Types.ARRAY(typ, un) => typ
-    | (_) => (
-      ErrorMsg.error pos "GG wrong type, not arraytype";
-      Types.NIL
-    )
+      foldl unitRefFolder firstPassTable decList
     end
+
+ fun checkDupsFoldFunc(currentDec:{name: Symbol.symbol, ty: Absyn.ty, pos: Absyn.pos}, (listOfNames,err)) = 
+  let 
+    val found = List.find (fn(x) => x = (#name (currentDec))) listOfNames
+  in  
+    if err = 1 
+    then (listOfNames,err)
+    else (
+      if isSome found 
+      then (
+        ErrorMsg.error 0 "Duplicate declaration in declist";
+        (listOfNames, 1)
+      )
+      else(
+        ((#name (currentDec)) :: listOfNames, 0)
+      )
+    )
+  end
   
-  
-  
+  fun tyEqualTo(ty1, ty2) = 
+    case (ty1, ty2) of 
+      (Types.RECORD(_), Types.RECORD(_)) => true
+    | (Types.ARRAY(_), Types.ARRAY(_)) => true
+    | (Types.INT, Types.INT) => true
+    | (Types.STRING, Types.STRING) => true
+    | (Types.NIL, Types.NIL) => true
+    | (Types.UNIT, Types.UNIT) => true
+    | (Types.BOTTOM, _) => true
+    | (_, Types.BOTTOM) => true
+    | (_, _) => false
+    
+  fun tyListEqualTo(tylist1:Types.ty list, tylist2:Types.ty list) = 
+    if List.length(tylist1) <> List.length(tylist2) then false 
+    else 
+    (
+      let 
+        val zippedList = ListPair.zip(tylist1, tylist2) 
+      in
+        foldl (fn (nextTup, equalSoFar) => if  tyEqualTo((#1 nextTup),(#2 nextTup)) then equalSoFar else false) true zippedList
+      end
+    )
+
   (* return venv with params added *)
   fun addFunctionParamsVenv(venv,tenv,params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list) =
     let fun foldFn (x, venv) = 
-            case x of
-              {name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} =>
-                let 
-                  val paramType = getTypeOrNil(tenv,typ)
-                in
-                  case paramType of
-                    Types.NIL  => (ErrorMsg.error pos "Unknown parameter type for function"; venv)
-                  | _ => Symbol.enter(venv,name,Env.VarEntry({ty=paramType}))
-                end
+      case x of
+      {name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} =>
+        let 
+          val paramType = getTypeOrNil(tenv,typ)
+        in
+          case paramType of
+            Types.NIL  => (ErrorMsg.error pos "Unknown parameter type for function"; venv)
+          | _ => Symbol.enter(venv,name,Env.VarEntry({ty=paramType}))
+        end
     in
       foldl foldFn venv params
     end
@@ -131,26 +176,25 @@ struct
   (* Params: name = function name; params = (symbol*type) list; resultVal = symbol*pos 
      Returns: function entry to venv *)
   fun parseHeaders (name, params:{name: Symbol.symbol, escape: bool ref, 
-		  typ: Symbol.symbol, pos: Absyn.pos} list) =
-        (let
-          val params_sym = map (fn x => #typ x) params
-          val paramsTyList = 
-            (* transTy on #1 resultVal *)
-            let fun funcFoldrArg(sym, result) =
-              let
-                val foundType = getTypeOrNil(tenv, sym)
-              in
-                if foundType = Types.NIL
-                then (ErrorMsg.error 0 "Unknown type in params list"; Types.NIL :: result)
-                else
-                  foundType :: result
-              end
-            in 
-              foldr funcFoldrArg [] params_sym
+	  typ: Symbol.symbol, pos: Absyn.pos} list) =
+      (let
+        val params_sym = map (fn x => #typ x) params
+        val paramsTyList = 
+          (* transTy on #1 resultVal *)
+          let fun funcFoldrArg(sym, result) =
+            let
+              val foundType = getTypeOrNil(tenv, sym)
+            in
+              case foundType of Types.NIL =>
+                (ErrorMsg.error 0 "Unknown type in params list"; Types.BOTTOM :: result)
+              | (_) => foundType :: result
             end
-        in 
-          paramsTyList
-        end)
+          in 
+            foldr funcFoldrArg [] params_sym
+          end
+      in 
+        paramsTyList
+      end)
   
   fun venvWithFunctionHeaders fundeclist = 
   let 
@@ -160,9 +204,12 @@ struct
             (* first pass put function headers into venv table *)
             let 
               val paramsList = parseHeaders (name, params)
-              val resultTy = if getTypeOrNil(tenv, symbol) = Types.NIL 
-                             then (ErrorMsg.error pos "return type not found in tenv"; Types.NIL)
-                             else getTypeOrNil(tenv, symbol)
+              val resultTy = 
+              let val typeGotten = getTypeOrNil(tenv, symbol)
+              in
+                case typeGotten of Types.NIL =>  (ErrorMsg.error pos "return type not found in tenv"; Types.NIL)
+                | (_) => typeGotten
+              end
               val funentry = Env.FunEntry({formals=paramsList, result=resultTy})
             in
               Symbol.enter(venv, name, funentry)
@@ -181,7 +228,23 @@ struct
     in
             foldr parseHeadersWithReturnType venv fundeclist
     end 
-    
+   
+  fun getTyOfName(declist : {name: Symbol.symbol, ty: Absyn.ty, pos: Absyn.pos} list, name) =
+    let val foundOpt = List.find (fn(x)=>(#name x) = name) declist
+    in 
+      foundOpt
+    end
+
+  fun getSymFromFieldList(sym, fieldlist) =
+    let fun getField(currentField:Symbol.symbol * Types.ty, typSoFar:Types.ty) = 
+      if Symbol.name(#1 (currentField) ) = Symbol.name(sym) 
+      then #2 (currentField)
+      else typSoFar
+    in
+        foldl getField Types.BOTTOM fieldlist
+    end
+
+
   fun transProg(e) =
     let 
       fun transOpExp(venv, tenv, exp) = 
@@ -193,12 +256,12 @@ struct
             let 
               val {exp=_, ty=tyleft} = transExp(venv,tenv,left)
               val {exp=_, ty=tyright} = transExp(venv,tenv,right)
-            in
-              case tyleft of Types.INT => ()
-              | _ => ErrorMsg.error 0 "integer required";
-              case tyright of Types.INT => ()
-              | _ => ErrorMsg.error 0 "integer required";
-              {exp=(),ty=Types.INT}
+            in (
+              case tyleft of Types.INT => {exp=(),ty=Types.INT}
+              | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM});
+              case tyright of Types.INT => {exp=(),ty=Types.INT}
+              | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM})
+            )
             end
 
 
@@ -245,7 +308,7 @@ struct
         | (_) => {exp=(),ty = Types.INT}
 
 
-      and transExp(venv, tenv, exp): {exp:unit, ty:Types.ty} = (
+      and transExp(venv:venv, tenv:tenv, exp): {exp:unit, ty:Types.ty} = (
         case exp of Absyn.IntExp(_) => (
           {exp=(), ty=Types.INT}
         )
@@ -255,29 +318,28 @@ struct
               (* check size is int *)
                 let val sizeTyp = #ty (transExp(venv,tenv,s))
                 in  
-                    case sizeTyp of 
-                      Types.INT => (
-                        (* check init same type as t *)
-                          let 
-                            val initTyp = (#ty (transExp(venv,tenv,i)))
-                            val tTyp = getArrayTy(tenv, t, p)
-                            val arrayTyp = Types.ARRAY(initTyp, ref ())
-                          in
-                            if initTyp = tTyp then (
-                             
-                              {exp=(), ty=arrayTyp}
-                             
-                            ) else (
-                              ErrorMsg.error p "Type mismatch in arrayexp.";
-                              {exp=(), ty=Types.NIL}
-                            )
-                            end
-                        )
-                      |(_) => (
-                        (* array size is not int *)
-                        ErrorMsg.error 0 "array size must be an int";
-                        {exp=(), ty=Types.NIL}  
+                  case sizeTyp of 
+                    Types.INT => (
+                      (* check init same type as t *)
+                      let 
+                        val initTyp = (#ty (transExp(venv,tenv,i)))
+                        val tTyp = getTy(tenv, t, p)
+                      in
+                        case tTyp of Types.ARRAY(array_func, _) =>
+                          if tyEqualTo(initTyp, array_func()) then (
+                            {exp=(), ty=tTyp}
+                          ) else (
+                            ErrorMsg.error p "Type mismatch in arrayexp.";
+                            {exp=(), ty=Types.NIL}
+                          )
+                        | (_) => (ErrorMsg.error p "Tried to initialize array with non array type."; {exp=(), ty=Types.NIL})
+                      end
                       )
+                    |(_) => (
+                      (* array size is not int *)
+                      ErrorMsg.error 0 "array size must be an int";
+                      {exp=(), ty=Types.NIL}  
+                    )
               end
             )
           | Absyn.VarExp(somevar) => 
@@ -302,27 +364,60 @@ struct
             | Absyn.SubscriptVar(var, exp, pos) => (
               (* First construct a VarExp a[4][4]*)
               let 
-                val varExp = Absyn.VarExp(var)
-                val varExpType = (#ty (transExp(venv, tenv, varExp)));
+                val varType = (#ty (transVar(venv, tenv, var)));
               in  (
                 (* check type of subscript.var *)
                 
                 (* check if its an array type*)
-                case varExpType of 
-                (Types.ARRAY(typ, unique)) => 
+                case varType of 
+                  (Types.ARRAY(typ, unique)) => 
                   (* check if exp is int type *)
                   let 
                     val expType = (#ty (transExp(venv, tenv, exp))) 
                   in
-                    if expType = Types.INT then {exp=(),ty=typ} else (ErrorMsg.error pos "Array index must be integer";  {exp=(), ty = Types.NIL})
+                    if tyEqualTo(expType, Types.INT) then {exp=(),ty=typ()} else (ErrorMsg.error pos "Array index must be integer";  {exp=(), ty = Types.NIL})
                   end
-                | (_) => (ErrorMsg.error 0 "unmatched exp";
+                
+                | (_) => (ErrorMsg.error pos "SubscriptVar on non array type \n";
                          {exp=(), ty=Types.NIL}
                          )
                 )
               end
               )
-            )
+           | Absyn.FieldVar(var,symbol,pos) =>
+              (* var must be record type, get field list, check if symbol is in fieldlist, return type of symbol *)
+              let val varTyp = #ty (transVar(venv, tenv, var))
+              in
+                case varTyp of 
+                  Types.RECORD(get_fields_func, unit_ref) =>
+                    let 
+                      val fields_list = get_fields_func()
+                      
+                    (*  val typ = getSymFromFieldList(symbol, fields_list) *)
+                        val typ_opt = List.find (fn x => Symbol.name(#1 (x)) = Symbol.name(symbol)) fields_list
+                    in (
+                      printGetFieldsOutput(fields_list);
+                      case typ_opt of 
+                        SOME(found_symbol, found_type) => (
+                          case found_type of 
+                              Types.BOTTOM =>
+                                (ErrorMsg.error pos "field not found in record \n";
+                                {exp=(), ty=Types.BOTTOM})
+                        
+                          | (_) => {exp=(), ty = found_type}
+                        )
+                      | NONE => (ErrorMsg.error pos "field not found in record \n";
+                                {exp=(), ty=Types.BOTTOM})
+                    )
+                    end
+                  
+                | (_) => (
+                  ErrorMsg.error pos "get field on nonrecord type \n";
+                  {exp=(), ty=Types.BOTTOM}
+                )
+              end
+          )            
+
           | Absyn.LetExp({decs, body, pos}) => 
             let 
               fun first  (a, _) = a
@@ -343,9 +438,9 @@ struct
               print("in seqexp\n");
               res
             end
-          | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) =>
+          | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) => 
             (* get the type of test, must be int *)
-            if (#ty (transExp(venv, tenv, test))) <> Types.INT 
+            if tyEqualTo(#ty (transExp(venv, tenv, test)), Types.INT)
             then  
             (
             print("in ifexp\n");
@@ -359,7 +454,7 @@ struct
                 print("in ifexp\n");
                 if isSome else'
                 then (
-                  if (#ty (transExp(venv, tenv, valOf else')) <> #ty thenTyp) then ( 
+                  if not (tyEqualTo(#ty (transExp(venv, tenv, valOf else') ), #ty thenTyp)) then ( 
                   ErrorMsg.error pos "branches have non-matching types" ;
                   {exp=(), ty=Types.NIL}
                   ) else (
@@ -368,26 +463,25 @@ struct
                 )
                 else (
                   (* check that then' is of UNIT type*)
-                if (#ty thenTyp) <> Types.UNIT then ( ErrorMsg.error pos "if-then statements must return unit."; {exp=(), ty=Types.NIL})
+                if not (tyEqualTo((#ty thenTyp), Types.UNIT)) then ( ErrorMsg.error pos "if-then statements must return unit."; {exp=(), ty=Types.NIL})
                 else {exp=(), ty=Types.UNIT}
                 )
               end
             )
-          (*
-          | Absyn.WhileExp({test: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
+          | Absyn.WhileExp({test: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) => 
             (* check test is of type int*)
             (let 
               val testType = #ty (transExp(venv, tenv, test))
               val lol = print("in whileExp\n")
             in
               (
-              if testType = Types.INT 
+              if tyEqualTo(testType, Types.INT)
               then
                 (
                   let 
                     val bodyType = #ty (transExp(venv, tenv, body))   
                   in
-                    (if bodyType <> Types.UNIT 
+                    (if not (tyEqualTo(bodyType, Types.UNIT))
                     then
                       (
                         ErrorMsg.error pos "While expression has non-unit body type\n";
@@ -403,14 +497,13 @@ struct
                 )
               )
             end)
-            *)
-            
-          (* | Absyn.ForExp({var: Symbol.symbol, escape: bool ref, lo: Absyn.exp, hi: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
+
+           | Absyn.ForExp({var: Symbol.symbol, escape: bool ref, lo: Absyn.exp, hi: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* Remember to call enterScope here !!*)
             (* First, check exp1 is Types.INT*)
             ( let val loType = #ty (transExp(venv, tenv, lo))
               in
-                (if loType <> Types.INT
+                (if not (tyEqualTo(loType, Types.INT))
                  then (
                   ErrorMsg.error pos "ForExp lower bound is not int type";
                   {exp=(), ty=Types.NIL}
@@ -420,7 +513,7 @@ struct
                     let 
                        val hiType = #ty (transExp(venv, tenv, hi))
                     in  
-                      (if hiType <> Types.INT
+                      (if not (tyEqualTo(hiType, Types.INT))
                        then (
                         ErrorMsg.error pos "ForExp upper bound is not int type";
                         {exp=(), ty=Types.NIL}
@@ -429,12 +522,12 @@ struct
                           (* Save var in venv *)
                           (* Rmb to enter scope *)
                           let 
-                              val venv = Symbol.enter(venv, var, VarEntry({ty=Types.INT}))
+                              val venv = Symbol.enter(venv, var, Env.VarEntry({ty=Types.INT}))
                           in
                              (let val bodyType = #ty (transExp(venv, tenv, body))
                               in
                               (  
-                                if bodyType <> Types.UNIT 
+                                if not (tyEqualTo(bodyType, Types.UNIT))
                                 then (
                                   ErrorMsg.error pos "ForExp body not of UNIT type";
                                   {exp=(), ty=Types.NIL}
@@ -451,7 +544,89 @@ struct
                   )
                 )
             end
-            ) *)
+            ) 
+          
+          | Absyn.CallExp({func:Symbol.symbol, args: Absyn.exp list, pos: Absyn.pos}) =>
+            (* Compare type of each exp in exp list against param list of func*)
+            let 
+                val expectedParamsResultTyOpt = Symbol.look(venv, func)
+                val actualParamsTyList = map (fn(currentExp) => (#ty (transExp(venv, tenv, currentExp)))) args
+            in
+              if isSome expectedParamsResultTyOpt
+              then (
+                let val expectedParamsResultTy = valOf(expectedParamsResultTyOpt)
+                in (
+                  case expectedParamsResultTy of Env.FunEntry({formals = expectedParamsTyList, result = resultTy}) =>
+                    
+                    if tyListEqualTo(expectedParamsTyList, actualParamsTyList)
+                    then ({exp=(), ty=resultTy})
+                    else (
+                      ErrorMsg.error pos "Illegal argument types passed to CallExp\n";
+                      {exp=(), ty=Types.NIL}
+                    )
+                  | (_) => (ErrorMsg.error pos "Non-function used in CallExp\n";{exp=(),ty=Types.NIL})
+                )
+                end
+              ) else (
+                (* function undeclared *)
+                ErrorMsg.error pos "undeclared function";
+                {exp=(), ty=Types.NIL}
+              )
+          end
+          
+           | Absyn.AssignExp({var:Absyn.var, exp:Absyn.exp, pos:Absyn.pos}) =>
+              (* Call transvar on var, get its type, compare with exp*)
+              let val varTyp = (#ty (transVar(venv, tenv, var)))
+                  val expTyp = (#ty (transExp(venv, tenv, exp)))
+              in
+                if not (tyEqualTo(varTyp, Types.NIL)) then
+                (
+                  if not (tyEqualTo(varTyp, expTyp)) then
+                  (
+                    ErrorMsg.error pos "AssignExp lvalue type and exp type don't match"
+                  )
+                  else ();
+                  {exp=(), ty=Types.UNIT}
+                )
+                else (
+                  ErrorMsg.error pos "variable type was found to be NIL.";
+                  {exp=(), ty=Types.UNIT}
+                )
+              end
+          | Absyn.RecordExp({fields, typ: Symbol.symbol, pos: Absyn.pos}) =>
+
+              (* look up typ in tenv, get field list, tycheck each field *)
+              let 
+                val found_tup_opt = Symbol.look(tenv, typ)
+  
+                val sorted_fields = ListMergeSort.sort (fn(x,y) => Symbol.name(#1 x) > Symbol.name(#1 y)) fields
+                val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x)))) sorted_fields
+
+              in(
+                  case found_tup_opt of 
+                  SOME(Types.RECORD(get_fields_func, unique_ref)) =>
+                    (
+                    let val found_list = get_fields_func()
+                        val sorted_found_list = ListMergeSort.sort (fn(x,y) => Symbol.name(#1 x) > Symbol.name(#1 y)) found_list
+                        val zipped_list = ListPair.zip (sorted_found_list, sorted_exp_fields) (*  ( (sym1,ty1),(sym2,ty2) )  *)
+                    in (
+                        if List.length(sorted_found_list) = List.length(sorted_exp_fields)
+                        then (
+                          foldl (fn (next_tup, equalSoFar) => if  tyEqualTo((#2 (#1 next_tup)),(#2 (#2 next_tup))) then equalSoFar else false) true zipped_list;
+                          {exp=(), ty = Types.RECORD(get_fields_func, unique_ref)}
+                        ) else (
+                          ErrorMsg.error pos "Record creation does not assign value to all fields";
+                          {exp=(), ty = Types.BOTTOM}
+                        )
+                      )
+                    end
+                    )
+                  | NONE => (
+                    ErrorMsg.error pos "Unknown record type instantiated";
+                    {exp=(), ty = Types.BOTTOM}
+                  )
+                 )
+              end
           
           |_ => (
             ErrorMsg.error 0 "unmatched exp";
@@ -461,54 +636,66 @@ struct
   
       (* Just handle non-recursive tydecs first *)
       and transDec(venv, tenv, dec): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table} =
-        (* case dec of Absyn.TypeDec([{name, ty,pos}]) => (* change to match lists of all lengths for non-recursive case*)
-          let
-            val tenv = Symbol.enter(tenv, name, transTy(tenv, ty))
-          in
-            (*inEnv(tenv, Symbol.symbol("intarray"));*)
-            print("inserting!!!");
-            {venv=venv, tenv=tenv}
-          end 
+        case dec of Absyn.TypeDec(tydecList) =>
+          (* add non array/record to tenv; create table symbol=>unit ref for array/record; *)
+          let 
+              val unitRefTable = createUnitRef tydecList
+              val (list,err) = foldl checkDupsFoldFunc ([],0) tydecList
+              fun foldFn2({name=name_symbol, ty=ty, pos=pos}, table) = 
+                case ty of 
+                   Absyn.NameTy(ty_symbol,pos) => Symbol.enter(table, name_symbol, [ty_symbol])
+                  | Absyn.RecordTy(fieldlist) => 
+                    let 
+                      fun fieldTypeAccumulator(field, res) = case field of 
+                      {name=name_symbol, escape=_, typ=ty_symbol, pos=pos} => ty_symbol::res
+                      val fieldtypelist = foldr fieldTypeAccumulator [] fieldlist
+                    in
+                      Symbol.enter(table, name_symbol, fieldtypelist)
+                    end
+                  | Absyn.ArrayTy(ty_symbol, pos) => Symbol.enter(table, name_symbol, [ty_symbol])
+              val symTable = foldl foldFn2 Symbol.empty tydecList
+          in (
+            if err = 1 
+            then 
+            ( 
+              {venv=venv, tenv=tenv}
+            )
+            else 
+             ( 
+               let fun foldFn (somety,tenv) =
+                case somety of {name=name, ty=ty, pos=pos} =>
+                  ( print("folding transty over one typedec\n");
+                  Symbol.enter(tenv, name, transTy(name, tenv,ty,tydecList, symTable, unitRefTable, []))
+                  )
+               in 
+                  {venv=venv, tenv=foldl foldFn tenv tydecList}
+               end
+            )
+          )
+        end
           
-          *** ILLEGAL ***
-          type a = b
-          type b = a
-          
-          *** LEGAL ***
-          type intlist = {hd:int, tl:intlist}
-          
-          type tree = {key:int, children:treelist}
-          type treelist = {hd:tree, tl:treelist}
-          
-          *)
-          
-          case dec of Absyn.TypeDec(list) => {venv=venv, tenv=tenv}
-              (* TO-DO
-              case list of 
-                  [] => 
-                  [{name=name,ty=ty,pos=pos}::l] =>  
-              *)
         | Absyn.VarDec({name, escape, typ, init, pos})	=> (* how to handle escape? what is it even??? *)
   	      (* if isSome typ then need to do type checking of init against typ, else just save the type of init for var name in venv*)
   	      if isSome typ then
             (
             let val expectedType = getTypeOrNil(tenv, #1 (valOf typ))
   	        in
-  	          if expectedType = Types.NIL 
-  	          then (
-  	            ErrorMsg.error pos "Used Nil as a type.";
-  	            {venv=venv, tenv=tenv}
-  	          ) else (
-    	          let val actualType = (#ty (transExp(venv, tenv, init)))
+  	          case expectedType of Types.NIL =>
+                (
+  	              ErrorMsg.error pos "Used Nil as a type.";
+  	              {venv=venv, tenv=tenv}
+  	            )  	          
+              | (_) => 
+                (
+    	            let val actualType = (#ty (transExp(venv, tenv, init)))
         	          val newVarEntry = Env.VarEntry({ty=actualType})
-        	      in (
-      	            (* begin of case *)
+        	        in (
+      	              (* begin of case *)
       	            case (actualType, expectedType) of (Types.ARRAY(sym, reff),Types.ARRAY(sym2, reff2)) => (
-      	                  if sym = sym2 then (
+      	                  if tyEqualTo(sym(), sym2()) then (
             	              let 
             	                  val venv = Symbol.enter(venv, name, newVarEntry) 
             	              in 
-            	                  (*inEnv(venv, Symbol.symbol("a"));*)
               	                {venv=venv, tenv=tenv}
               	            end
           	              ) else (
@@ -517,16 +704,15 @@ struct
           	              ) 
       	                 ) 
       	            | (x, y) => (
-      	                  if actualType = expectedType 
+      	                  if tyEqualTo(actualType, expectedType)
       	                  then 
         	                    let 
           	                      val venv = Symbol.enter(venv, name, newVarEntry) 
           	                  in 
-        	                        (*inEnv(venv, Symbol.symbol("a"));*)
           	                      {venv=venv, tenv=tenv}
             	                end
             	            else  (
-      	                      ErrorMsg.error pos "Var not found in venv.";
+      	                      ErrorMsg.error pos "Declared type does not match exp type.";
       	                      {venv=venv, tenv=tenv}
       	                  )
       	             ) 
@@ -535,7 +721,6 @@ struct
         	          ) (* end in *)
               end
   	         ) (* end else *)
-
   	         end
       	     
       	     ) else ( 
@@ -574,7 +759,7 @@ struct
                           | NONE => (ErrorMsg.error 0 "undefined function\n"; Types.NIL)
                       end
                   in
-                    if expectedReturnType = actualRetType
+                    if tyEqualTo(expectedReturnType, actualRetType)
                     then true
                     else (ErrorMsg.error pos "function return type mismatch\n";false)
                   end
@@ -582,55 +767,195 @@ struct
           in
             if (foldl foldFn true fundeclist) then {venv=venv, tenv=tenv} else (ErrorMsg.error 0 "fundecs do not type check\n"; {venv=venv, tenv=tenv})
           end))
-          
- (*           | (_) => ( 
+            
+            (*| (_) => ( 
               ErrorMsg.error 0 "unmatched dec";
               {venv=venv, tenv=tenv}
-            )
-  *)        
+            )*)
           
-         
+  (*
+  fun recursiveSearch (name: Symbol.symbol, tenv, symTable, currentPath: Symbol.symbol list, recordSeen: bool): Types.ty =
+    (* 
+    symTable: symbol -> symbol list table 
+    tenv: local tenv created by get_fields
     
-  and transTy(tenv, somety) = 
-
-    case somety of Absyn.NameTy(symbol, pos) => 
-        let 
-          val s = Symbol.look(tenv,symbol)
-        in
-            if isSome(s) 
-            then valOf s 
-            else Types.NIL
-        end
-    | Absyn.RecordTy(fieldlist) => 
+    in search function :
+    
+    if sym matches something in local_tenv, return that if it is base type or recurse over it if it isnt.
+    2.1 raise error if illegal cycle detected i.e. cycles with no array or record type
+    2.2 add newly resolved types to local_tenv  *)
+    
+    let val newPath = name :: currentPath
+    in
       let
-        val resList = map (fn x => let 
-                                      val lookup = Symbol.look(tenv,#typ x)
-                                   in
-                                      if isSome lookup 
-                                      then (#name x, valOf lookup)
-                                      else (#name x, Types.NIL)
-                                   end) fieldlist
-      in
-        (*TODO verify unit ref can be local*)
-        Types.RECORD((resList, ref ()))
-      end
-    | Absyn.ArrayTy(symbol, pos) => 
-      let
-        val res = 
-        let 
-          val lookup = Symbol.look(tenv, symbol)
-        in
-          if isSome lookup 
-          then valOf lookup 
-          else Types.NIL
+  *)
+    
+  and transTy(name, tenv, Absyn.RecordTy(fieldlist:{escape:bool ref, name:Symbol.symbol, pos:Absyn.pos,
+                    typ:Symbol.symbol} list), decList, symTable ,unitRefList, currentPath: Symbol.symbol list): Types.ty = 
+    let
+      fun get_fields () = (print("calling getfields");
+                           map (fn {name,escape,typ,pos} => 
+                          let val nextTypOpt = getTyOfName(decList, typ)
+                              val foundInTenvOpt = Symbol.look(tenv, typ)
+                          in
+                            if isSome nextTypOpt then
+  		                        (name, transTy(name, tenv, #ty (valOf nextTypOpt), decList, symTable, unitRefList, []))
+  		                      else 
+  		                        if isSome foundInTenvOpt then (name, (valOf foundInTenvOpt)) else (
+  		                        print(Symbol.name(typ));
+  		                        ErrorMsg.error pos "[GET FIELDS] Symbol is not found in local tenv or decList";
+  		                        (name, Types.BOTTOM))
+  		                    end
+		              ) fieldlist)
+    in
+    
+      (print("in transty for recordty\n");
+      printGetFieldsOutput(get_fields());
+      let val unitRef =
+        let val unitRefOpt = Symbol.look(unitRefList, name) in
+          case unitRefOpt of SOME(x) => x
+          | NONE => (ErrorMsg.error 0 "Unit ref not found for record type.";
+                   ref ()
+                  )
         end
       in
-        Types.ARRAY(res, ref ())
+        Types.RECORD (get_fields,unitRef)
+      end
+      )
+    end
+      
+    
+  
+    | transTy(name, tenv, Absyn.NameTy(ty_sym, pos), decList, symTable ,unitRefList, currentPath: Symbol.symbol list): Types.ty = 
+    let 
+      val updatedPath = name :: currentPath
+      val updatedPathString = map (fn x => print(Symbol.name(x))) updatedPath
+    in 
+     
+    (
+      print("\n");
+      (* get fields pointed to by current record from sym table*)
+      let 
+        val foundOpt = List.find (fn x => x = ty_sym) updatedPath 
+          in 
+            case foundOpt of SOME(x) => 
+              (* Cycle with no record type detected, we know this because we do not add record types to list *)
+              (* Error, illegal cycle*)
+              (
+              ErrorMsg.error pos "Illegal cycle in type dec!";
+              Types.BOTTOM
+              )
+            | NONE =>
+              let 
+                val tySymOpt = getTyOfName (decList, ty_sym)
+                val foundInTenvOpt = Symbol.look(tenv, ty_sym)
+              in
+                if isSome tySymOpt then (
+                  transTy(ty_sym, tenv, #ty (valOf(tySymOpt)), decList, symTable ,unitRefList, updatedPath)
+                  )
+                else
+                  (* search tenv*)
+                  if isSome foundInTenvOpt then
+                    valOf foundInTenvOpt
+                  else (
+                    ErrorMsg.error pos "Type declarations do not resolve.";
+                    Types.BOTTOM
+                  )
+              end
+      end)
+    end
+    | transTy(name, tenv, Absyn.ArrayTy(ty_sym, pos), decList, symTable ,unitRefList, currentPath: Symbol.symbol list): Types.ty = 
+      Types.ARRAY((fn() => Types.INT), ref ()) (* TEMP *)
+
+
+  and transVar(venv:venv, tenv:tenv, var:Absyn.var) =
+    (*pattern match on Absyn.var*)
+    case var of Absyn.SimpleVar(sym, pos) =>
+      let val varTypOpt = Symbol.look(venv, sym)
+      in 
+        (if isSome varTypOpt 
+        then (
+        let val varTyp = valOf varTypOpt
+          in 
+            case varTyp of
+              Env.VarEntry({ty=typ}) => {exp=(), ty=typ}
+            | _ => (
+                    ErrorMsg.error pos "using function as a var";
+                    {exp=(), ty=Types.NIL} 
+                   )
+          end
+        )
+        else
+          (
+           ErrorMsg.error pos "var was not declared";
+           {exp=(), ty=Types.NIL}
+          )
+        )
       end
 
+    
+      | Absyn.FieldVar(var, symbol, pos) =>
+      (* *)
+      let 
+        val varType = #ty (transVar(venv,tenv,var))
+      in
+        if not (tyEqualTo(varType, Types.RECORD((fn()=>[]), ref())))
+        then (
+          ErrorMsg.error pos "accessing field of non-fieldVar\n";
+          {exp=(), ty=Types.NIL}
+        ) 
+        else (
+          case varType of
+            Types.RECORD(fnn, reff) => 
+              let 
+                val fieldList = fnn()
+                fun matchFn (tup:Symbol.symbol * Types.ty) = ((#1 tup) = symbol)
+                val fieldVal = List.find matchFn fieldList
+             in 
+              (
+                (* check if symbol exists in field list *)
+                (*val find : ('a -> bool) -> 'a list -> 'a option*)
+                case fieldVal of 
+                  NONE => (
+                    ErrorMsg.error pos "nonexistent field\n";
+                    {exp=(), ty=Types.NIL}
+                  )
+                  | SOME (sym,typ) => {exp=(),ty=typ}
+              )
+              end
+        )
+      end
+      
+  
+        
+    | Absyn.SubscriptVar(var, exp, pos) =>
+      (* check exp is int *)
+      (* check var is array *)
+      let 
+          val expType = #ty (transExp(venv:venv,tenv:tenv,exp))
+          val varType = #ty (transVar(venv:venv,tenv:tenv,var))
+      in (
+         if not (tyEqualTo(expType,Types.INT))
+         then (
+            ErrorMsg.error pos "Non-integer used as array index.\n";
+            {exp=(), ty=Types.NIL}
+         )
+         else (
+            case varType of 
+                Types.ARRAY(arrayGetterFn, someref) => {exp=(),ty=arrayGetterFn()}
+              | _ => (
+              ErrorMsg.error pos "subscript var on nonarray type.\n";
+              {exp=(), ty=Types.NIL}
+            )
+          )
+      )
+      end
+      
   in
     transExp(venv,tenv, e);
     print "jobs done!"
   end
+  
+
 
 end

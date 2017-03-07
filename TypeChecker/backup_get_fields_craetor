@@ -1,0 +1,120 @@
+
+    let 
+      
+      fun get_fields_creator (fl) = let fun get_fields () = 
+        map (fn {name,escape,typ,pos} => 
+          recursiveSearch (name, tenv, symTable, [], false)
+        ) fl 
+      in 
+        get_fields
+      end
+    in (
+      val this_get_fields = get_fields_creator(fieldlist);
+      this_get_fields();
+      T.RECORD (this_get_fields, ref ())
+      )
+    end
+
+       
+    2. get_fields will call search fn on every symbol in fieldlist.
+    
+    *** in search function ***
+        if sym matches something in local_tenv, return that if it is base type or recurse over it if it isnt.
+    
+    2.1 raise error if illegal cycle detected i.e. cycles with no array or record type
+    2.2 add newly resolved types to local_tenv 
+    
+    fun 
+    
+    *)
+    
+    
+    let
+      fun get_fields () = map (fn {name,escape,typ,pos} =>
+		                  case S.look(tenv,typ) of
+		                      SOME(ty) => (name,ty)
+		                    | NONE => (err pos "cannot find field type"; (name,T.ERROR))
+		              ) fields
+    in
+    
+      (get_fields();
+      T.RECORD (get_fields, ref ()))
+    end
+    
+    
+    
+    ---------
+     case somety of Absyn.NameTy(symbol, pos) => 
+        let 
+          val s = Symbol.look(tenv,symbol)
+        in
+            if isSome(s) 
+            then valOf s 
+            else Types.NIL
+        end
+    | Absyn.RecordTy(fieldlist) => 
+      let
+        val resList = map (fn x => let 
+                                      val lookup = Symbol.look(tenv,#typ x)
+                                   in
+                                      if isSome lookup 
+                                      then (#name x, valOf lookup)
+                                      else (#name x, Types.NIL)
+                                   end) fieldlist
+      in
+        (*TODO verify unit ref can be local*)
+        Types.RECORD((resList, ref ()))
+      end
+    | Absyn.ArrayTy(symbol, pos) => 
+      let
+        val res = 
+        let 
+          val lookup = Symbol.look(tenv, symbol)
+        in
+          if isSome lookup 
+          then valOf lookup 
+          else Types.NIL
+        end
+      in
+        Types.ARRAY(res, ref ())
+      end
+      
+      
+      ----
+      
+         | transTy(name, tenv, Absyn.NameTy(ty_sym, pos), decList, symTable ,unitRefList, currentPath: Symbol.symbol): Types.ty = 
+    let 
+      val updatedPath = name :: currentPath
+    in
+    (
+      (* get fields pointed to by current record from sym table*)
+      let 
+        val dependenciesOpt = Symbol.look(symTable, name)
+      in
+        if isSome dependenciesOpt then 
+          (
+            let 
+              val dependencies = valOf dependenciesOpt
+              fun foldFn3 (nextSym, ) =
+              let 
+                foundOpt = List.find (fn x => x = name) currentPath 
+              in 
+                case foundOpt of SOME(x) => 
+                  (* Cycle with no record type detected, we know this because we do not add record types to list *)
+                  (* Error, illegal cycle*)
+                  ErrorMsg.error pos "Illegal cycle in type dec"
+                  Types.BOTTOM
+                | NONE =>
+                  
+                  transTy(ty_sym, tenv, ty_sym, decList, symTable ,unitRefList, updatedPath)
+                  
+      | NONE => 
+            in
+            (* check if next dependency has been seen*)
+            foldl (fn dep => transTy(dep, tenv, (* get what form the dep is in*), symTable, unitRefList, updatedPath)
+          )
+      else (
+        []
+      )
+      end;
+    | transTy(name, tenv, Absyn.ArrayTy(ty_sym, pos), decList, symTable ,unitRefList, currentPath: Symbol.symbol): Types.ty = 

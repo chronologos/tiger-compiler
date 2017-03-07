@@ -1,0 +1,6 @@
+let
+    type tree = {key:int, children:treelist}
+    type treelist = {hd:tree}
+in
+    1+1
+end
