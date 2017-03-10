@@ -1,9 +1,0 @@
-assignexp line 576 -> need new fn to compare array and record types with one another using their refs.
-recordexp didnt compare refs.
-call get_fields in transdec (not called currently)
-
-scoping
-finish transty for arrays
-breakexp
-more testing for mutually recursive tydecs
-drews corner case from piazza

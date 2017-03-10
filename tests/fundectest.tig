@@ -1,5 +1,6 @@
 let
-function fish (id: int, name: string) = 1
-function dish (id: int): int = 1 in
+function fish (id: int, name: string):int = 1
+function dish (id: int): int = 1 
+in
 1
 end

@@ -1,6 +1,15 @@
 let
     type tree = {key:int, children:treelist}
     type treelist = {hd:tree}
+    type faketree = {key: int, children:treelist}
+    var x : tree := tree{key=2, children=nil}
+    var y : treelist := treelist{hd=nil}
+    var z : faketree := faketree{key=8, children=nil}
+    var t : faketree := tree{key = 23, children = y}
 in
-    1+1
+    1+1;
+    x.key + 7;
+    y.hd.key := 10;
+    y.hd := x;
+    z := x
 end
