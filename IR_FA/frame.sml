@@ -1,6 +1,5 @@
 structure MipsFrame :> FRAME =
 struct
-  type localVarTable = Frame.access Symbol.table
   type frame = {name:Temp.label, formals:access list, fpMaxOffset:int ref}
   type access = InFrame of int | InReg of Temp.temp
 
@@ -24,9 +23,9 @@ struct
 
   fun name ({name=label, formals=list, fpMaxOffset=offst}) = name
 
-  fun formals ({name=label, formals=list,fpMaxOffset=offst}) = list
+  fun formals ({name=label, formals=list, fpMaxOffset=offst}) = list
 
-  fun allocLocal (){name=label, formals=list,fpMaxOffset=offset}) =
+  fun allocLocal ({name=label, formals=list,fpMaxOffset=offset}) =
     let
       fun allocLocalBool ecp =
         if ecp

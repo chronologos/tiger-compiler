@@ -1,9 +1,13 @@
+(* function parameters access not set correctly *)
 structure Env :> ENV =
 struct
   type access = int
   (*type ty = Types.ty*)
-  datatype enventry = VarEntry of {ty: Types.ty}
-                    | FunEntry of {formals: Types.ty list, result: Types.ty}
+  datatype enventry = VarEntry of {access: Translate.access, ty: Types.ty}
+                    | FunEntry of {level: Translate.level,
+                                   label: Temp.label,
+                                   formals: Types.ty list,
+                                   result: Types.ty}
 
   (***** types ******)
   fun initTypes() =
@@ -18,17 +22,17 @@ struct
   (**** functions and vars *******)
   fun initValues() =
     let val emptyTable = Symbol.empty
-      val printFunEntry = FunEntry({formals=[Types.STRING], result = Types.UNIT})
-      val flushFunEntry = FunEntry({formals=[], result=Types.UNIT})
-      val getcharFunEntry = FunEntry({formals = [], result = Types.STRING})
-      val ordFunEntry = FunEntry({formals = [Types.STRING], result = Types.INT})
-      val charFunEntry = FunEntry({formals = [Types.INT], result=Types.STRING})
-      val sizeFunEntry = FunEntry({formals=[Types.STRING], result=Types.INT})
-      val substringFunEntry = FunEntry({formals=[Types.STRING, Types.INT, Types.INT], result = Types.STRING})
-      val concatFunEntry = FunEntry({formals=[Types.STRING, Types.STRING], result=Types.STRING})
-      val notFunEntry = FunEntry({formals = [Types.INT], result = Types.INT})
-      val exitFunEntry = FunEntry({formals=[Types.INT], result=Types.UNIT})
-      val nilEntry = VarEntry({ty=Types.NIL})
+      val printFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING], result = Types.UNIT})
+      val flushFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[], result=Types.UNIT})
+      val getcharFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [], result = Types.STRING})
+      val ordFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.STRING], result = Types.INT})
+      val charFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.INT], result=Types.STRING})
+      val sizeFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING], result=Types.INT})
+      val substringFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING, Types.INT, Types.INT], result = Types.STRING})
+      val concatFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING, Types.STRING], result=Types.STRING})
+      val notFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.INT], result = Types.INT})
+      val exitFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.INT], result=Types.UNIT})
+      val nilEntry = VarEntry({access=Translate.allocLocal(Translate.outermost)(true) ,ty=Types.NIL})
       val t1 = Symbol.enter(emptyTable, Symbol.symbol("print"), printFunEntry)
       val t2 = Symbol.enter(t1, Symbol.symbol("flush"), flushFunEntry)
       val t3 = Symbol.enter(t2, Symbol.symbol("getchar"), getcharFunEntry)
@@ -51,9 +55,9 @@ struct
 
 structure Semant =
 struct
-  (*transVar: venv * tenv * Absyn.var -> expty*)
-  (*transExp: venv * tenv * Absyn.exp -> expty*)
-  (*transDec: venv * tenv * Absyn.dec -> {venv: venv, tenv: tenv}*)
+  (*transVar: venv * tenv * Absyn.var * level -> expty*)
+  (*transExp: venv * tenv * Absyn.exp * level -> expty*)
+  (*transDec: venv * tenv * Absyn.dec * level -> {venv: venv, tenv: tenv}*)
   (*transTy:  tenv * Absyn.ty -> Types.ty*)
   (*transProg: Absyn.exp -> unit*)
   type venv = Env.enventry Symbol.table
@@ -102,7 +106,7 @@ struct
 
   (* add record type symbols to someEnv and create unit ref *)
   fun unitRefFolder ({name=name, ty=Absyn.RecordTy(fieldList), pos=pos}, someEnv) =
-    ( 
+    (
       (*print(Symbol.name(name));
       print("\n"); *)
       Symbol.enter(someEnv, name, ref ())
@@ -141,7 +145,7 @@ struct
         )
       )
     end
-	
+
 	fun checkFunDupsFoldFunc(currentDec as {name=name, params=params, result=result, body=body, pos=pos}, (listOfNames, err)) =
 	   let
         val found = List.find (fn(x) => x = (#name (currentDec))) listOfNames
@@ -159,8 +163,14 @@ struct
           )
         )
       end
-	
-	
+
+  fun paramsToFormals(params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list) =
+    let
+      fun foldFn (p,list) = true::list
+    in
+      foldr foldFn [] params
+    end
+
 
   fun tyEqualTo(ty1, ty2) =
     case (ty1, ty2) of
@@ -181,7 +191,7 @@ struct
 
   fun arrayTyEqualTo(Types.ARRAY(f1, r1), Types.ARRAY(f2, r2)) = (r1 = r2)
     | arrayTyEqualTo(_, _) = (print("Non-array types passed into arrayTyEqualTo method!"); false)
-  
+
   fun tyListEqualTo(tylist1:Types.ty list, tylist2:Types.ty list) =
     if List.length(tylist1) <> List.length(tylist2) then false
     else
@@ -194,19 +204,22 @@ struct
     )
 
   (* return venv with params added *)
-  fun addFunctionParamsVenv(venv,tenv,params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list) =
-    let fun foldFn (x, venv) =
-      case x of
-      {name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} =>
-        let
-          val paramType = getTypeOrBottom(tenv,typ)
-        in
-          case paramType of
-            Types.BOTTOM  => (ErrorMsg.error pos "Unknown parameter type for function"; venv)
-          | _ => Symbol.enter(venv,name,Env.VarEntry({ty=paramType}))
-        end
+  fun addFunctionParamsVenv(venv,tenv,params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list, funLevel) =
+    let
+      val frameAccessList = Translate.formals funLevel
+      val zipped = ListPair.zip (params,frameAccessList)
+      fun foldFn (x, venv) =
+        case x of
+        ({name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos},acc) =>
+          let
+            val paramType = getTypeOrBottom(tenv,typ)
+          in
+            case paramType of
+              Types.BOTTOM  => (ErrorMsg.error pos "Unknown parameter type for function"; venv)
+            | _ => Symbol.enter(venv,name,Env.VarEntry({access=acc,ty=paramType}))
+          end
     in
-      foldl foldFn venv params
+      foldl foldFn venv zipped
     end
 
   (* Params: name = function name; params = (symbol*type) list; resultVal = symbol*pos
@@ -224,7 +237,7 @@ struct
               case foundType of Types.BOTTOM =>
                 (ErrorMsg.error 0 "Unknown type in params list"; Types.BOTTOM :: result)
               | (_) => foundType :: result
-             ) 
+             )
             end
           in
             foldr funcFoldrArg [] params_sym
@@ -233,7 +246,7 @@ struct
         paramsTyList
       end)
 
-  fun venvWithFunctionHeaders (venv, fundeclist, tenv) =
+  fun venvWithFunctionHeaders (venv, fundeclist, tenv, level) =
   let
     fun parseHeadersWithReturnType(x, venv) =
         case x of {name=name, params=params , result=result, body=body, pos=pos} =>
@@ -247,7 +260,7 @@ struct
                 case typeGotten of Types.BOTTOM =>  (ErrorMsg.error pos "return type not found in tenv"; Types.BOTTOM)
                 | (_) => typeGotten
               end
-              val funentry = Env.FunEntry({formals=paramsList, result=resultTy})
+              val funentry = Env.FunEntry({level=level,label=Temp.newlabel(),formals=paramsList, result=resultTy})
             in
               (*
               (* print("storing function with non unit type as result: "); *)
@@ -261,7 +274,7 @@ struct
           | NONE => (
             let
               val paramsList = parseHeaders (name, params, tenv)
-              val funentry = Env.FunEntry({formals=paramsList,result=Types.UNIT})
+              val funentry = Env.FunEntry({level=level,label=Temp.newlabel(),formals=paramsList,result=Types.UNIT})
             in
               (*print("storing function with type unit as result"); *)
               Symbol.enter(venv, name, funentry)
@@ -289,15 +302,15 @@ struct
 
   fun transProg(e) =
     let
-      fun transOpExp(venv, tenv, exp) =
+      fun transOpExp(venv, tenv, exp, level) =
         case exp of
           (Absyn.OpExp({left,oper=Absyn.PlusOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.MinusOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.TimesOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.DivideOp,right,pos})) =>
             let
-              val {exp=_, ty=tyleft} = transExp(venv,tenv,left)
-              val {exp=_, ty=tyright} = transExp(venv,tenv,right)
+              val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
+              val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
             in (
               case tyleft of Types.INT => {exp=(),ty=Types.INT}
               | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM});
@@ -311,8 +324,8 @@ struct
         Absyn.OpExp({left,
         oper=Absyn.LtOp, right,pos})) =>
           let
-            val {exp=_, ty=tyleft} = transExp(venv,tenv,left)
-            val {exp=_, ty=tyright} = transExp(venv,tenv,right)
+            val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
+            val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
           in
             case (tyleft, tyright) of ((Types.INT, Types.INT) | (Types.STRING, Types.STRING)) => ({exp=(),ty=Types.INT})
             | (_,_) => (ErrorMsg.error pos "Both operands must be either int or string"; {exp=(),ty=Types.BOTTOM})
@@ -321,8 +334,8 @@ struct
         |(Absyn.OpExp({left, oper=Absyn.EqOp, right,pos}) | Absyn.OpExp({left,
           oper=Absyn.NeqOp, right,pos})) =>
           let
-            val {exp=_, ty=tyleft} = transExp(venv,tenv,left)
-            val {exp=_, ty=tyright} = transExp(venv,tenv,right)
+            val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
+            val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
           in
             case (tyleft, tyright) of ((Types.STRING, Types.STRING)|
             (Types.INT, Types.INT)) => {exp=(), ty=Types.INT}
@@ -346,23 +359,23 @@ struct
         | (_) => (ErrorMsg.error 0 "Unmatched OpExp at unkwown pos."; {exp=(),ty = Types.INT})
 
 
-      and transExp(venv:venv, tenv:tenv, exp): {exp:unit, ty:Types.ty} = (
+      and transExp(venv:venv, tenv:tenv, exp, level): {exp:unit, ty:Types.ty} = (
         case exp of Absyn.IntExp(_) => (
           {exp=(), ty=Types.INT}
         )
           | Absyn.NilExp => ({exp=(),ty=Types.NIL})
           | Absyn.BreakExp(pos) => ( if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=(),ty=Types.BOTTOM}) else {exp=(),ty=Types.BOTTOM})
           | Absyn.StringExp(_) => {exp=(),ty=Types.STRING}
-          | Absyn.OpExp(_) => transOpExp(venv, tenv, exp)
+          | Absyn.OpExp(_) => transOpExp(venv, tenv, exp,level)
           | Absyn.ArrayExp({typ=t, size=s, init=i, pos=p}) => (
             (* check size is int *)
-            let val sizeTyp = #ty (transExp(venv,tenv,s))
+            let val sizeTyp = #ty (transExp(venv,tenv,s,level))
             in
               case sizeTyp of
                 Types.INT => (
                   (* check init same type as t *)
                   let
-                    val initTyp = (#ty (transExp(venv,tenv,i)))
+                    val initTyp = (#ty (transExp(venv,tenv,i,level)))
                     val tTyp = getTy(tenv, t, p)
                   in
                     case tTyp of Types.ARRAY(array_func, _) =>
@@ -402,7 +415,7 @@ struct
 
             | Absyn.SubscriptVar(var, exp, pos) => (
               let
-                val varType = (#ty (transVar(venv, tenv, var)));
+                val varType = (#ty (transVar(venv, tenv, var, level)));
               in  (
                 (* check type of subscript.var *)
                 (* check if its an array type*)
@@ -412,7 +425,7 @@ struct
                   (Types.ARRAY(typ, unique)) =>
                   (* check if exp is int type *)
                   let
-                    val expType = (#ty (transExp(venv, tenv, exp)))
+                    val expType = (#ty (transExp(venv, tenv, exp, level)))
                   in
                     if tyEqualTo(expType, Types.INT) then {exp=(),ty=typ()} else
                       (ErrorMsg.error pos "Array index must be integer.";
@@ -427,7 +440,7 @@ struct
               )
            | Absyn.FieldVar(var,symbol,pos) =>
               (* var must be record type, get field list, check if symbol is in fieldlist, return type of symbol *)
-              let val varTyp = #ty (transVar(venv, tenv, var))
+              let val varTyp = #ty (transVar(venv, tenv, var, level))
               in
                 case varTyp of
                   Types.RECORD(get_fields_func, unit_ref) =>
@@ -460,26 +473,27 @@ struct
             let
               fun first  (a, _) = a
               fun second (_, b) = b
+              val myLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals:[]})
               val res = foldl (fn (dec, env) => transDec(#venv env, #tenv env,
-              dec)) {venv=venv, tenv=tenv} decs
+              dec,myLevel)) {venv=venv, tenv=tenv} decs
             in
               (* remember to push (venv, tenv) onto stack *)
               (*print("in letexp\n");*)
-              transExp(#venv res,#tenv res, body)
+              transExp(#venv res,#tenv res, body, myLevel)
               (** remember to pop from stack **)
             end
           | Absyn.SeqExp(xs) => let
             fun first  (a, _) = a
             fun second (_, b) = b
-            val res: {exp:unit, ty:Types.ty} = foldl (fn (x, y) => transExp(venv, tenv, first x)) {exp=(), ty=Types.BOTTOM} xs
+            val res: {exp:unit, ty:Types.ty} = foldl (fn (x, y) => transExp(venv, tenv, first x, level)) {exp=(), ty=Types.BOTTOM} xs
             in
               (*print("in seqexp\n");*)
               res
             end
           | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) =>
             (* get the type of test, must be int *)
-            
-            if (not (tyEqualTo(#ty (transExp(venv, tenv, test)), Types.INT)))
+
+            if (not (tyEqualTo(#ty (transExp(venv, tenv, test, level)), Types.INT)))
             then
             (
             ErrorMsg.error pos "test of if-else does not evaluate to int";
@@ -487,13 +501,13 @@ struct
             )
             else (
               let
-                val thenTyp = transExp(venv, tenv, then')
+                val thenTyp = transExp(venv, tenv, then', level)
               in
                 if isSome else'
                 then (
-                
-                  let 
-                      val elseType = #ty (transExp(venv, tenv, valOf else'))
+
+                  let
+                      val elseType = #ty (transExp(venv, tenv, valOf else', level))
                       val thenType = #ty thenTyp
                   in
                       case (thenType, elseType) of ((Types.RECORD(_), Types.NIL) | (Types.NIL, Types.RECORD(_))) =>
@@ -519,7 +533,7 @@ struct
           | Absyn.WhileExp({test: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* check test is of type int*)
             (let
-              val testType = #ty (transExp(venv, tenv, test))
+              val testType = #ty (transExp(venv, tenv, test, level))
             in
               (
               breakable := (!breakable + 1);
@@ -527,7 +541,7 @@ struct
               then
                 (
                   let
-                    val bodyType = #ty (transExp(venv, tenv, body))
+                    val bodyType = #ty (transExp(venv, tenv, body, level))
                   in
                     (if not (tyEqualTo(bodyType, Types.UNIT))
                     then
@@ -555,7 +569,9 @@ struct
            | Absyn.ForExp({var: Symbol.symbol, escape: bool ref, lo: Absyn.exp, hi: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* Remember to call enterScope here !!*)
             (* First, check exp1 is Types.INT*)
-            ( let val loType = #ty (transExp(venv, tenv, lo))
+            ( let
+                val loType = #ty (transExp(venv, tenv, lo, level))
+                val forLoopLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
               in
                 (if not (tyEqualTo(loType, Types.INT))
                  then (
@@ -565,7 +581,7 @@ struct
                  else (
                   (* Check type of hi *)
                     let
-                       val hiType = #ty (transExp(venv, tenv, hi))
+                       val hiType = #ty (transExp(venv, tenv, hi, level))
                     in
                       (if not (tyEqualTo(hiType, Types.INT))
                        then (
@@ -575,15 +591,15 @@ struct
                        else (
                           (* Save var in venv *)
                           (* Rmb to enter scope *)
-                          
+
                           breakable := (!breakable + 1);
-                          
-                          
+
+
                           let
                               (*val venv = enterscope(venv)*)
-                              val venv = Symbol.enter(venv, var, Env.VarEntry({ty=Types.INT}))
+                              val venv = Symbol.enter(venv, var, Env.VarEntry({access=Translate.allocLocal(forLoopLevel)(true),ty=Types.INT}))
                           in
-                             (let val bodyType = #ty (transExp(venv, tenv, body))
+                             (let val bodyType = #ty (transExp(venv, tenv, body, forLoopLevel))
                               in
                               (
                                 if not (tyEqualTo(bodyType, Types.UNIT))
@@ -611,7 +627,7 @@ struct
             (* Compare type of each exp in exp list against param list of func*)
             let
                 val expectedParamsResultTyOpt = Symbol.look(venv, func)
-                val actualParamsTyList = map (fn(currentExp) => (#ty (transExp(venv, tenv, currentExp)))) args
+                val actualParamsTyList = map (fn(currentExp) => (#ty (transExp(venv, tenv, currentExp, level)))) args
             in
               if isSome expectedParamsResultTyOpt
               then (
@@ -636,10 +652,10 @@ struct
 
            | Absyn.AssignExp({var:Absyn.var, exp:Absyn.exp, pos:Absyn.pos}) =>
               (* Call transvar on var, get its type, compare with exp*)
-              let val varTyp = (#ty (transVar(venv, tenv, var)))
-                  val expTyp = (#ty (transExp(venv, tenv, exp)))
+              let val varTyp = (#ty (transVar(venv, tenv, var, level)))
+                  val expTyp = (#ty (transExp(venv, tenv, exp, level)))
               in
-              
+
                 case (varTyp, expTyp) of (Types.RECORD(_, _), Types.RECORD(_, _)) => if recordTyEqualTo(varTyp, expTyp) then {exp = (), ty = Types.UNIT} else (ErrorMsg.error pos "Yo Noid Record types are different";{exp = (), ty = Types.BOTTOM})
                 | (Types.ARRAY(_, _), Types.ARRAY(_, _)) => (
                   if (arrayTyEqualTo(varTyp, expTyp)) then {exp=(),ty=Types.UNIT} else (ErrorMsg.error pos "Array types are different."; {exp=(), ty=Types.BOTTOM})
@@ -655,9 +671,9 @@ struct
                     ErrorMsg.error pos "AssignExp lvalue type and exp type don't match";
                     {exp=(), ty=Types.BOTTOM}
                   )
-                  else ({exp=(), ty=Types.UNIT}) 
+                  else ({exp=(), ty=Types.UNIT})
                 )
-          
+
               end
           | Absyn.RecordExp({fields, typ: Symbol.symbol, pos: Absyn.pos} ) =>
               (* look up typ in tenv, get field list, tycheck each field *)
@@ -665,7 +681,7 @@ struct
                 val found_tup_opt = Symbol.look(tenv, typ)
 
                 val sorted_fields = ListMergeSort.sort (fn(x,y) => Symbol.name(#1 x) > Symbol.name(#1 y)) fields
-                val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x)))) sorted_fields
+                val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x, level)))) sorted_fields
 
               in(
                 case found_tup_opt of
@@ -695,7 +711,7 @@ struct
         )
 
       (* Just handle non-recursive tydecs first *)
-      and transDec(venv, tenv, dec): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table} =
+      and transDec(venv, tenv, dec, level): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table} =
         case dec of Absyn.TypeDec(tydecList) =>
           (* add non array/record to tenv; create table symbol=>unit ref for array/record; *)
           let
@@ -724,12 +740,12 @@ struct
              (
                let fun foldFn (somety,tenv) =
                 case somety of {name=name, ty=ty, pos=pos} =>
-                  ( 
+                  (
                     Symbol.enter(tenv, name, transTy(name, tenv,ty,tydecList, symTable, unitRefTable, []))
                   )
                 val new_tenv = foldl foldFn tenv tydecList
                in (
-                map (fn x => let 
+                map (fn x => let
                                 val sym = (#name x)
                                 val typeOpt = Symbol.look(new_tenv, sym)
                               in
@@ -757,8 +773,8 @@ struct
                 )
               | (_) =>
                 (
-                    let val actualType = (#ty (transExp(venv, tenv, init)))
-                      val newVarEntry = Env.VarEntry({ty=actualType})
+                    let val actualType = (#ty (transExp(venv, tenv, init, level)))
+                      val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=actualType})
                     in (
                       (* begin of case *)
                     case (actualType, expectedType) of (Types.ARRAY(sym, reff),Types.ARRAY(sym2, reff2)) => (
@@ -786,8 +802,8 @@ struct
                           )
                          )
                     | (Types.NIL,Types.RECORD(sym2, reff2)) => (
-                      let 
-                        val thisVarEntry = Env.VarEntry({ty=expectedType})
+                      let
+                        val thisVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=expectedType})
                         val venv = Symbol.enter(venv, name, thisVarEntry)
                       in
                         {venv=venv, tenv=tenv}
@@ -814,8 +830,8 @@ struct
 
              ) else (
               (* typ is NONE, so nothing to check, just put actualType of init in table *)
-              let val actualType = (#ty (transExp(venv, tenv, init)))
-                  val newVarEntry = Env.VarEntry({ty=actualType})
+              let val actualType = (#ty (transExp(venv, tenv, init, level)))
+                  val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=actualType})
               in
                   {venv = Symbol.enter(venv, name, newVarEntry), tenv = tenv}
               end
@@ -835,8 +851,9 @@ struct
                 {name: Absyn.symbol, params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list , result: (Symbol.symbol * Absyn.pos) option, body: Absyn.exp, pos: Absyn.pos} =>
                   let
                     (* add parameters to venv *)
-                    val venv = addFunctionParamsVenv(venv,tenv,params)
-                    val actualRetType = #ty (transExp(venv, tenv, body))
+                    val funLevel = Translate.newLevel({parent=level,name=Temp.newlabel(),formals=paramsToFormals(params)})
+                    val venv = addFunctionParamsVenv(venv,tenv,params,funLevel)
+                    val actualRetType = #ty (transExp(venv, tenv, body, funLevel))
                     val expectedReturnType =
                       let
                         (* look up function's return type in venv *)
@@ -945,7 +962,7 @@ struct
           val foundInTenvOpt = Symbol.look(tenv, ty_sym)
         in
           case tySymOpt of SOME(tySym) => transTy(ty_sym, tenv, (#ty tySym), decList, symTable ,unitRefList, [])
-          | NONE => ( 
+          | NONE => (
             case foundInTenvOpt of SOME(typ) => typ
             | NONE => (ErrorMsg.error pos "Type not found in transTy for ArrayTy."; Types.BOTTOM)
           )
@@ -964,10 +981,10 @@ struct
         Types.ARRAY(get_fields,unitRef)
       end
       )
-    end 
+    end
 
 
-  and transVar(venv:venv, tenv:tenv, var:Absyn.var) =
+  and transVar(venv:venv, tenv:tenv, var:Absyn.var, level:Translate.level) =
     (*pattern match on Absyn.var*)
     case var of Absyn.SimpleVar(sym, pos) =>
       let val varTypOpt = Symbol.look(venv, sym)
@@ -996,7 +1013,7 @@ struct
       | Absyn.FieldVar(var, symbol, pos) =>
       (* *)
       let
-        val varType = #ty (transVar(venv,tenv,var))
+        val varType = #ty (transVar(venv,tenv,var,level))
       in
         if not (tyEqualTo(varType, Types.RECORD((fn()=>[]), ref())))
         then (
@@ -1031,8 +1048,8 @@ struct
     | Absyn.SubscriptVar(var, exp, pos) =>
       (* check var is array *)
       let
-          val expType = #ty (transExp(venv:venv,tenv:tenv,exp))
-          val varType = #ty (transVar(venv:venv,tenv:tenv,var))
+          val expType = #ty (transExp(venv:venv,tenv:tenv,exp,level))
+          val varType = #ty (transVar(venv:venv,tenv:tenv,var,level))
       in (
          if not (tyEqualTo(expType,Types.INT))
          then (
@@ -1054,7 +1071,7 @@ struct
       end
   (* end all mutually recursive function defs and start in block of transProg *)
   in
-    transExp(venv,tenv, e);
+    transExp(venv,tenv, e, Translate.outermost);
     print "Hi Tamara! Jobs Done! \n"
   end
 end

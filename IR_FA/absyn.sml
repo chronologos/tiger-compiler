@@ -1,4 +1,4 @@
-structure Absyn = 
+structure Absyn =
 struct
 
 type pos = int   and   symbol = Symbol.symbol
@@ -40,15 +40,12 @@ and ty = NameTy of symbol * pos
 and oper = PlusOp | MinusOp | TimesOp | DivideOp
          | EqOp | NeqOp | LtOp | LeOp | GtOp | GeOp
 
-withtype field = {name: symbol, escape: bool ref, 
+withtype field = {name: symbol, escape: bool ref,
 		  typ: symbol, pos: pos}
    and   fundec = {name: symbol,
 		   params: field list,
 		   result: (symbol * pos) option,
 		   body: exp,
 		   pos: pos}
-     
-end
 
-    
-        
+end
