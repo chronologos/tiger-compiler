@@ -13,5 +13,11 @@ tiger.lex
 tiger.grm
 parse.sml
 types.sml
+temp.sig
+temp.sml
+frame.sig
+frame.sml
+translate.sig
+translate.sml
 $/basis.cm
 $/smlnj-lib.cm

@@ -63,9 +63,11 @@ struct
   type venv = Env.enventry Symbol.table
   type tenv = Types.ty Symbol.table
   type expty = {exp: unit, ty: Types.ty}
+
   val venv = Env.base_venv
   val tenv = Env.base_tenv
   val breakable = ref 0;
+  val debug = false;
 
 
   fun getTypeOrBottom(table, sym) =
@@ -361,12 +363,23 @@ struct
 
       and transExp(venv:venv, tenv:tenv, exp, level): {exp:unit, ty:Types.ty} = (
         case exp of Absyn.IntExp(_) => (
+          if debug
+          then print("IntExp at level "^Translate.levelToString(level)^".\n")
+          else ();
           {exp=(), ty=Types.INT}
         )
-          | Absyn.NilExp => ({exp=(),ty=Types.NIL})
-          | Absyn.BreakExp(pos) => ( if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=(),ty=Types.BOTTOM}) else {exp=(),ty=Types.BOTTOM})
-          | Absyn.StringExp(_) => {exp=(),ty=Types.STRING}
-          | Absyn.OpExp(_) => transOpExp(venv, tenv, exp,level)
+          | Absyn.NilExp => (if debug
+          then print("NilExp at level "^Translate.levelToString(level)^".\n")
+          else ();{exp=(),ty=Types.NIL})
+          | Absyn.BreakExp(pos) => (if debug
+          then print("BreakExp at level "^Translate.levelToString(level)^".\n")
+          else (); if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=(),ty=Types.BOTTOM}) else {exp=(),ty=Types.BOTTOM})
+          | Absyn.StringExp(_) => (if debug
+          then print("StringExp at level "^Translate.levelToString(level)^".\n")
+          else ();{exp=(),ty=Types.STRING})
+          | Absyn.OpExp(_) => (if debug
+          then print("OpExp at level "^Translate.levelToString(level)^".\n")
+          else ();transOpExp(venv, tenv, exp,level))
           | Absyn.ArrayExp({typ=t, size=s, init=i, pos=p}) => (
             (* check size is int *)
             let val sizeTyp = #ty (transExp(venv,tenv,s,level))
@@ -404,7 +417,7 @@ struct
                     ErrorMsg.error pos "Fun not found in venv.";
                     {exp=(),ty=Types.BOTTOM}
                     )
-                  | SOME(Env.VarEntry({ty=ty})) => (
+                  | SOME(Env.VarEntry({access=acc,ty=ty})) => (
                     {exp=(), ty=ty})
                   | NONE => (
                     ErrorMsg.error pos "Var not found in venv.";
@@ -473,7 +486,7 @@ struct
             let
               fun first  (a, _) = a
               fun second (_, b) = b
-              val myLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals:[]})
+              val myLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
               val res = foldl (fn (dec, env) => transDec(#venv env, #tenv env,
               dec,myLevel)) {venv=venv, tenv=tenv} decs
             in
@@ -633,7 +646,7 @@ struct
               then (
                 let val expectedParamsResultTy = valOf(expectedParamsResultTyOpt)
                 in (
-                  case expectedParamsResultTy of Env.FunEntry({formals = expectedParamsTyList, result = resultTy}) =>
+                  case expectedParamsResultTy of Env.FunEntry({level=lev,label=lab, formals = expectedParamsTyList, result = resultTy}) =>
                     if tyListEqualTo(expectedParamsTyList, actualParamsTyList)
                     then ({exp=(), ty=resultTy})
                     else (
@@ -841,7 +854,7 @@ struct
           (
           (* foldl with transExp on body; returns boolean *)
           (let
-            val venv = venvWithFunctionHeaders(venv, fundeclist, tenv)
+            val venv = venvWithFunctionHeaders(venv, fundeclist, tenv, level)
             val dupErr = #2 (foldl checkFunDupsFoldFunc ([], 0) fundeclist)
             fun foldFn (fundec, bool) =
             case bool of
@@ -860,7 +873,7 @@ struct
                         val expectedReturnTypeOpt = Symbol.look(venv, name)
                       in
                         case expectedReturnTypeOpt of
-                          SOME(Env.FunEntry({formals=formals,result=result})) => result
+                          SOME(Env.FunEntry({label=lab, level=lev, formals=formals,result=result})) => result
                           | SOME(_) => (ErrorMsg.error pos "Expected function but got something else in transDec."; Types.BOTTOM)
                           | NONE => (ErrorMsg.error pos "Undefined function in transDec."; Types.BOTTOM)
                       end
@@ -994,7 +1007,7 @@ struct
         let val varTyp = valOf varTypOpt
           in
             case varTyp of
-              Env.VarEntry({ty=typ}) => {exp=(), ty=typ}
+              Env.VarEntry({access=acc, ty=typ}) => {exp=(), ty=typ}
             | _ => (
                     ErrorMsg.error pos "using function as a var";
                     {exp=(), ty=Types.BOTTOM}

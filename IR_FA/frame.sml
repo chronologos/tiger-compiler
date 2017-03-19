@@ -1,9 +1,9 @@
 structure MipsFrame :> FRAME =
 struct
+  datatype access = InFrame of int | InReg of Temp.temp
   type frame = {name:Temp.label, formals:access list, fpMaxOffset:int ref}
-  type access = InFrame of int | InReg of Temp.temp
 
-  fun newFrame ({name=label, formals=bools}) =
+  fun newFrame ({name=label:Temp.label, formals=bools: bool list}) =
     let
         val maxOffset = ref 0
         (* assume all bools are true for simplicity *)
@@ -12,29 +12,33 @@ struct
             val offset = !maxOffset
           in
             maxOffset := offset-4;
-            offset::accessList
+            InFrame(offset)::accessList
           end
         val access = foldr foldFn [] bools
         val offset = ref 0
-        val offset := !maxOffset
     in
-        {name=label, formals=access,fpMaxOffset=offset}
+        offset := !maxOffset;
+        let
+            val ret:frame = {name=label, formals=access,fpMaxOffset=offset}
+        in
+            ret
+        end
     end
 
-  fun name ({name=label, formals=list, fpMaxOffset=offst}) = name
+  fun name ({name=label, formals=list, fpMaxOffset=offst}) = label
 
   fun formals ({name=label, formals=list, fpMaxOffset=offst}) = list
 
-  fun allocLocal ({name=label, formals=list,fpMaxOffset=offset}) =
+  fun allocLocal ({name=label:Temp.label, formals=list:access list,fpMaxOffset=offset: int ref}) =
     let
       fun allocLocalBool ecp =
         if ecp
         then (
           offset := !offset-4;
-          !offset
+          InFrame(!offset)
         )
         else (
-          Temp.newtemp()
+          InReg(Temp.newtemp())
         )
     in
       allocLocalBool

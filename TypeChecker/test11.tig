@@ -1,4 +1,5 @@
 let var x : int := 5
+    function harryPotter (x:int):int = x 
     function z (y:int): int = y
 in
      z("hi");
