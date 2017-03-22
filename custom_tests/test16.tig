@@ -1,0 +1,10 @@
+let 
+    type intlist = {hd:int, tl:intlist}
+    
+    type intlist2 = {hd:int, tl:intlist}
+
+    var x:intlist := intlist{hd=0,tl=nil}
+    var y:intlist2 := intlist2{hd=0,tl=nil}
+in 
+   x.tl := y 
+end

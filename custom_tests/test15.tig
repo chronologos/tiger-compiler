@@ -1,0 +1,8 @@
+let type a = {A:int}
+    var x : a := a{A=5}
+in 
+    1+1;
+    x.A + 3;
+    x.B;
+    x.A + "hi"
+end

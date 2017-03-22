@@ -1,0 +1,8 @@
+let var x : int := 5
+    function z (y:string): int = y
+in
+     1+1;
+     1+2;
+     1+3
+end
+    

@@ -1,0 +1,7 @@
+let 
+    type intarray = array of int
+    type stringarray = array of string
+    var a : stringarray := stringarray [1] of "af"
+in
+    a
+end

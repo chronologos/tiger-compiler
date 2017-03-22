@@ -1,0 +1,10 @@
+let var x : int := 5
+    in
+    (if "hi" then 1 else 0;
+    if 1 then "hi" else 5;
+    if 1 then 3 else 2;
+    if "booya" then 4;
+    if 1 then 3
+    )
+end
+    

@@ -1,0 +1,12 @@
+let var x : int := 5
+    function harryPotter (x:int):int = x 
+    function z (y:int): int = y
+in
+     z("hi");
+     z(1);
+     2 + z(5);
+     "hi" + z(3);
+     1+1;
+     1+2;
+     1+3
+end
