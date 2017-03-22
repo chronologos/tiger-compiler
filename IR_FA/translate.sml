@@ -12,6 +12,7 @@ struct
   exception Translate
 
   val debug = false
+  val k = 4
   val currentLevel = ref 0
   val outermost = 0
   val outermostFrame = SOME(Frame.newFrame({name=Temp.newlabel(), formals=[]}))
@@ -42,7 +43,20 @@ struct
   fun newLevel ({parent=lev, name=label, formals=formals}) =
     let
         val nextLevel = !currentLevel+1
-        val nextFrame = Frame.newFrame({name=label, formals=formals})
+        val parentFrameOpt = H.find frameTable lev
+        val nextFrame = if List.length(formals) <= k
+                        then Frame.newFrame({name=label, kFormals=formals, moreFormals=[]})
+                        else  case parentFrameOpt of
+                                SOME(parentFrame) => (
+                                  let
+                                    val moreFormals = List.drop(formals,k)
+                                    val foldFormalsFn (bool,accessList) =
+                                        (Frame.allocLocal parentFrame true) :: accessList
+                                    val accessMoreFormals = List.drop(foldr foldFormalsFn [] kFormals@moreFormals,k)
+                                  in
+                                    Frame.newFrame({name=label, kFormals=formals, moreFormals=accessMoreFormals})
+                                )
+                              | NONE => (ErrorMsg.error 0 "[ TRANSLATE ] Parent frame at level "^levelToString(lev)^" not found.\n"; [])
     in
         currentLevel := nextLevel;
         H.insert frameTable (nextLevel,nextFrame);
