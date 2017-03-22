@@ -15,7 +15,7 @@ struct
   val k = 4
   val currentLevel = ref 0
   val outermost = 0
-  val outermostFrame = SOME(Frame.newFrame({name=Temp.newlabel(), formals=[]}))
+  val outermostFrame = SOME(Frame.newFrame({name=Temp.newlabel(), kFormals=[], moreFormals=[]}))
   val sizeHintFrameTable = 16
   val sizeHintLevelTable = 128
   val frameTable : (int,Frame.frame) H.hash_table =
@@ -50,13 +50,14 @@ struct
                                 SOME(parentFrame) => (
                                   let
                                     val moreFormals = List.drop(formals,k)
-                                    val foldFormalsFn (bool,accessList) =
+                                    fun foldFormalsFn (bool,accessList) =
                                         (Frame.allocLocal parentFrame true) :: accessList
-                                    val accessMoreFormals = List.drop(foldr foldFormalsFn [] kFormals@moreFormals,k)
+                                    val accessMoreFormals = List.drop(foldr foldFormalsFn [] formals,k)
                                   in
-                                    Frame.newFrame({name=label, kFormals=formals, moreFormals=accessMoreFormals})
+                                    Frame.newFrame({name=label, kFormals=List.take(formals,k), moreFormals=accessMoreFormals})
+                                  end
                                 )
-                              | NONE => (ErrorMsg.error 0 "[ TRANSLATE ] Parent frame at level "^levelToString(lev)^" not found.\n"; [])
+                              | NONE => (ErrorMsg.error 0 ("[ TRANSLATE ] Parent frame at level "^levelToString(lev)^" not found.\n"); Frame.newFrame({name=label,kFormals=[],moreFormals=[]}))
     in
         currentLevel := nextLevel;
         H.insert frameTable (nextLevel,nextFrame);
@@ -95,7 +96,7 @@ struct
             )
           | NONE => (
             ErrorMsg.error 0 ("Frame at level "^Int.toString(level)^" does not exist.\n");
-            (0-1,Frame.allocLocal(Frame.newFrame({name=Temp.newlabel(), formals=[]}))(ecp) )
+            (0-1,Frame.allocLocal(Frame.newFrame({name=Temp.newlabel(), kFormals=[], moreFormals=[]}))(ecp) )
             )
 
     in

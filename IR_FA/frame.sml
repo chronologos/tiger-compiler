@@ -24,7 +24,7 @@ struct
     in
         offset := !maxOffset;
         let
-            val ret:frame = {name=label, kFormals=access,fpMaxOffset=offset,m moreFormals=moreFormals}
+            val ret:frame = {name=label, kFormals=access,fpMaxOffset=offset,moreFormals=moreFormals}
         in
             ret
         end
@@ -32,7 +32,7 @@ struct
 
   fun name ({name=label, kFormals=list, fpMaxOffset=offst, moreFormals=moreFormals}) = label
 
-  fun formals ({name=label, kFormals=list, moreFormals=moreFormals, fpMaxOffset=offst}) = kFormals @ moreFormals
+  fun formals ({name=label, kFormals=kFormals, moreFormals=moreFormals, fpMaxOffset=offst}) = kFormals @ moreFormals
 
   fun allocLocal ({name=label:Temp.label, kFormals=list:access list, moreFormals=moreFormals, fpMaxOffset=offset: int ref}) =
     let
