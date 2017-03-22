@@ -11,7 +11,7 @@ struct
 
   exception Translate
 
-  val debug = true
+  val debug = false
   val currentLevel = ref 0
   val outermost = 0
   val outermostFrame = SOME(Frame.newFrame({name=Temp.newlabel(), formals=[]}))

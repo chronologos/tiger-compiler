@@ -610,7 +610,7 @@ struct
 
                           let
                               (*val venv = enterscope(venv)*)
-                              val venv = Symbol.enter(venv, var, Env.VarEntry({access=Translate.allocLocal(forLoopLevel)(true),ty=Types.INT}))
+                              val venv = Symbol.enter(venv, var, Env.VarEntry({access=Translate.allocLocal(forLoopLevel)(!escape),ty=Types.INT}))
                           in
                              (let val bodyType = #ty (transExp(venv, tenv, body, forLoopLevel))
                               in
@@ -773,7 +773,7 @@ struct
           )
         end
 
-        | Absyn.VarDec({name, escape, typ, init, pos}) => (* how to handle escape? what is it even??? *)
+        | Absyn.VarDec({name, escape:bool ref, typ, init, pos}) => (* how to handle escape? what is it even??? *)
           (* if isSome typ then need to do type checking of init against typ, else just save the type of init for var name in venv*)
            if isSome typ then
             (
@@ -787,7 +787,7 @@ struct
               | (_) =>
                 (
                     let val actualType = (#ty (transExp(venv, tenv, init, level)))
-                      val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=actualType})
+                      val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
                     in (
                       (* begin of case *)
                     case (actualType, expectedType) of (Types.ARRAY(sym, reff),Types.ARRAY(sym2, reff2)) => (
@@ -844,7 +844,7 @@ struct
              ) else (
               (* typ is NONE, so nothing to check, just put actualType of init in table *)
               let val actualType = (#ty (transExp(venv, tenv, init, level)))
-                  val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=actualType})
+                  val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
               in
                   {venv = Symbol.enter(venv, name, newVarEntry), tenv = tenv}
               end
@@ -1085,6 +1085,6 @@ struct
   (* end all mutually recursive function defs and start in block of transProg *)
   in
     transExp(venv,tenv, e, Translate.outermost);
-    print "Hi Tamara! Jobs Done! \n"
+    ()
   end
 end
