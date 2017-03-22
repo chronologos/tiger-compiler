@@ -31,6 +31,10 @@ struct
 		      (name,i)
 		  end
 *)
+  fun debugPrint(msg:string, pos:int) =
+    if debug
+    then ErrorMsg.error pos msg
+    else ()
 
   fun levelToString level =
     Int.toString(level)
@@ -71,15 +75,17 @@ struct
         val frame = if level=outermost then outermostFrame else  H.find frameTable level
         fun labelAccess ecp =
           case frame of
-            SOME(f) => (level, Frame.allocLocal f ecp)
+            SOME(f) => (
+              debugPrint("Translate.allocLocal called with escape "^Bool.toString(ecp)^" at level "^Int.toString(level)^".\n",0);
+              (level, Frame.allocLocal f ecp)
+            )
           | NONE => (
             ErrorMsg.error 0 ("Frame at level "^Int.toString(level)^" does not exist.\n");
             (0-1,Frame.allocLocal(Frame.newFrame({name=Temp.newlabel(), formals=[]}))(ecp) )
             )
+
     in
-      if debug
-      then print("Translate.allocLocal "^Int.toString(level)^" called"^".\n")
-      else ();
+      debugPrint("Translate.allocLocal at level "^Int.toString(level)^" called"^".\n",0);
       labelAccess
     end
 

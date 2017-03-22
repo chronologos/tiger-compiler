@@ -3,7 +3,7 @@ struct
   type depth = int
   type escEnv = (depth * bool ref) Symbol.table
 
-  val debug = true
+  val debug = false
 
   fun debugPrint(msg:string, pos:int) =
     if debug

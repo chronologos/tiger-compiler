@@ -69,6 +69,10 @@ struct
   val breakable = ref 0;
   val debug = false;
 
+  fun debugPrint(msg:string, pos:int) =
+    if debug
+    then ErrorMsg.error pos msg
+    else ()
 
   fun getTypeOrBottom(table, sym) =
     let
@@ -383,6 +387,7 @@ struct
           | Absyn.ArrayExp({typ=t, size=s, init=i, pos=p}) => (
             (* check size is int *)
             let val sizeTyp = #ty (transExp(venv,tenv,s,level))
+                val dummy = debugPrint("ArrayExp at level "^Translate.levelToString(level)^".\n",p)
             in
               case sizeTyp of
                 Types.INT => (
@@ -410,6 +415,7 @@ struct
           | Absyn.VarExp(somevar) =>
             ( case somevar of Absyn.SimpleVar(sym,pos) =>
               let
+                  val dummy = debugPrint("varExp at level "^Translate.levelToString(level)^".\n",pos)
                   val somety = Symbol.look(venv, sym)
               in
                   case somety of
@@ -486,6 +492,7 @@ struct
             let
               fun first  (a, _) = a
               fun second (_, b) = b
+              val dummy = debugPrint("LetExp at level "^Translate.levelToString(level)^".\n",pos)
               val myLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
               val res = foldl (fn (dec, env) => transDec(#venv env, #tenv env,
               dec,myLevel)) {venv=venv, tenv=tenv} decs
@@ -498,6 +505,7 @@ struct
           | Absyn.SeqExp(xs) => let
             fun first  (a, _) = a
             fun second (_, b) = b
+            val dummy = debugPrint("SeqExp at level "^Translate.levelToString(level)^".\n",0)
             val res: {exp:unit, ty:Types.ty} = foldl (fn (x, y) => transExp(venv, tenv, first x, level)) {exp=(), ty=Types.BOTTOM} xs
             in
               (*print("in seqexp\n");*)
@@ -505,7 +513,6 @@ struct
             end
           | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) =>
             (* get the type of test, must be int *)
-
             if (not (tyEqualTo(#ty (transExp(venv, tenv, test, level)), Types.INT)))
             then
             (
@@ -546,6 +553,7 @@ struct
           | Absyn.WhileExp({test: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* check test is of type int*)
             (let
+              val dummy = debugPrint("WhileExp at level "^Translate.levelToString(level)^".\n",pos)
               val testType = #ty (transExp(venv, tenv, test, level))
             in
               (
@@ -585,6 +593,7 @@ struct
             ( let
                 val loType = #ty (transExp(venv, tenv, lo, level))
                 val forLoopLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
+                val dumm = debugPrint("forExp at level "^Translate.levelToString(forLoopLevel)^"\n",pos)
               in
                 (if not (tyEqualTo(loType, Types.INT))
                  then (
@@ -611,6 +620,7 @@ struct
                           let
                               (*val venv = enterscope(venv)*)
                               val venv = Symbol.enter(venv, var, Env.VarEntry({access=Translate.allocLocal(forLoopLevel)(!escape),ty=Types.INT}))
+                              val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(var)^" at level "^Translate.levelToString(forLoopLevel)^".\n",pos)
                           in
                              (let val bodyType = #ty (transExp(venv, tenv, body, forLoopLevel))
                               in
@@ -788,6 +798,8 @@ struct
                 (
                     let val actualType = (#ty (transExp(venv, tenv, init, level)))
                       val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
+                      val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
+
                     in (
                       (* begin of case *)
                     case (actualType, expectedType) of (Types.ARRAY(sym, reff),Types.ARRAY(sym2, reff2)) => (
@@ -845,6 +857,8 @@ struct
               (* typ is NONE, so nothing to check, just put actualType of init in table *)
               let val actualType = (#ty (transExp(venv, tenv, init, level)))
                   val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
+                  val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
+
               in
                   {venv = Symbol.enter(venv, name, newVarEntry), tenv = tenv}
               end
