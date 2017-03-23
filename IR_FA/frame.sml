@@ -3,7 +3,7 @@ struct
   structure T = Tree
   datatype access = InFrame of int | InReg of Temp.temp
   type frame = {name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref}
-  val FP = Temp.newlabel()
+  val FP = Temp.newtemp()
   val wordSize = 4
 
   fun exp (a) (tExp) =

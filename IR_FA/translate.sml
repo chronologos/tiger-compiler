@@ -63,8 +63,9 @@ struct
     end
 
   fun seq(stmList) =
-    let foldStmFn (stm, seqStm) = T.SEQ (stm,seqStm)
-    in  foldl foldStmFn List.hd(stmList) List.drop(stmList,1)
+    let
+        fun foldStmFn (stm, seqStm) = T.SEQ (stm,seqStm)
+    in  foldl foldStmFn (List.hd(stmList)) (List.drop(stmList,1))
     end
 
   fun unEx (Ex e) = e
@@ -82,7 +83,7 @@ struct
 
   fun unNx (Ex e) = T.EXP e
     | unNx (Cx genstm) =
-        let l1 = Temp.newlabel()
+        let val l1 = Temp.newlabel()
         in  seq([genstm(l1,l1),
                  T.LABEL l1])
         end
@@ -90,25 +91,28 @@ struct
 
   fun unCx (Cx genstm) = genstm
     | unCx (Ex e) =
-        case e of
+        (case e of
           T.CONST 1 =>
-            fn (l1,l2) => T.JUMP(T.NAME l1, [l1])
+            let fun genstm (l1,l2) = T.JUMP(T.NAME l1, [l1])
+            in genstm
+            end
         | T.CONST 0 =>
-            fn (l1,l2) => T.JUMP(T.NAME l2, [l2])
+            let fun genstm(l1,l2) = T.JUMP(T.NAME l2, [l2])
+            in genstm
+            end
         | (_) =>
-        let val t = Temp.newlabel()
-            val f = Temp.newlabel()
-            val z = T.CONST 0
-            fun cxFn (l1,l2) =
+        (let val t = Temp.newlabel()
+             val f = Temp.newlabel()
+             val z = T.CONST 0
+             fun genstm (l1,l2) =
               seq([T.CJUMP(T.EQ,z,e,t,f),
                    T.LABEL t,
-                   T.JUMP (T.NAME l1, [l1])
+                   T.JUMP (T.NAME l1, [l1]),
                    T.LABEL f,
                    T.JUMP (T.NAME l2, [l2])
                   ])
-        in
-            cxFn
-        end
+        in genstm
+        end))
     | unCx (Nx s) =
         let val t = Temp.newlabel()
             (*  should be syntax error to unCx an Nx *)

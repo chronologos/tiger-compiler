@@ -1,4 +1,3 @@
-(* function parameters access not set correctly *)
 structure Env :> ENV =
 struct
   type access = int

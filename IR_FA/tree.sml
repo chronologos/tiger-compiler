@@ -1,4 +1,4 @@
-signature TREE = 
+signature TREE =
 sig
   type label = Temp.label
   type size
@@ -54,4 +54,7 @@ datatype stm = SEQ of stm * stm
       and relop = EQ | NE | LT | GT | LE | GE
 	        | ULT | ULE | UGT | UGE
 
+fun notRel r:relop = r
+
+fun commute r:relop = r
 end
