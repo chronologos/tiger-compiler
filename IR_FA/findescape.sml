@@ -98,7 +98,7 @@ struct
       | Absyn.LetExp({decs=decList, body=bodyexp, pos=pos}) => (
         (* traverseDec on decList, use new env to check bodyexp *)
         let
-          val letDepth = d+1
+          val letDepth = d
           val letBodyEnv = traverseDecs(env,letDepth,decList)
         in
           traverseExp(letBodyEnv,letDepth,bodyexp)
@@ -111,7 +111,7 @@ struct
         )
       | Absyn.ForExp({var=varSym,escape=ecpRef,lo=loExp,hi=hiExp,body=bodyExp,pos=pos}) => (
           let
-            val forDepth = d+1
+            val forDepth = d
             val forEnv = Symbol.enter(env,varSym,(forDepth,ecpRef))
           in
             ecpRef := false;

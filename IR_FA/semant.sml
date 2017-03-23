@@ -492,7 +492,7 @@ struct
               fun first  (a, _) = a
               fun second (_, b) = b
               val dummy = debugPrint("LetExp at level "^Translate.levelToString(level)^".\n",pos)
-              val myLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
+              val myLevel = level
               val res = foldl (fn (dec, env) => transDec(#venv env, #tenv env,
               dec,myLevel)) {venv=venv, tenv=tenv} decs
             in
@@ -591,7 +591,7 @@ struct
             (* First, check exp1 is Types.INT*)
             ( let
                 val loType = #ty (transExp(venv, tenv, lo, level))
-                val forLoopLevel = Translate.newLevel({parent=level, name=Temp.newlabel(), formals=[]})
+                val forLoopLevel = level
                 val dumm = debugPrint("forExp at level "^Translate.levelToString(forLoopLevel)^"\n",pos)
               in
                 (if not (tyEqualTo(loType, Types.INT))
