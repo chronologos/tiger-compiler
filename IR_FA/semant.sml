@@ -445,7 +445,7 @@ struct
                   let
                     val expType = (#ty (transExp(venv, tenv, exp, level)))
                   in
-                    if tyEqualTo(expType, Types.INT) then {exp=(),ty=typ()} else
+                    if tyEqualTo(expType, Types.INT) then {exp=(),ty=typ} else
                       (ErrorMsg.error pos "Array index must be integer.";
                       {exp=(), ty = Types.BOTTOM})
                   end

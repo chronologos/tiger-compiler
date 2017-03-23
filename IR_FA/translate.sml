@@ -39,8 +39,24 @@ struct
 		      (name,i)
 		  end
 *)
+  (* move -1 to register as return val *)
+  fun nilExp():T.exp =
+    let val tmp = Temp.newtemp()
+    in  T.ESEQ(T.MOVE(T.TEMP tmp, T.CONST -1), T.TEMP tmp)
+    end
+
+  fun intExp(intExp:Absyn.IntExp) =
+    let val tmp = Temp.newtemp()
+        val const = case intExp of Absyn.IntExp constant => constant
+    in  T.ESEQ(T.MOVE(T.TEMP tmp, T.CONST const),tmp)
+    end
+
+  fun stringExp()
+
+  fun opExp(leftExp:T.exp, rightExp:T.rightExp, )
+
   (* a=access of var, l=level of function in which var is used *)
-  fun simpleVar(a:access,l:level) =
+  fun simpleVar(a:access,l:level):T.exp =
     let
         val (dLevInt,fAccess) =  case a of
                                   ((levInt, levRef),frameAccess) => (levInt,frameAccess)

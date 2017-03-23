@@ -4,6 +4,7 @@ struct
   datatype access = InFrame of int | InReg of Temp.temp
   type frame = {name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref}
   val FP = Temp.newtemp()
+  val SP = Temp.newtemp()
   val wordSize = 4
 
   fun exp (a) (tExp) =
@@ -30,12 +31,18 @@ struct
           ) else (
             InReg(Temp.newtemp())::accessList
           )
+        fun foldMoreFormals (InFrame(accInt),accessList) =
+          case accessList of
+              [] => InFrame(wordSize)::[]
+            | (InFrame(a)::l) => InFrame(a+wordSize)::accessList
+
         val access = foldr foldFn [] (true::bools)
         val offset = ref 0
+        val moreFormalsOfsetCurrFrame = foldr foldMoreFormals [] moreFormals
     in
         offset := !maxOffset;
         let
-            val ret:frame = {name=label, kFormals=access,fpMaxOffset=offset,moreFormals=moreFormals}
+            val ret:frame = {name=label, kFormals=access,fpMaxOffset=offset,moreFormals=moreFormalsOfsetCurrFrame}
         in
             ret
         end
