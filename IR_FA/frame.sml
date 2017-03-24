@@ -5,8 +5,13 @@ struct
   type frame = {name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref}
   val FP = Temp.newtemp()
   val SP = Temp.newtemp()
+  val RV = Temp.newtemp()
   val wordSize = 4
-
+  datatype frag =  PROC of {body:Tree.stm, frame:frame}
+                   | STRING of Temp.label * string
+       
+  fun procEntryExit1 (frame,body) = body     
+             
   fun exp (a) (tExp) =
     case a of
       InFrame(k) =>

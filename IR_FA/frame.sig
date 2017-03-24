@@ -6,6 +6,10 @@ sig type frame
     val formals: frame -> access list
     val allocLocal: frame -> bool -> access
     val FP : Temp.temp
+    datatype frag =  PROC of {body:Tree.stm, frame:frame}
+                   | STRING of Temp.label * string
     val wordSize : int
-    val exp : access -> Tree.exp -> Tree.exp (* first Tree.exp is adress of the stack frame that the access lives in *)
+    val RV : Temp.temp
+    val procEntryExit1 : frame * Tree.stm -> Tree.stm
+    val exp : access -> Tree.exp -> Tree.exp (* first Tree.exp is address of the stack frame that the access lives in *)
 end

@@ -307,20 +307,20 @@ struct
 
   fun transProg(e) =
     let
-      fun transOpExp(venv, tenv, exp, level) =
+      fun transOpExp(venv, tenv, exp, level, looplabel) =
         case exp of
           (Absyn.OpExp({left,oper=Absyn.PlusOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.MinusOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.TimesOp,right,pos}) |
           Absyn.OpExp({left,oper=Absyn.DivideOp,right,pos})) =>
             let
-              val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
-              val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
+              val {exp=expLeft, ty=tyleft} = transExp(venv,tenv,left,level,looplabel)
+              val {exp=expRight, ty=tyright} = transExp(venv,tenv,right,level,looplabel)
             in (
-              case tyleft of Types.INT => {exp=(),ty=Types.INT}
-              | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM});
-              case tyright of Types.INT => {exp=(),ty=Types.INT}
-              | (_) => (ErrorMsg.error pos "integer required"; {exp=(),ty=Types.BOTTOM})
+              case (tyLeft, tyRight) of (Types.INT, Types.INT) => (
+                {exp=Translate.opExp(expLeft,expRight,oper),ty=Types.INT}
+              )
+              | (_, _) => (ErrorMsg.error pos "Integer required in OpExp."; {exp=Translate.transError(), ty=Types.BOTTOM})
             )
             end
         | (Absyn.OpExp({left, oper=Absyn.GeOp, right,pos}) | Absyn.OpExp({left,
@@ -329,70 +329,74 @@ struct
         Absyn.OpExp({left,
         oper=Absyn.LtOp, right,pos})) =>
           let
-            val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
-            val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
+            val {exp=expLeft, ty=tyLeft} = transExp(venv,tenv,left,level,looplabel)
+            val {exp=expRight, ty=tyRight} = transExp(venv,tenv,right,level,looplabel)
           in
-            case (tyleft, tyright) of ((Types.INT, Types.INT) | (Types.STRING, Types.STRING)) => ({exp=(),ty=Types.INT})
-            | (_,_) => (ErrorMsg.error pos "Both operands must be either int or string"; {exp=(),ty=Types.BOTTOM})
+            case (tyLeft, tyRight) of ((Types.INT, Types.INT) =>
+              {exp=Translate.opExp(expLeft,expRight,oper),ty=Types.INT}
+            | (Types.STRING, Types.STRING)) => {exp=Translate.strCmp(expLeft,expRight,oper,level),ty=Types.INT}
+            | (_,_) => (ErrorMsg.error pos "Both operands must be either int or string"; {exp=Translate.transError(), ty=Types.BOTTOM})
           end
 
         |(Absyn.OpExp({left, oper=Absyn.EqOp, right,pos}) | Absyn.OpExp({left,
           oper=Absyn.NeqOp, right,pos})) =>
           let
-            val {exp=_, ty=tyleft} = transExp(venv,tenv,left,level)
-            val {exp=_, ty=tyright} = transExp(venv,tenv,right,level)
+            val {exp=expLeft, ty=tyLeft} = transExp(venv,tenv,left,level,looplabel)
+            val {exp=expRight, ty=tyRight} = transExp(venv,tenv,right,level,looplabel)
           in
-            case (tyleft, tyright) of ((Types.STRING, Types.STRING)|
-            (Types.INT, Types.INT)) => {exp=(), ty=Types.INT}
-            | (Types.RECORD(_ , x),Types.RECORD(_, y))  => if x = y then
-              {exp=(), ty=Types.INT} else (
-                ErrorMsg.error pos "Both operands must be of the same type";
-                {exp=(), ty=Types.BOTTOM}
+            case (tyLeft, tyRight) of ((Types.STRING, Types.STRING) => {exp=Translate.strCmp(expLeft,expRight,oper,level),ty=Types.INT}
+            | (Types.INT, Types.INT)) => {exp=Translate.opExp(expLeft,expRight,oper), ty=Types.INT}
+            | (Types.RECORD(_ , x),Types.RECORD(_, y))  => 
+              if x = y then
+                {exp=Translate.refCompare(expLeft,expRight), ty=Types.INT} 
+              else (
+                ErrorMsg.error pos "Both operands must be of the same type.";
+                {exp=Translate.transError(), ty=Types.BOTTOM}
               )
             | (Types.ARRAY(_ , x), Types.ARRAY(_,y))=> if x = y then {
-              exp=(), ty=Types.INT} else (
+              exp=Translate.refCompare(expLeft,expRight), ty=Types.INT} else (
               ErrorMsg.error pos "Both operands must be of the same type";
-              {exp=(), ty=Types.BOTTOM}
+              {exp=Translate.transError(), ty=Types.BOTTOM}
              )
             | ((Types.NIL, Types.RECORD(_, x)) | (Types.RECORD(_, x), Types.NIL))
-             => {exp=(), ty=Types.INT}
+             => {exp=Translate.refCompare(leftExp,rightExp), ty=Types.INT}
             | (_, _) =>  (
               ErrorMsg.error pos "Both operands must be of the same type";
-              {exp=(), ty=Types.BOTTOM} (*TODO*)
+              {exp=Translate.transError(), ty=Types.BOTTOM} (*TODO*)
             )
           end
-        | (_) => (ErrorMsg.error 0 "Unmatched OpExp at unkwown pos."; {exp=(),ty = Types.INT})
+        | (_) => (ErrorMsg.error 0 "Unmatched OpExp at unkwown pos."; {exp=Translate.transError(),ty = Types.INT})
 
 
-      and transExp(venv:venv, tenv:tenv, exp, level): {exp:unit, ty:Types.ty} = (
+      and transExp(venv:venv, tenv:tenv, exp, level, looplabel): {exp:Translate.exp, ty:Types.ty} = (
         case exp of Absyn.IntExp(_) => (
           if debug
           then print("IntExp at level "^Translate.levelToString(level)^".\n")
           else ();
-          {exp=(), ty=Types.INT}
+          {exp=Translate.intExp(exp), ty=Types.INT}
         )
           | Absyn.NilExp => (if debug
           then print("NilExp at level "^Translate.levelToString(level)^".\n")
-          else ();{exp=(),ty=Types.NIL})
+          else ();{exp=Translate.transError(), ty=Types.NIL})
           | Absyn.BreakExp(pos) => (if debug
           then print("BreakExp at level "^Translate.levelToString(level)^".\n")
-          else (); if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=(),ty=Types.BOTTOM}) else {exp=(),ty=Types.BOTTOM})
+          else (); if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=Translate.transError(),ty=Types.BOTTOM}) else {exp=Translate.transError(),ty=Types.BOTTOM})
           | Absyn.StringExp(_) => (if debug
           then print("StringExp at level "^Translate.levelToString(level)^".\n")
-          else ();{exp=(),ty=Types.STRING})
+          else ();{exp=Translate.stringExp(exp),ty=Types.STRING})
           | Absyn.OpExp(_) => (if debug
           then print("OpExp at level "^Translate.levelToString(level)^".\n")
           else ();transOpExp(venv, tenv, exp,level))
           | Absyn.ArrayExp({typ=t, size=s, init=i, pos=p}) => (
             (* check size is int *)
-            let val sizeTyp = #ty (transExp(venv,tenv,s,level))
+            let val sizeTyp = #ty (transExp(venv,tenv,s,level,looplabel))
                 val dummy = debugPrint("ArrayExp at level "^Translate.levelToString(level)^".\n",p)
             in
               case sizeTyp of
                 Types.INT => (
                   (* check init same type as t *)
                   let
-                    val initTyp = (#ty (transExp(venv,tenv,i,level)))
+                    val initTyp = (#ty (transExp(venv,tenv,i,level,looplabel)))
                     val tTyp = getTy(tenv, t, p)
                   in
                     case tTyp of Types.ARRAY(array_func, _) =>
@@ -400,14 +404,14 @@ struct
                         {exp=(), ty=tTyp}
                       ) else (
                         ErrorMsg.error p "Type mismatch in arrayexp.";
-                        {exp=(), ty=Types.BOTTOM}
+                        {exp=Translate.transError(), ty=Types.BOTTOM}
                       )
-                    | (_) => (ErrorMsg.error p "Tried to initialize array with non array type."; {exp=(), ty=Types.BOTTOM})
+                    | (_) => (ErrorMsg.error p "Tried to initialize array with non array type."; {exp=Translate.transError(), ty=Types.BOTTOM})
                   end
                   )
                 |(_) => (
                   ErrorMsg.error 0 "Array size must be an int.";
-                  {exp=(), ty=Types.BOTTOM}
+                  {exp=Translate.transError(), ty=Types.BOTTOM}
                 )
           end
           )
@@ -420,20 +424,20 @@ struct
                   case somety of
                     SOME(Env.FunEntry(_)) => (
                     ErrorMsg.error pos "Fun not found in venv.";
-                    {exp=(),ty=Types.BOTTOM}
+                    {exp=Translate.transError(),ty=Types.BOTTOM}
                     )
                   | SOME(Env.VarEntry({access=acc,ty=ty})) => (
                     {exp=(), ty=ty})
                   | NONE => (
                     ErrorMsg.error pos "Var not found in venv.";
-                    {exp=(),ty=Types.BOTTOM}
+                    {exp=Translate.transError(),ty=Types.BOTTOM}
                   )
 
               end
 
             | Absyn.SubscriptVar(var, exp, pos) => (
               let
-                val varType = (#ty (transVar(venv, tenv, var, level)));
+                val varType = (#ty (transVar(venv, tenv, var, level,looplabel)));
               in  (
                 (* check type of subscript.var *)
                 (* check if its an array type*)
@@ -443,15 +447,15 @@ struct
                   (Types.ARRAY(typ, unique)) =>
                   (* check if exp is int type *)
                   let
-                    val expType = (#ty (transExp(venv, tenv, exp, level)))
+                    val expType = (#ty (transExp(venv, tenv, exp, level,looplabel)))
                   in
                     if tyEqualTo(expType, Types.INT) then {exp=(),ty=typ} else
                       (ErrorMsg.error pos "Array index must be integer.";
-                      {exp=(), ty = Types.BOTTOM})
+                      {exp=Translate.transError(), ty = Types.BOTTOM})
                   end
 
                 | (_) => (ErrorMsg.error pos "SubscriptVar on non array type.";
-                         {exp=(), ty=Types.BOTTOM}
+                         {exp=Translate.transError(), ty=Types.BOTTOM}
                          )
                 )
               end
@@ -471,18 +475,18 @@ struct
                           case found_type of
                               Types.BOTTOM =>
                                 (ErrorMsg.error pos "Field not found in record.";
-                                {exp=(), ty=Types.BOTTOM})
+                                {exp=Translate.transError(), ty=Types.BOTTOM})
 
                           | (_) => {exp=(), ty = found_type}
                         )
                       | NONE => (ErrorMsg.error pos "Field not found in record.";
-                                {exp=(), ty=Types.BOTTOM})
+                                {exp=Translate.transError(), ty=Types.BOTTOM})
                     )
                     end
 
                 | (_) => (
                   ErrorMsg.error pos "Tried to get field on non record type.";
-                  {exp=(), ty=Types.BOTTOM}
+                  {exp=Translate.transError(), ty=Types.BOTTOM}
                 )
               end
           )
@@ -494,39 +498,39 @@ struct
               val dummy = debugPrint("LetExp at level "^Translate.levelToString(level)^".\n",pos)
               val myLevel = level
               val res = foldl (fn (dec, env) => transDec(#venv env, #tenv env,
-              dec,myLevel)) {venv=venv, tenv=tenv} decs
+              dec,myLevel,looplabel)) {venv=venv, tenv=tenv} decs
             in
               (* remember to push (venv, tenv) onto stack *)
               (*print("in letexp\n");*)
-              transExp(#venv res,#tenv res, body, myLevel)
+              transExp(#venv res,#tenv res, body, myLevel,looplabel)
               (** remember to pop from stack **)
             end
           | Absyn.SeqExp(xs) => let
             fun first  (a, _) = a
             fun second (_, b) = b
             val dummy = debugPrint("SeqExp at level "^Translate.levelToString(level)^".\n",0)
-            val res: {exp:unit, ty:Types.ty} = foldl (fn (x, y) => transExp(venv, tenv, first x, level)) {exp=(), ty=Types.BOTTOM} xs
+            val res: {exp:unit, ty:Types.ty} = foldl (fn (x, y) => transExp(venv, tenv, first x, level, looplabel)) {exp=(), ty=Types.BOTTOM} xs
             in
               (*print("in seqexp\n");*)
               res
             end
           | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) =>
             (* get the type of test, must be int *)
-            if (not (tyEqualTo(#ty (transExp(venv, tenv, test, level)), Types.INT)))
+            if (not (tyEqualTo(#ty (transExp(venv, tenv, test, level,looplabel)), Types.INT)))
             then
             (
             ErrorMsg.error pos "test of if-else does not evaluate to int";
-            {exp=(), ty=Types.BOTTOM}
+            {exp=Translate.transError(), ty=Types.BOTTOM}
             )
             else (
               let
-                val thenTyp = transExp(venv, tenv, then', level)
+                val thenTyp = transExp(venv, tenv, then', level, looplabel)
               in
                 if isSome else'
                 then (
 
                   let
-                      val elseType = #ty (transExp(venv, tenv, valOf else', level))
+                      val elseType = #ty (transExp(venv, tenv, valOf else', level, looplabel))
                       val thenType = #ty thenTyp
                   in
                       case (thenType, elseType) of ((Types.RECORD(_), Types.NIL) | (Types.NIL, Types.RECORD(_))) =>
@@ -534,7 +538,7 @@ struct
                       | (_, _) =>
                           if not (tyEqualTo( elseType, thenType)) then (
                             ErrorMsg.error pos "Branches have non-matching types" ;
-                            {exp=(), ty=Types.BOTTOM}
+                            {exp=Translate.transError(), ty=Types.BOTTOM}
                            ) else (
                           thenTyp
                           )
@@ -544,7 +548,7 @@ struct
                   (* check that then' is of UNIT type*)
                 if not (tyEqualTo((#ty thenTyp), Types.UNIT)) then (
                 ErrorMsg.error pos "if-then statements must return unit.";
-                {exp=(), ty=Types.BOTTOM})
+                {exp=Translate.transError(), ty=Types.BOTTOM})
                 else {exp=(), ty=Types.UNIT}
                 )
               end
@@ -553,7 +557,9 @@ struct
             (* check test is of type int*)
             (let
               val dummy = debugPrint("WhileExp at level "^Translate.levelToString(level)^".\n",pos)
-              val testType = #ty (transExp(venv, tenv, test, level))
+              val donelabel = Temp.newlabel()
+              val test' = transExp(venv, tenv, test, level, donelabel)
+              val testType = #ty test' 
             in
               (
               breakable := (!breakable + 1);
@@ -561,19 +567,20 @@ struct
               then
                 (
                   let
-                    val bodyType = #ty (transExp(venv, tenv, body, level))
+                    val body = transExp(venv, tenv, body, level, donelabel)
+                    val bodyType = #ty body
                   in
                     (if not (tyEqualTo(bodyType, Types.UNIT))
                     then
                       (
                         breakable := (!breakable - 1);
                         ErrorMsg.error pos "While expression has non-unit body type\n";
-                        {exp=(), ty=Types.BOTTOM}
+                        {exp=Translate.transError(), ty=Types.BOTTOM}
                       )
                     else
                       (
                       breakable := (!breakable - 1);
-                      {exp=(), ty=Types.UNIT})
+                      {exp=Translate.transWhile(#exp test', #exp body, donelabel), ty=Types.UNIT})
                   )
                   end
                 )
@@ -581,75 +588,67 @@ struct
                 (
                   breakable := (!breakable - 1);
                   ErrorMsg.error pos "While expression test condition has non-int type\n";
-                  {exp=(),ty=Types.BOTTOM}
+                  {exp=Translate.transError(), ty=Types.BOTTOM}
                 )
               )
             end)
 
            | Absyn.ForExp({var: Symbol.symbol, escape: bool ref, lo: Absyn.exp, hi: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* Remember to call enterScope here !!*)
-            (* First, check exp1 is Types.INT*)
-            ( let
-                val loType = #ty (transExp(venv, tenv, lo, level))
-                val forLoopLevel = level
-                val dumm = debugPrint("forExp at level "^Translate.levelToString(forLoopLevel)^"\n",pos)
-              in
-                (if not (tyEqualTo(loType, Types.INT))
-                 then (
-                  ErrorMsg.error pos "ForExp lower bound is not int type";
-                  {exp=(), ty=Types.BOTTOM}
-                  )
-                 else (
-                  (* Check type of hi *)
-                    let
-                       val hiType = #ty (transExp(venv, tenv, hi, level))
-                    in
-                      (if not (tyEqualTo(hiType, Types.INT))
-                       then (
-                        ErrorMsg.error pos "ForExp upper bound is not int type";
-                        {exp=(), ty=Types.BOTTOM}
-                       )
-                       else (
-                          (* Save var in venv *)
-                          (* Rmb to enter scope *)
-
-                          breakable := (!breakable + 1);
-
-
-                          let
-                              (*val venv = enterscope(venv)*)
-                              val venv = Symbol.enter(venv, var, Env.VarEntry({access=Translate.allocLocal(forLoopLevel)(!escape),ty=Types.INT}))
-                              val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(var)^" at level "^Translate.levelToString(forLoopLevel)^".\n",pos)
-                          in
-                             (let val bodyType = #ty (transExp(venv, tenv, body, forLoopLevel))
-                              in
-                              (
-                                if not (tyEqualTo(bodyType, Types.UNIT))
-                                then (
-                                  breakable := (!breakable - 1);
-                                  ErrorMsg.error pos "ForExp body not of UNIT type";
-                                  {exp=(), ty=Types.BOTTOM}
-                                  )
-                                else (
-                                  breakable := (!breakable - 1);
-                                  {exp=(), ty = Types.UNIT}
-                                )
-                              )
-                              end)
-                          end
-                        )
-                      )
-                    end
-                  )
+            let
+              val lo' = transExp(venv, tenv, lo, level,looplabel)
+              val loType = #ty lo'
+              val hi' = transExp(venv, tenv, hi, level,looplabel)
+              val hiType = #ty hi' 
+              val forLoopLevel = level
+              val dumm = debugPrint("forExp at level "^Translate.levelToString(forLoopLevel)^"\n",pos)
+            in
+              if not (tyEqualTo(loType, Types.INT))
+               then (
+                ErrorMsg.error pos "ForExp lower bound is not int type";
+                (* TODO: check, what to put here on error? *)
+                {exp=Translate.transError(), ty=Types.BOTTOM}
                 )
-            end
-            )
-
+               else (
+                if not tyEqualTo(hiType, Types.INT)
+                  then (
+                    ErrorMsg.error pos "ForExp upper bound is not int type";
+                    {exp=Translate.transError(), ty=Types.BOTTOM}
+                   )
+                else (
+                  (* Save var in venv *)
+                  breakable := (!breakable + 1);
+                  let
+                    (*val venv = enterscope(venv)*)
+                    val loopVar = Translate.allocLocal(forLoopLevel)(!escape)
+                    val venv = Symbol.enter(venv, var, Env.VarEntry({access=loopVar,ty=Types.INT}))
+                    val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(var)^" at level "^Translate.levelToString(forLoopLevel)^".\n",pos)
+                  in
+                    let 
+                      val body' = transExp(venv, tenv, body, forLoopLevel,looplabel) 
+                      val bodyType = #ty body'
+                    in
+                      if not (tyEqualTo(bodyType, Types.UNIT))
+                      then (
+                        breakable := (!breakable - 1);
+                        ErrorMsg.error pos "ForExp body not of UNIT type";
+                        {exp=Translate.transError(), ty=Types.BOTTOM}
+                        )
+                      else (
+                        breakable := (!breakable - 1);
+                        {exp=Translate.transFor(loopVar, lo', hi', body'), ty=Types.UNIT}
+                        )
+                    end
+                  end
+                )
+              )
+          end
+            
           | Absyn.CallExp({func:Symbol.symbol, args: Absyn.exp list, pos: Absyn.pos}) =>
             (* Compare type of each exp in exp list against param list of func*)
             let
                 val expectedParamsResultTyOpt = Symbol.look(venv, func)
-                val actualParamsTyList = map (fn(currentExp) => (#ty (transExp(venv, tenv, currentExp, level)))) args
+                val actualParamsTyList = map (fn(currentExp) => (#ty (transExp(venv, tenv, currentExp, level,looplabel)))) args
             in
               if isSome expectedParamsResultTyOpt
               then (
@@ -660,29 +659,29 @@ struct
                     then ({exp=(), ty=resultTy})
                     else (
                       ErrorMsg.error pos "Illegal argument types passed to CallExp.";
-                      {exp=(), ty=Types.BOTTOM}
+                      {exp=Translate.transError(), ty=Types.BOTTOM}
                     )
-                  | (_) => (ErrorMsg.error pos "Non-function used in CallExp.";{exp=(),ty=Types.BOTTOM})
+                  | (_) => (ErrorMsg.error pos "Non-function used in CallExp.";{exp=Translate.transError(),ty=Types.BOTTOM})
                 )
                 end
               ) else (
                 (* function undeclared *)
                 ErrorMsg.error pos "Tried to call undeclared function";
-                {exp=(), ty=Types.BOTTOM}
+                {exp=Translate.transError(), ty=Types.BOTTOM}
               )
           end
 
            | Absyn.AssignExp({var:Absyn.var, exp:Absyn.exp, pos:Absyn.pos}) =>
               (* Call transvar on var, get its type, compare with exp*)
-              let val varTyp = (#ty (transVar(venv, tenv, var, level)))
-                  val expTyp = (#ty (transExp(venv, tenv, exp, level)))
+              let val (varExp,varTyp) = (transVar(venv, tenv, var, level, looplabel))
+                  val (initExp,expTyp) = (transExp(venv, tenv, exp, level,looplabel))
               in
 
-                case (varTyp, expTyp) of (Types.RECORD(_, _), Types.RECORD(_, _)) => if recordTyEqualTo(varTyp, expTyp) then {exp = (), ty = Types.UNIT} else (ErrorMsg.error pos "Yo Noid Record types are different";{exp = (), ty = Types.BOTTOM})
+                case (varTyp, expTyp) of (Types.RECORD(_, _), Types.RECORD(_, _)) => if recordTyEqualTo(varTyp, expTyp) then {exp = (), ty = Types.UNIT} else (ErrorMsg.error pos "Yo Noid Record types are different";{exp = Translate.transError(), ty = Types.BOTTOM})
                 | (Types.ARRAY(_, _), Types.ARRAY(_, _)) => (
-                  if (arrayTyEqualTo(varTyp, expTyp)) then {exp=(),ty=Types.UNIT} else (ErrorMsg.error pos "Array types are different."; {exp=(), ty=Types.BOTTOM})
+                  if (arrayTyEqualTo(varTyp, expTyp)) then {exp=(),ty=Types.UNIT} else (ErrorMsg.error pos "Array types are different."; {exp=Translate.transError(), ty=Types.BOTTOM})
                   )
-                | (Types.RECORD(_,_), Types.NIL) => {exp=(), ty=Types.UNIT}
+                | (Types.RECORD(_,_), Types.NIL) => {exp=Translate.assignExp(varExp,initExp), ty=Types.UNIT}
                 | (t1, t2) => (
                   if not (tyEqualTo(varTyp, expTyp)) then
                   (
@@ -691,9 +690,9 @@ struct
                     printDatatype(expTyp);
                     *)
                     ErrorMsg.error pos "AssignExp lvalue type and exp type don't match";
-                    {exp=(), ty=Types.BOTTOM}
+                    {exp=Translate.transError(), ty=Types.BOTTOM}
                   )
-                  else ({exp=(), ty=Types.UNIT})
+                  else ({exp=Translate.assignExp(varExp,initExp), ty=Types.UNIT})
                 )
 
               end
@@ -703,7 +702,7 @@ struct
                 val found_tup_opt = Symbol.look(tenv, typ)
 
                 val sorted_fields = ListMergeSort.sort (fn(x,y) => Symbol.name(#1 x) > Symbol.name(#1 y)) fields
-                val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x, level)))) sorted_fields
+                val sorted_exp_fields = map (fn x => (#1 x, #ty(transExp(venv, tenv, #2 x, level,looplabel)))) sorted_fields
 
               in(
                 case found_tup_opt of
@@ -719,21 +718,21 @@ struct
                         {exp=(), ty = Types.RECORD(get_fields_func, unique_ref)}
                       ) else (
                         ErrorMsg.error pos "Record creation does not assign value to all fields";
-                        {exp=(), ty = Types.BOTTOM}
+                        {exp=Translate.transError(), ty = Types.BOTTOM}
                       )
                     )
                   end
                   )
                 | (_) => (
                   ErrorMsg.error pos "Unknown record type instantiated";
-                  {exp=(), ty = Types.BOTTOM}
+                  {exp=Translate.transError(), ty = Types.BOTTOM}
                 )
                )
               end
         )
 
       (* Just handle non-recursive tydecs first *)
-      and transDec(venv, tenv, dec, level): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table} =
+      and transDec(venv, tenv, dec, level, looplabel): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table, expList:Translate.exp list} =
         case dec of Absyn.TypeDec(tydecList) =>
           (* add non array/record to tenv; create table symbol=>unit ref for array/record; *)
           let
@@ -782,7 +781,7 @@ struct
           )
         end
 
-        | Absyn.VarDec({name, escape:bool ref, typ, init, pos}) => (* how to handle escape? what is it even??? *)
+        | Absyn.VarDec({name, escape:bool ref, typ, init, pos}) => 
           (* if isSome typ then need to do type checking of init against typ, else just save the type of init for var name in venv*)
            if isSome typ then
             (
@@ -795,7 +794,7 @@ struct
                 )
               | (_) =>
                 (
-                    let val actualType = (#ty (transExp(venv, tenv, init, level)))
+                    let val actualType = (#ty (transExp(venv, tenv, init, level,looplabel)))
                       val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
                       val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
 
@@ -854,7 +853,7 @@ struct
 
              ) else (
               (* typ is NONE, so nothing to check, just put actualType of init in table *)
-              let val actualType = (#ty (transExp(venv, tenv, init, level)))
+              let val actualType = (#ty (transExp(venv, tenv, init, level,looplabel)))
                   val newVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(!escape),ty=actualType})
                   val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
 
@@ -879,7 +878,7 @@ struct
                     (* add parameters to venv *)
                     val funLevel = Translate.newLevel({parent=level,name=Temp.newlabel(),formals=paramsToFormals(params)})
                     val venv = addFunctionParamsVenv(venv,tenv,params,funLevel)
-                    val actualRetType = #ty (transExp(venv, tenv, body, funLevel))
+                    val actualRetType = #ty (transExp(venv, tenv, body, funLevel,looplabel))
                     val expectedReturnType =
                       let
                         (* look up function's return type in venv *)
@@ -1010,7 +1009,7 @@ struct
     end
 
 
-  and transVar(venv:venv, tenv:tenv, var:Absyn.var, level:Translate.level) =
+  and transVar(venv:venv, tenv:tenv, var:Absyn.var, level:Translate.level,looplabel:Temp.label) =
     (*pattern match on Absyn.var*)
     case var of Absyn.SimpleVar(sym, pos) =>
       let val varTypOpt = Symbol.look(venv, sym)
@@ -1020,32 +1019,31 @@ struct
         let val varTyp = valOf varTypOpt
           in
             case varTyp of
-              Env.VarEntry({access=acc, ty=typ}) => {exp=(), ty=typ}
+              Env.VarEntry({access=acc, ty=typ}) => {exp=Translate.simpleVar(acc,level), ty=typ}
             | _ => (
                     ErrorMsg.error pos "using function as a var";
-                    {exp=(), ty=Types.BOTTOM}
+                    {exp=Translate.transError(), ty=Types.BOTTOM}
                    )
           end
         )
         else
           (
            ErrorMsg.error pos "var was not declared";
-           {exp=(), ty=Types.BOTTOM}
+           {exp=Translate.transError(), ty=Types.BOTTOM}
           )
         )
       end
 
 
       | Absyn.FieldVar(var, symbol, pos) =>
-      (* *)
       let
-        val varType = #ty (transVar(venv,tenv,var,level))
+        val (varExp, varType) = transVar(venv,tenv,var,level,looplabel)
       in
         if not (tyEqualTo(varType, Types.RECORD((fn()=>[]), ref())))
         then (
           ErrorMsg.error pos "accessing field of non-fieldVar\n";
           (*{exp=(), ty=Types.NIL} *)
-          {exp=(), ty=Types.BOTTOM}
+          {exp=Translate.transError(), ty=Types.BOTTOM}
         )
         else (
           case varType of
@@ -1062,42 +1060,50 @@ struct
                   NONE => (
                     ErrorMsg.error pos "nonexistent field\n";
                     (* {exp=(), ty=Types.NIL} *)
-                    {exp = (), ty = Types.BOTTOM}
+                    {exp = Translate.transError(), ty = Types.BOTTOM}
                   )
-                  | SOME (sym,typ) => {exp=(),ty=typ}
+                  | SOME (sym,typ) => (
+                    (* find idx of symobol in sorted field list *)
+                    let
+                      fun indexFoldFn ((x,xType),idx) = if x = sym then idx else idx
+                      val idx = foldl indexFoldFn 0 fieldList 
+                    in  
+                      {exp=Translate.fieldVar(varExp,idx),ty=typ}
+                    end
+                  )
               )
               end
-            | (_) => (ErrorMsg.error pos "Non-record base variable for FieldVar"; {exp=(), ty=Types.BOTTOM})
+            | (_) => (ErrorMsg.error pos "Non-record base variable for FieldVar"; {exp=Translate.transError(), ty=Types.BOTTOM})
         )
       end
 
     | Absyn.SubscriptVar(var, exp, pos) =>
       (* check var is array *)
       let
-          val expType = #ty (transExp(venv:venv,tenv:tenv,exp,level))
-          val varType = #ty (transVar(venv:venv,tenv:tenv,var,level))
+          val (subscriptExp,expType) = transExp(venv:venv,tenv:tenv,exp,level,looplabel)
+          val (varExp,varType) = transVar(venv:venv,tenv:tenv,var,level,looplabel)
       in (
          if not (tyEqualTo(expType,Types.INT))
          then (
             ErrorMsg.error pos "Non-integer used as array index.\n";
            (* {exp=(), ty=Types.NIL} *)
-           {exp=(), ty=Types.BOTTOM}
+           {exp=Translate.transError(), ty=Types.BOTTOM}
          )
          else (
             case varType of
                 (* check exp is int *)
-                Types.ARRAY(arrayGetterFn, someref) => {exp=(),ty=arrayGetterFn()}
+                Types.ARRAY(arrayGetterFn, someref) => {exp=Translate.subscriptVar(varExp,subscriptExp),ty=arrayGetterFn()}
               | _ => (
                 ErrorMsg.error pos "subscript var on nonarray type.\n";
                 (* {exp=(), ty=Types.NIL} *)
-                {exp=(), ty=Types.BOTTOM}
+                {exp=Translate.transError(), ty=Types.BOTTOM}
               )
           )
       )
       end
   (* end all mutually recursive function defs and start in block of transProg *)
   in
-    transExp(venv,tenv, e, Translate.outermost);
-    ()
+    transExp(venv,tenv, e, Translate.outermost, Temp.newlabel()); (* you can't break in outer loop so use random label *)
+    Translate.getResult()
   end
 end
