@@ -22,6 +22,5 @@ findescape.sml
 translate.sig
 translate.sml
 printtree.sml
-prabsyn.sml
 $/basis.cm
 $/smlnj-lib.cm

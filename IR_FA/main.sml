@@ -1,11 +1,11 @@
-structure Main : sig val tycheck : string -> MipsFrame.frag list end =
+structure Main : sig val IR : string -> MipsFrame.frag list end =
 struct
   structure TigerLrVals = TigerLrValsFun(structure Token = LrParser.Token)
   structure Lex = TigerLexFun(structure Tokens = TigerLrVals.Tokens)
   structure TigerP = Join(structure ParserData = TigerLrVals.ParserData
   structure Lex=Lex
   structure LrParser = LrParser)
-  fun tycheck filename =
+  fun IR filename =
     let val _ = (ErrorMsg.reset(); ErrorMsg.fileName := filename)
       val file = TextIO.openIn filename
       fun get _ = TextIO.input file
