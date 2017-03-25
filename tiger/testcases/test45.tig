@@ -2,7 +2,11 @@
 let 
 	type rectype = {name:string, id:int}
 
+	var c := 5
+
+
 	var a:= nil
 in
-	a
+		c := nil;
+		a
 end
