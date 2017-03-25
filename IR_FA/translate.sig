@@ -29,10 +29,10 @@ sig
   val funDec : level * Temp.label * exp -> unit 
   val varDecAlloc : access * exp -> exp 
   val transWhile: exp * exp * Temp.label -> exp
-  val transFor: access * exp * exp * exp -> exp
+  val transFor: access * exp * exp * exp * Temp.label -> exp
   val transBreak: Temp.label -> exp
-  val refCompare: exp * exp -> exp 
-  
+  val refCompare: exp * exp * Absyn.oper -> exp 
+  val nilOrUnit: unit -> exp
   val transError: unit -> exp
   val unNx: exp -> Tree.stm  (* TODO: temp *)
   

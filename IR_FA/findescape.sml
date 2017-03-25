@@ -25,6 +25,8 @@ struct
                   debugPrint("Set escape of "^Symbol.name(symbol)^" to true. Var declared depth="^Int.toString(declaredDepth)^" var referenced depth="^Int.toString(d)^".\n",pos)
                   )
                 else (
+                
+                  boolref := false;
                   debugPrint("Set escape of "^Symbol.name(symbol)^" to false. Var declared depth="^Int.toString(declaredDepth)^" var referenced depth="^Int.toString(d)^".\n",pos)
 
                   )
@@ -131,10 +133,20 @@ struct
               (* check initExp using env passed in; add nameSym & depth & ecpRef to create new env *)
               let
                 val newEnv = Symbol.enter(envVar,nameSym,(d,ecpRef))
-              in
-                traverseExp(envVar,d,initExp);
-                ecpRef := false;
-                newEnv
+              in (
+                  if !ecpRef 
+                  then
+                    (debugPrint("[vardec] Escape of "^(Symbol.name(nameSym))^" is true.\n", 0);
+                    ecpRef := false;
+                    newEnv)
+                  else (
+                    debugPrint(("[vardec] Escape of "^(Symbol.name(nameSym))^" is false.\n"), 0);
+                    traverseExp(envVar,d,initExp);
+                    ecpRef := false;
+                    debugPrint(("set escape of "^Symbol.name(nameSym)^" to false.\n"),0);
+                    newEnv
+                  )
+              )
               end
           )
         | Absyn.FunctionDec(fundecList) => (
@@ -147,6 +159,7 @@ struct
                         fun foldFnParamsFn (field, paramEnv) =
                           case field of
                             {name=namesym,escape=ecpRef,typ=typ,pos=pos} => (
+                                ecpRef := false;
                                 Symbol.enter(paramEnv,namesym,(d+1,ecpRef))
                             )
                       in
@@ -163,7 +176,6 @@ struct
       foldl foldDecsFn env s
     end
 
-  fun findEscape(prog:Absyn.exp):unit =
-      traverseExp(Symbol.empty, 0, prog)
+  fun findEscape(prog:Absyn.exp):unit = traverseExp(Symbol.empty, 0, prog)
 
 end

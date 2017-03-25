@@ -154,7 +154,9 @@ struct
 
   fun paramsToFormals(params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list) =
     let
-      fun foldFn (p,list) = true::list
+      fun foldFn (p,list) = 
+        case p of
+          {name=name,escape=ecp, typ=typ, pos=pos} => (debugPrint("escape of formal "^Symbol.name(name)^" is "^Bool.toString(!ecp)^".\n",pos); !ecp::list)
     in
       foldr foldFn [] params
     end
@@ -165,7 +167,7 @@ struct
     | (Types.ARRAY(_), Types.ARRAY(_)) => true
     | (Types.INT, Types.INT) => true
     | (Types.STRING, Types.STRING) => true
-    | (Types.NIL, Types.NIL) => true
+    | (Types.NIL, Types.NIL) => false
     | (Types.UNIT, Types.UNIT) => true
     | (Types.BOTTOM, _) => true
     | (_, Types.BOTTOM) => true
@@ -312,21 +314,21 @@ struct
             | (Types.INT, Types.INT) => {exp=Translate.opExp(expLeft,expRight,oper), ty=Types.INT}
             | (Types.RECORD(_ , x),Types.RECORD(_, y))  => 
               if x = y then
-                {exp=Translate.refCompare(expLeft,expRight), ty=Types.INT} 
+                {exp=Translate.refCompare(expLeft,expRight,oper), ty=Types.INT} 
               else (
                 ErrorMsg.error pos "Both operands must be of the same type.";
                 {exp=Translate.transError(), ty=Types.BOTTOM}
               )
             | (Types.ARRAY(_ , x), Types.ARRAY(_,y))=> if x = y then {
-              exp=Translate.refCompare(expLeft,expRight), ty=Types.INT} else (
+              exp=Translate.refCompare(expLeft,expRight,oper), ty=Types.INT} else (
               ErrorMsg.error pos "Both operands must be of the same type";
               {exp=Translate.transError(), ty=Types.BOTTOM}
              )
             | ((Types.NIL, Types.RECORD(_, x)) | (Types.RECORD(_, x), Types.NIL))
-             => {exp=Translate.refCompare(expLeft,expRight), ty=Types.INT}
+             => {exp=Translate.refCompare(expLeft,expRight,oper), ty=Types.INT}
             | (_, _) =>  (
               ErrorMsg.error pos "Both operands must be of the same type";
-              {exp=Translate.transError(), ty=Types.BOTTOM} (*TODO*)
+              {exp=Translate.transError(), ty=Types.BOTTOM}
             )
       )
       end
@@ -340,10 +342,10 @@ struct
         )
           | Absyn.NilExp => (if debug
           then print("NilExp at level "^Translate.levelToString(level)^".\n")
-          else ();{exp=Translate.transError(), ty=Types.NIL})
+          else ();{exp=Translate.nilOrUnit(), ty=Types.NIL})
           | Absyn.BreakExp(pos) => (if debug
           then print("BreakExp at level "^Translate.levelToString(level)^".\n")
-          else (); if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=Translate.transError(),ty=Types.BOTTOM}) else {exp=Translate.transError(),ty=Types.BOTTOM})
+          else (); if !breakable < 1 then (ErrorMsg.error pos "Illegal break."; {exp=Translate.transError(),ty=Types.BOTTOM}) else {exp=Translate.transBreak(looplabel),ty=Types.BOTTOM})
           | Absyn.StringExp(_) => (if debug
           then print("StringExp at level "^Translate.levelToString(level)^".\n")
           else ();{exp=Translate.stringExp(exp),ty=Types.STRING})
@@ -495,6 +497,8 @@ struct
                       (newEnv, expList)
                 end
               val (envs,expList) = foldl foldFn ({venv=venv, tenv=tenv},[]) decs
+              val expList = (List.rev expList)
+              (* we want to process from left to right but preserve order of expList *)
               val {exp=bodyExp,ty=bodyTyp} = transExp(#venv envs,#tenv envs, body, myLevel,looplabel)
             in
               {exp=Translate.letExp(expList, bodyExp), ty=bodyTyp}
@@ -597,6 +601,7 @@ struct
            | Absyn.ForExp({var: Symbol.symbol, escape: bool ref, lo: Absyn.exp, hi: Absyn.exp, body: Absyn.exp, pos: Absyn.pos}) =>
             (* Remember to call enterScope here !!*)
             let
+              val donelabel = Temp.newlabel()
               val lo' = transExp(venv, tenv, lo, level,looplabel)
               val loType = #ty lo'
               val hi' = transExp(venv, tenv, hi, level,looplabel)
@@ -607,7 +612,6 @@ struct
               if not (tyEqualTo(loType, Types.INT))
                then (
                 ErrorMsg.error pos "ForExp lower bound is not int type";
-                (* TODO: check, what to put here on error? *)
                 {exp=Translate.transError(), ty=Types.BOTTOM}
                 )
                else (
@@ -637,7 +641,7 @@ struct
                         )
                       else (
                         breakable := (!breakable - 1);
-                        {exp=Translate.transFor(loopVar, #exp lo', #exp hi', #exp body'), ty=Types.UNIT}
+                        {exp=Translate.transFor(loopVar, #exp lo', #exp hi', #exp body', donelabel), ty=Types.UNIT}
                         )
                     end
                   end
@@ -882,7 +886,13 @@ struct
                 val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
                 val res = Translate.varDecAlloc(newAlloc, #exp actual)
               in
-                {venv=Symbol.enter(venv, name, newVarEntry), tenv=tenv, exp=SOME(res)}
+                case actualType of 
+                  Types.NIL => (
+                      ErrorMsg.error pos "Assign nil to new var\n";
+                      {venv=venv,tenv=tenv,exp=SOME(res)}
+                    )
+                  | (_) => {venv=Symbol.enter(venv, name, newVarEntry), tenv=tenv, exp=SOME(res)}
+                
               end
             )
             
@@ -1075,7 +1085,6 @@ struct
         if not (tyEqualTo(varType, Types.RECORD((fn()=>[]), ref())))
         then (
           ErrorMsg.error pos "accessing field of non-fieldVar\n";
-          (*{exp=(), ty=Types.NIL} *)
           {exp=Translate.transError(), ty=Types.BOTTOM}
         )
         else (
@@ -1092,14 +1101,13 @@ struct
                 case fieldVal of
                   NONE => (
                     ErrorMsg.error pos "nonexistent field\n";
-                    (* {exp=(), ty=Types.NIL} *)
                     {exp = Translate.transError(), ty = Types.BOTTOM}
                   )
                   | SOME (sym,typ) => (
                     (* find idx of symobol in sorted field list *)
                     let
-                      fun indexFoldFn ((x,xType),idx) = if x = sym then idx else idx
-                      val idx = foldl indexFoldFn 0 fieldList 
+                      fun indexFoldFn ((x,xType),(idx,currIdx)) = if x = sym then(currIdx, currIdx+1) else (idx, currIdx + 1)
+                      val idx = #1(foldl indexFoldFn (0,0) fieldList) 
                     in  
                       {exp=Translate.fieldVar(varExp,idx),ty=typ}
                     end
@@ -1119,7 +1127,6 @@ struct
          if not (tyEqualTo(expType,Types.INT))
          then (
             ErrorMsg.error pos "Non-integer used as array index.\n";
-           (* {exp=(), ty=Types.NIL} *)
            {exp=Translate.transError(), ty=Types.BOTTOM}
          )
          else (
@@ -1128,7 +1135,6 @@ struct
                 Types.ARRAY(arrayGetterFn, someref) => {exp=Translate.subscriptVar(varExp,subscriptExp),ty=arrayGetterFn()}
               | _ => (
                 ErrorMsg.error pos "subscript var on nonarray type.\n";
-                (* {exp=(), ty=Types.NIL} *)
                 {exp=Translate.transError(), ty=Types.BOTTOM}
               )
           )
@@ -1139,7 +1145,7 @@ struct
   val {exp=exp, ty=ty} = transExp(venv,tenv, e, Translate.outermost, Temp.newlabel()); (* you can't break in outer loop so use random label *)
   in
   (
-    Printtree.printtree (TextIO.stdOut, Translate.unNx exp);
+    Translate.funDec(Translate.outermost, Temp.newlabel(), exp);
     Translate.getResult()
   )
   end

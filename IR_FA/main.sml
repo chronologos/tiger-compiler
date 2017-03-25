@@ -14,6 +14,12 @@ struct
       val (absyn, _) = TigerP.parse(30,lexer,parseerror,())
     in
       TextIO.closeIn file;
+      (*
+      print("before\n");
+      PrintAbsyn.print(TextIO.stdOut, absyn);
+      print("after\n");
+      PrintAbsyn.print(TextIO.stdOut, absyn);
+      *)
       FindEscape.findEscape(absyn);
       let 
         val res = Semant.transProg(absyn)

@@ -79,7 +79,7 @@ struct
   
   fun unEx (Ex e) = e
   | unEx (Cx genstm) =
-      let val r = Temp.newtemp()
+      let val r = Temp.newNamedTemp("unExResultTemp")
           val t = Temp.newlabel() and f = Temp.newlabel()
       in  T.ESEQ(seq([T.MOVE(T.TEMP r, T.CONST 1),
                      genstm(t,f),
@@ -92,7 +92,7 @@ struct
 
   fun unNx (Ex e) = T.EXP e
     | unNx (Cx genstm) =
-        let val l1 = Temp.newlabel()
+        let val l1 = Temp.namedlabel("unNx_Cx")
         in  T.SEQ(genstm(l1,l1),
                  T.LABEL l1)
         end
@@ -152,12 +152,16 @@ struct
 
   (* move -1 to register as return val *)
   fun nilExp():exp =
-    let val tmp = Temp.newtemp()
+    let 
+      (*val tmp = Temp.newtemp()*)
+      val tmp = Temp.newNamedTemp("nilTemp")
     in  Ex(T.ESEQ(T.MOVE(T.TEMP tmp, T.CONST 0), T.TEMP tmp))
     end
 
   fun intExp(intExp:Absyn.exp) =
-    let val tmp = Temp.newtemp()
+    let 
+        (*val tmp = Temp.newtemp()*)
+        val tmp = Temp.newNamedTemp("intExpTemp")
         val const = case intExp of Absyn.IntExp constant => constant
     in  Ex(T.ESEQ(T.MOVE(T.TEMP tmp, T.CONST const),T.TEMP(tmp)))
     end
@@ -314,22 +318,21 @@ struct
   fun simpleVar(a:access, l:level): exp =
     let
         val (dLevInt,fAccess) =  case a of
-                                  ((levInt, levRef),frameAccess) => (levInt,frameAccess)
-        val useLevInt = case l of
-                          (levInt,levRef) => levInt
+                                  ((levInt, levRef), fAccess) => (levInt, fAccess)
+        val useLevInt = case l of (levInt,levRef) => levInt
         val fpExp = T.TEMP Frame.FP
     in
-        if useLevInt = dLevInt
-        then Ex(Frame.exp(fAccess)(fpExp))
-        else (
-            let val levDiff = useLevInt - dLevInt
-                fun getfp(diff, tExp) =
-                    if diff=0
-                    then tExp
-                    else getfp(diff-1, T.MEM (tExp))
-            in
-                Ex(Frame.exp(fAccess)(getfp(levDiff,fpExp)))
-            end
+      if useLevInt = dLevInt
+      then Ex(Frame.exp(fAccess)(fpExp))
+      else (
+          let val levDiff = useLevInt - dLevInt
+              fun getfp(diff, tExp) =
+                  if diff=0
+                  then tExp
+                  else getfp(diff-1, T.MEM (tExp))
+          in
+              Ex(Frame.exp(fAccess)(getfp(levDiff,fpExp)))
+          end
         )
     end
 
@@ -341,7 +344,8 @@ struct
       val t = Temp.newlabel()
       val f = Temp.newlabel()
       val end' = Temp.newlabel()
-      val r = Temp.newtemp()
+      (*val r = Temp.newtemp()*)
+      val r = Temp.newNamedTemp("ifExpReturnTemp")
     in
       Ex (T.ESEQ(seq([i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), unEx(Nx i2)), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r), unEx(Nx i3)),T.LABEL(end')], 20),T.TEMP(r)))
     end
@@ -353,7 +357,8 @@ struct
       val t = Temp.newlabel()
       val f = Temp.newlabel()
       val end' = Temp.newlabel()
-      val r = Temp.newtemp()
+      (*val r = Temp.newtemp()*)
+      val r = Temp.newNamedTemp("ifExpReturnTemp")
     in
       Ex (T.ESEQ(seq([i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), i2), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r),i3),T.LABEL(end')],21),T.TEMP(r)))
     end
@@ -369,7 +374,8 @@ struct
   
   
   fun recordExp(sortedFields:(Symbol.symbol * exp) list) = 
-    let val tmp = Temp.newtemp()
+    let (*val tmp = Temp.newtemp()*)
+        val tmp = Temp.newNamedTemp("recordExpHeadPointerTemp")
         val len = (List.length sortedFields)
         val ctr = ref 0
         val addressExp = T.MOVE(T.TEMP tmp,T.CALL(T.NAME (Temp.namedlabel("malloc")), [T.CONST (len*Frame.wordSize)]))
@@ -389,7 +395,19 @@ struct
     end
   
   fun arrayExp(sizeExp:exp,initExp:exp,cLevel:level) =
-    Ex (T.CALL(T.NAME (Temp.namedlabel("initArray")), [unEx (calcSL(cLevel,(0,ref ()))), unEx sizeExp, unEx initExp]))
+    let val r = Temp.newNamedTemp("mallocReturnAddressTemp")
+    in Ex (
+        T.ESEQ(seq([T.EXP(T.CALL(
+            T.NAME (Temp.namedlabel("initArray")), 
+            [unEx (calcSL(cLevel,(0,ref ()))), 
+             T.BINOP(T.PLUS, unEx sizeExp, 
+             (T.CONST 1)),
+             unEx initExp
+            ])),
+            T.MOVE(T.MEM(T.TEMP Frame.RV),unEx(sizeExp))],3)
+            ,T.BINOP(T.PLUS,T.TEMP Frame.RV,T.CONST Frame.wordSize))
+       )
+    end
   
   fun assignExp(varExp:exp,assignExp:exp) = 
     Nx (T.MOVE(unEx varExp,unEx assignExp))
@@ -398,7 +416,6 @@ struct
     let
       val listLen = List.length l 
     in  (
-      print("seqexp");
       case listLen of 1 => hd l 
       | 0 => (Ex(T.TEMP (Temp.newtemp()))) (* TODO find better noop *)
       | _ =>  let 
@@ -411,11 +428,52 @@ struct
     
     end
   fun fieldVar(varAccess:exp, fieldOffset:int) = 
-    Ex (T.MEM(T.BINOP(T.PLUS, T.BINOP(T.MUL,T.CONST fieldOffset,T.CONST Frame.wordSize),unEx varAccess)))
+    Ex (T.MEM(
+          T.BINOP(T.PLUS, 
+                  T.BINOP(T.MUL,
+                          T.CONST fieldOffset,
+                          T.CONST Frame.wordSize),
+                  unEx varAccess
+                  )
+             )
+       )
   
   fun subscriptVar(varAccess:exp, offsetExp:exp) = 
-    Ex (T.MEM(T.BINOP(T.PLUS,unEx varAccess,T.BINOP(T.MUL,unEx offsetExp,T.CONST Frame.wordSize))))
-  
+    let val expLabel = Temp.namedlabel("array idx out of bound label")
+        val sizeTemp = Temp.newNamedTemp("arraySizeTemp")
+        val okLabel = Temp.namedlabel("array idx ok label")
+        val doneLabel = Temp.namedlabel("subscriptVar done label")
+        val rTemp = Temp.newNamedTemp("subscriptVarResultTemp")
+    in (
+      (* this IR fragment checks for array out-of-bounds exceptions as well *)
+      1+1;
+      Ex (
+        T.ESEQ(
+        seq([
+          T.MOVE(T.TEMP(sizeTemp), T.MEM(T.BINOP(T.MINUS, unEx varAccess, T.CONST 4))),
+          T.CJUMP(T.GT, T.TEMP(sizeTemp), unEx (offsetExp), okLabel,expLabel),
+          T.LABEL(okLabel),
+          T.MOVE(T.TEMP rTemp,
+            T.MEM(
+              T.BINOP(T.PLUS,
+                    unEx varAccess,
+                    T.BINOP(T.MUL,
+                      unEx offsetExp,
+                      T.CONST Frame.wordSize
+                    )
+              )
+            )
+          ),
+          T.JUMP (T.NAME doneLabel, [doneLabel]),
+          T.LABEL(expLabel),
+          T.EXP( (T.CALL (T.NAME (Temp.namedlabel("exit")), [T.CONST 1]))),
+          T.MOVE(T.TEMP rTemp, T.CONST 1),
+          T.LABEL(doneLabel)
+        ], 3371
+        ), T.TEMP rTemp)
+      )
+    ) end
+    
   fun varDecAlloc(varAccess:access,initExp:exp) = 
     let val (level,fAccess) = varAccess
         val frame = case frameAtLevel(level) of
@@ -436,7 +494,7 @@ struct
   
   fun funDec(funLevel:level, lab:Temp.label, body:exp) = 
     let 
-      val bodyStm = T.SEQ(unNx body,T.MOVE(T.TEMP Frame.RV, unEx body))
+      val bodyStm = T.MOVE(T.TEMP Frame.RV, unEx body)
     in
       procEntryExit({level=funLevel, body=bodyStm})
     end
@@ -450,22 +508,23 @@ struct
       Nx (seq([T.JUMP(T.NAME(l1),[l1]), T.LABEL(l2), unNx body, T.LABEL(l1), unCx test (l2,donelabel), T.LABEL(donelabel)],9))
     end
    
-  fun transError() = Ex (T.CONST 0)
+  fun transError() = Ex (T.CALL (T.NAME (Temp.namedlabel("exit")), [T.CONST 1]))
+  fun nilOrUnit() = Ex (T.CONST 0)
   
   fun transBreak(donelabel) = Nx (T.JUMP(T.NAME(donelabel), [donelabel]))
   
-  fun transFor(loopVar:access, lo, hi, body) =
+  fun transFor(loopVar:access, lo, hi, body, donelabel) =
     let
       val frameaccess = case loopVar of (lvl, frameaccess') => frameaccess' (* int * unit ref * frame.access *)
       val loopVar' = Frame.exp frameaccess (T.TEMP Frame.FP) (* need to make sure this is in register *)
-      val loopVar'' = Temp.newtemp() 
-      val hi'= Temp.newtemp()
-      val l1 = Temp.newlabel()
-      val l2 = Temp.newlabel()
-      val l3 = Temp.newlabel()
+      val loopVar'' = Temp.newNamedTemp("for_lo") 
+      val hi'= Temp.newNamedTemp("for_hi")
+      val l1 = Temp.namedlabel("for_true_init_branch")
+      val l2 = Temp.namedlabel("for_true_branch")
+      val l3 = donelabel 
     in
       Nx (seq(
-        [T.MOVE(T.TEMP loopVar'', loopVar'), (* in case loopvar' is in MEM. TODO: pattern match would be more efficient *)
+        [ (* in case loopvar' is in MEM. TODO: pattern match would be more efficient *)
         T.MOVE(T.TEMP loopVar'', unEx lo),
         T.MOVE(T.TEMP hi', unEx hi), 
         T.CJUMP(T.LE, T.TEMP loopVar'', T.TEMP hi', l2, l3), 
@@ -473,12 +532,12 @@ struct
         T.EXP (T.BINOP(T.PLUS, T.TEMP loopVar'', T.CONST 1)),
         T.LABEL l2,
         unNx body,
-        T.CJUMP(T.LE, T.TEMP loopVar'', T.TEMP hi', l1, l3), 
+        T.CJUMP(T.LT, T.TEMP loopVar'', T.TEMP hi', l1, l3), 
         T.LABEL l3],10
       ))
     end
     
-  fun refCompare(leftRef:exp, rightRef:exp) = 
+  fun refCompare(leftRef:exp, rightRef:exp, oper:Absyn.oper) = 
     let 
         val leftAdd = case unEx(leftRef) of
                           T.MEM(l) => l
@@ -487,20 +546,39 @@ struct
                           T.MEM(rr) => rr
                         | T.TEMP(rr) => T.TEMP(rr)
                         | T.CONST 0 => T.CONST 0 
-        val r = Temp.newtemp()
+                        | T.CALL _ => T.CONST ~1 (* if error was thrown, we will get here *)
+        val r = Temp.newNamedTemp("refCompResultTemp")
         val t = Temp.newlabel()
         val f = Temp.newlabel()
         val end' = Temp.newlabel()
+        val (relop,rop) = isRelop(oper)
+        val (binop,bop) = isBinop(oper)
     in
-      Ex(T.ESEQ(seq([
-        T.CJUMP(T.EQ,leftAdd,rightAdd,t,f),
-        T.LABEL t,
-        T.MOVE(T.TEMP r, T.CONST 1),
-        T.JUMP(T.NAME end', [end']),
-        T.LABEL f,
-        T.MOVE(T.TEMP r,T.CONST 0),
-        T.LABEL end'
-        ],11),T.TEMP r))
+      if binop 
+      then (
+        ErrorMsg.error 0 "[IR] Used binopto compare refs.";
+        transError()
+      )
+      else(
+        if relop
+        then (
+          case rop of (T.EQ | T.NE) =>
+            Ex(T.ESEQ(seq([
+              T.CJUMP(rop,leftAdd,rightAdd,t,f),
+              T.LABEL t,
+              T.MOVE(T.TEMP r, T.CONST 1),
+              T.JUMP(T.NAME end', [end']),
+              T.LABEL f,
+              T.MOVE(T.TEMP r,T.CONST 0),
+              T.LABEL end'
+              ],11),T.TEMP r))
+          | (_) => (
+            ErrorMsg.error 0 "[IR] Used invalid relop to compare refs.";
+            transError()
+          )
+        ) 
+        else (ErrorMsg.impossible "refcompare saw neither relop or binop"; transError())
+      )
     end
     
   fun levelToString (lev:level) =

@@ -1,28 +1,18 @@
-## NOTES
-#strExp          stringExp(strExp:A.StringExp) =
-#strCmp          strcmp(str1:exp,str2:exp,oper:A.oper,callLevel:level):Cx = 
-# nil              fun nilExp():T.exp =
-# int              intExp(intExp:Absyn.IntExp) =
-# opexp           opExp(leftExp:exp, rightExp:exp, oper:Absyn.oper) : exp =
-# assignexp         fun assignExp(varExp:exp,assignExp:exp) = 
-# simplevar       fun simpleVar(a:access,l:level): exp =
-# subscriptvar          fun subscriptVar(varAccess:exp, offsetExp:exp) = 
-# fieldvar           fun fieldVar(varAccess:exp, fieldOffset:int) =  (* fieldOffset as of in sorted field list *)
-# seqExp            fun seqExp(l:exp list) = 
-# recordexp         fun recordExp(fieldlist:(Symbol.symbol, exp) list) = 
-# arrayexp          fun arrayExp(sizeExp:exp,initExp:exp,cLevel:level) =
-# callExp         callExp(dLevel:level, cLevel:level, lab:Temp.label, expList:exp list) = 
-# ifExp             fun transIf({text=e1, then'=Nx(i2), else'=SOME(Nx(i3)), pos=_}) =
-# letexp             fun letExp(decExpList:exp list, body:exp) = 
-# functiondec       fun funDec(funLevel:level, lab:Temp.label, body:exp):Frame.PROC = 
-# vardec          fun varDecAlloc(varAccess:access,initExp:exp) = 
-# whileexp          fun transWhile({test=test, body=body, pos=_}, donelabel) = 
-# forexp            fun transFor({var=var, escape=escape, lo=lo, hi=hi, body=body, pos=_}, loopVar) 
-# breakexp        fun transBreak(donelabel) = T.JUMP(T.NAME(donelabel), [donelabel])
+# Intermediate Representation and Frame Analysis 
 
+## Debugging things 
+- We changed temp.sml so that we can have named registers which are guaranteed to be "unique". 
+- We also added named labels which are guaranteed to be "unique".
+- We added an extra parameter to seq() function for debugging purposes. 
 
-# TODO
-bounds checking
-possibly convert tree.sml to safe alternative
-instruction to move RV to register on function exit [done?]
-test 6: in which direction is memory read and written ie. MEM[-4] means -4 to -8 or 0 to -4?
+## Future TODO
+- bounds checking [done]
+- need to emit tiger_main frag [done]
+- instruction to move RV to register on function exit [done]
+- check all transerror and change those used in place of nil or unit [done]
+- possibly convert tree.sml to safe alternative
+- test 6: in which direction is memory read and written ie. MEM[-4] means -4 to -8 or 0 to -4?
+- test 11: edge case when for loop tries to assign to loop variable, this should not be allowed.
+
+## Happy birthday Adithya!
+![yaya adithya](https://www.dropbox.com/s/r0dz6hum7im02ek/17342866_10154601088338985_3403718265296467886_n.jpg?dl=0)
