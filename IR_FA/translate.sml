@@ -61,22 +61,31 @@ struct
          | A.DivideOp => (true,T.DIV)
       | (_) => (false, T.PLUS)
       
-  fun seq(stmList) =
+      
+  fun seq([], a:int) = (print("called with empty" ^ (Int.toString(a))); T.SEQ(T.EXP(T.CONST(0)),T.EXP(T.CONST(0))))
+  | seq(stmList, a:int) =
     let
       fun foldStmFn (stm, seqStm) =  T.SEQ (stm,seqStm)
-    in  
-      foldl foldStmFn (List.hd(stmList)) (List.drop(stmList,1))
+      val count = List.length stmList
+    in
+      if count = 1 then List.hd(stmList)
+      else (
+        print("in seq");
+        foldr foldStmFn (List.last stmList) (List.take(stmList,(List.length stmList) -1)) 
+      )
+        (*foldl foldStmFn [] stmList*)
     end
-
+    
+  
   fun unEx (Ex e) = e
   | unEx (Cx genstm) =
       let val r = Temp.newtemp()
           val t = Temp.newlabel() and f = Temp.newlabel()
-      in  T.ESEQ(seq[T.MOVE(T.TEMP r, T.CONST 1),
+      in  T.ESEQ(seq([T.MOVE(T.TEMP r, T.CONST 1),
                      genstm(t,f),
                      T.LABEL f,
                      T.MOVE(T.TEMP r,T.CONST 0),
-                     T.LABEL t],
+                     T.LABEL t],1111),
                   T.TEMP r)
       end
   | unEx(Nx s) = T.ESEQ(s,T.CONST 0)
@@ -84,8 +93,8 @@ struct
   fun unNx (Ex e) = T.EXP e
     | unNx (Cx genstm) =
         let val l1 = Temp.newlabel()
-        in  seq([genstm(l1,l1),
-                 T.LABEL l1])
+        in  T.SEQ(genstm(l1,l1),
+                 T.LABEL l1)
         end
     | unNx (Nx s) = s
 
@@ -105,19 +114,19 @@ struct
              val f = Temp.newlabel()
              val z = T.CONST 0
              fun genstm (l1,l2) =
+              
               seq([T.CJUMP(T.EQ,z,e,t,f),
                    T.LABEL t,
                    T.JUMP (T.NAME l1, [l1]),
                    T.LABEL f,
                    T.JUMP (T.NAME l2, [l2])
-                  ])
+                  ],1)
         in genstm
         end))
     | unCx (Nx s) =
         let val t = Temp.newlabel()
             (*  should be syntax error to unCx an Nx *)
-            fun cxFn (l1,l2) =
-                seq([T.LABEL l2])
+            fun cxFn (l1,l2) = (T.LABEL l2)
         in
           ErrorMsg.impossible "unCx called on Nx"
           cxFn
@@ -132,9 +141,13 @@ struct
 
 
   fun letExp(decExpList:exp list, body:exp) = 
-    let val nxDecExpList = map(fn x => unNx(x)) decExpList 
+    let 
+      val nxDecExpList = map(fn x => unNx(x)) decExpList 
+      val len = List.length decExpList
     in
-      Ex(T.ESEQ(seq(nxDecExpList),unEx (body)))
+      case len of 0 => (Ex(unEx body))
+      | 1 => Ex(T.ESEQ(hd nxDecExpList, unEx (body)))
+      | _ => Ex(T.ESEQ(seq(nxDecExpList,12322),unEx (body)))
     end
 
   (* move -1 to register as return val *)
@@ -208,7 +221,7 @@ struct
               fun cxFn (t,f) =
                   seq(
                   [T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringEqual")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
-                  T.CJUMP(T.EQ, T.TEMP(Frame.RV), T.CONST 1, t,f)]
+                  T.CJUMP(T.EQ, T.TEMP(Frame.RV), T.CONST 1, t,f)],2
                   )
             in
               Cx cxFn
@@ -220,7 +233,7 @@ struct
                   seq([ 
                   T.EXP(T.CALL(T.NAME(Temp.namedlabel("stringEqual")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST 0, t,f)
-                  ])
+                  ],3)
           
             in
               Cx cxFn
@@ -232,7 +245,7 @@ struct
                   seq([ 
                   T.EXP(T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST (0-1), t,f)
-                  ])
+                  ],4)
             in
               Cx cxFn
             end
@@ -243,7 +256,7 @@ struct
                   seq([ 
                   T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
                   T.CJUMP(T.LE,T.TEMP (Frame.RV), T.CONST 0, t,f)
-                  ])
+                  ],5)
             in
               Cx cxFn
             end
@@ -254,7 +267,7 @@ struct
                   seq([ 
                   T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST 1, t,f)
-                  ])
+                  ],6)
             in
               Cx cxFn
             end
@@ -265,7 +278,7 @@ struct
                   seq([ 
                   T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx(calcSL(callLevel,(0,ref ()))),s1, s2])),
                   T.CJUMP(T.GE, T.TEMP (Frame.RV), T.CONST 0, t,f)
-                  ])
+                  ],7)
             in
               Cx cxFn
             end
@@ -322,7 +335,7 @@ struct
 
  
   (*| IfExp of {test: exp, then': exp, else': exp option, pos: pos}*)
-  fun transIf({text=e1, then'=Nx(i2), else'=SOME(Nx(i3)), pos=_}) =
+  fun transIf({test=e1, then'=Nx(i2), else'=SOME(Nx(i3)), pos=_}) =
     let 
       val i1 = unCx e1
       val t = Temp.newlabel()
@@ -330,9 +343,9 @@ struct
       val end' = Temp.newlabel()
       val r = Temp.newtemp()
     in
-      Ex (T.ESEQ(seq[i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), unEx(Nx i2)), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r), unEx(Nx i3)),T.LABEL(end')],T.TEMP(r)))
+      Ex (T.ESEQ(seq([i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), unEx(Nx i2)), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r), unEx(Nx i3)),T.LABEL(end')], 20),T.TEMP(r)))
     end
-  | transIf({text=e1, then'=e2, else'=SOME(e3), pos=_}) =
+  | transIf({test=e1, then'=e2, else'=SOME(e3), pos=_}) =
     let 
       val i1 = unCx e1
       val i2 = unEx e2
@@ -342,16 +355,16 @@ struct
       val end' = Temp.newlabel()
       val r = Temp.newtemp()
     in
-      Ex (T.ESEQ(seq[i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), i2), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r),i3),T.LABEL(end')],T.TEMP(r)))
+      Ex (T.ESEQ(seq([i1(t,f), T.LABEL(t), T.MOVE(T.TEMP(r), i2), T.JUMP(T.NAME(end'), [end']),T.LABEL(f),T.MOVE(T.TEMP(r),i3),T.LABEL(end')],21),T.TEMP(r)))
     end
   
-  | transIf({text=e1, then'=e2, else'=NONE, pos=_}) =
+  | transIf({test=e1, then'=e2, else'=NONE, pos=_}) =
     let val i1 = unCx e1
         val i2 = unNx e2
         val t = Temp.newlabel()
         val f = Temp.newlabel()
     in
-        Nx(seq([i1(t,f),T.LABEL t, unNx e2, T.LABEL f]))
+        Nx(seq([i1(t,f),T.LABEL t, unNx e2, T.LABEL f],8))
     end
   
   
@@ -366,7 +379,9 @@ struct
             seqExp
           else (
             ctr := !ctr+1;
-            T.SEQ(seqExp,T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP tmp, T.BINOP(T.MUL,T.CONST (!ctr),T.CONST Frame.wordSize))),unEx e))
+            T.SEQ(seqExp,T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP tmp, T.BINOP(T.MUL,T.CONST (!ctr - 1),T.CONST Frame.wordSize))),unEx e))
+            
+
           )
         val seqStm = foldl foldExpFn (addressExp) sortedFields
     in
@@ -380,13 +395,21 @@ struct
     Nx (T.MOVE(unEx varExp,unEx assignExp))
       
   fun seqExp(l:exp list) = 
-    let 
-      val unwrappedList = map (fn x => unNx x) l
-      val seqExp = seq(List.take(unwrappedList,List.length(l)-1))
-    in  
-      Ex (T.ESEQ(seqExp,unEx (List.last(l))))
+    let
+      val listLen = List.length l 
+    in  (
+      print("seqexp");
+      case listLen of 1 => hd l 
+      | 0 => (Ex(T.TEMP (Temp.newtemp()))) (* TODO find better noop *)
+      | _ =>  let 
+                val unwrappedList = map (fn x => unNx x) l
+                val seqExp = seq(List.take(unwrappedList,List.length(l)-1),21312)
+              in  
+                Ex (T.ESEQ(seqExp,unEx (List.last(l))))
+              end
+      )
+    
     end
-  
   fun fieldVar(varAccess:exp, fieldOffset:int) = 
     Ex (T.MEM(T.BINOP(T.PLUS, T.BINOP(T.MUL,T.CONST fieldOffset,T.CONST Frame.wordSize),unEx varAccess)))
   
@@ -424,7 +447,7 @@ struct
       val l1 = Temp.newlabel()
       val l2 = Temp.newlabel()
     in
-      Nx (seq([T.JUMP(T.NAME(l1),[l1]), T.LABEL(l2), unNx body, T.LABEL(l1), unCx test (l2,donelabel), T.LABEL(donelabel)]))
+      Nx (seq([T.JUMP(T.NAME(l1),[l1]), T.LABEL(l2), unNx body, T.LABEL(l1), unCx test (l2,donelabel), T.LABEL(donelabel)],9))
     end
    
   fun transError() = Ex (T.CONST 0)
@@ -451,7 +474,7 @@ struct
         T.LABEL l2,
         unNx body,
         T.CJUMP(T.LE, T.TEMP loopVar'', T.TEMP hi', l1, l3), 
-        T.LABEL l3]
+        T.LABEL l3],10
       ))
     end
     
@@ -459,24 +482,25 @@ struct
     let 
         val leftAdd = case unEx(leftRef) of
                           T.MEM(l) => l
-                        | T.TEMP(l) => l
+                        | T.TEMP(l) => T.TEMP(l)
         val rightAdd = case unEx(rightRef) of
                           T.MEM(rr) => rr
-                        | T.TEMP(rr) => rr
+                        | T.TEMP(rr) => T.TEMP(rr)
+                        | T.CONST 0 => T.CONST 0 
         val r = Temp.newtemp()
         val t = Temp.newlabel()
         val f = Temp.newlabel()
-        val end = Temp.newlabel()
+        val end' = Temp.newlabel()
     in
       Ex(T.ESEQ(seq([
-        CJUMP(T.EQ,leftAdd,rightAdd,t,f),
+        T.CJUMP(T.EQ,leftAdd,rightAdd,t,f),
         T.LABEL t,
         T.MOVE(T.TEMP r, T.CONST 1),
-        T.JUMP(T.NAME end, [end]),
+        T.JUMP(T.NAME end', [end']),
         T.LABEL f,
         T.MOVE(T.TEMP r,T.CONST 0),
-        T.LABEL end
-        ],T.TEMP r)))
+        T.LABEL end'
+        ],11),T.TEMP r))
     end
     
   fun levelToString (lev:level) =

@@ -21,5 +21,6 @@ tree.sml
 findescape.sml
 translate.sig
 translate.sml
+printtree.sml
 $/basis.cm
 $/smlnj-lib.cm

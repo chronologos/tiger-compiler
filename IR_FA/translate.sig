@@ -24,7 +24,7 @@ sig
   val recordExp : (Symbol.symbol * exp) list -> exp 
   val arrayExp : exp * exp * level -> exp
   val callExp : level * level * Temp.label * exp list -> exp
-  val transIf: {text:exp, then':exp, else': exp option, pos:Absyn.pos} -> exp
+  val transIf: {test:exp, then':exp, else': exp option, pos:Absyn.pos} -> exp
   val letExp : exp list * exp -> exp
   val funDec : level * Temp.label * exp -> unit 
   val varDecAlloc : access * exp -> exp 
@@ -34,6 +34,6 @@ sig
   val refCompare: exp * exp -> exp 
   
   val transError: unit -> exp
-  
+  val unNx: exp -> Tree.stm  (* TODO: temp *)
   
 end

@@ -1,4 +1,4 @@
-structure Main : sig val tycheck : string -> Frame.frag list end =
+structure Main : sig val tycheck : string -> MipsFrame.frag list end =
 struct
   structure TigerLrVals = TigerLrValsFun(structure Token = LrParser.Token)
   structure Lex = TigerLexFun(structure Tokens = TigerLrVals.Tokens)
@@ -13,8 +13,22 @@ struct
       val lexer = LrParser.Stream.streamify (Lex.makeLexer get)
       val (absyn, _) = TigerP.parse(30,lexer,parseerror,())
     in
-    TextIO.closeIn file;
-    FindEscape.findEscape(absyn);
-    Semant.transProg(absyn)
-end handle LrParser.ParseError => raise ErrorMsg.Error
+      TextIO.closeIn file;
+      FindEscape.findEscape(absyn);
+      let 
+        val res = Semant.transProg(absyn)
+        fun foldFn (x,result) = case x of MipsFrame.STRING(_) => result
+                                                 | MipsFrame.PROC({body=body,frame=_}) => (
+                                                      print("\nFUNCTION:\n\n");
+                                                      Printtree.printtree (TextIO.stdOut, body); 
+                                                      print("\n-----------\n");
+                                                      result
+                                                 )
+      in
+      ( 
+        foldl foldFn [] res;
+        res
+      )
+      end
+    end handle LrParser.ParseError => raise ErrorMsg.Error
     end
