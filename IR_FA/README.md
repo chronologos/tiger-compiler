@@ -1,5 +1,6 @@
 # Intermediate Representation and Frame Analysis 
-
+Run with:
+    Main.IR "filename"
 ## Debugging things 
 - We changed temp.sml so that we can have named registers which are guaranteed to be "unique". 
 - We also added named labels which are guaranteed to be "unique".
@@ -15,4 +16,4 @@
 - test 11: edge case when for loop tries to assign to loop variable, this should not be allowed.
 
 ## Happy birthday Adithya!
-![yaya adithya](https://www.dropbox.com/s/r0dz6hum7im02ek/17342866_10154601088338985_3403718265296467886_n.jpg?dl=0)
+[yaya adithya](https://www.dropbox.com/s/r0dz6hum7im02ek/17342866_10154601088338985_3403718265296467886_n.jpg?dl=0)
