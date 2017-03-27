@@ -21,9 +21,6 @@ findescape.sml
 translate.sig
 translate.sml
 printtree.sml
-funcgraph.sig
-funcgraph.sml
-flowgraph.sml
 main2.sml
 assem.sml
 canon.sml
