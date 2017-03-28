@@ -96,6 +96,20 @@ structure MipsGen :> CODEGEN = struct
     and munchExp ...
     and fun munchArgs(i:int, args: Tree.exp list) = 
       let 
+        val numRegArgs = if List.length args >= Frame.k then Frame.k else (List.length args)
+        val numStackArgs = if List.length args > numRegArgs then ((List.length args) - numRegArgs) else 0
+        val regArgs = List.take(args, numRegArgs) 
+        val stackArgs = if numStackArgs > 0 then List.drop(args, numRegArgs) else []
+        
+        fun shrinkStack(num) =
+          munchStm(T.MOVE(T.TEMP(Frame.SP), 
+                   T.BINOP(T.PLUS,T.CONST(Frame.wordSize * num), T.TEMP(Frame.SP))))
+        fun growStack(num) =
+          munchStm(T.MOVE(T.TEMP(Frame.SP), 
+                   T.BINOP(T.MINUS, T.TEMP(Frame.SP), T.CONST(Frame.wordSize * num))))
+        fun pushToStack(num)=
+          munchStm(T.MOVE(T.MEM(T.BINOP(T.PLUS,T.TEMP(Frame.SP),T.CONST(Frame.wordSize * num))), argExp))
+        
         fun foldFn(nextExp, listSoFar) = 
           let 
             val len = List.length(listSoFar)

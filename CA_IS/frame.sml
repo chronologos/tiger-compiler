@@ -1,31 +1,31 @@
 structure MipsFrame :> FRAME =
 struct
   structure T = Tree
-  datatype access = InFrame of int | InReg of Temp.temp
   type frame = {name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref}
-  val FP = Temp.newNamedTemp("FP")
-  val SP = Temp.newNamedTemp("SP")
-  val RV = Temp.newNamedTemp("RV")
+  datatype access = InFrame of int | InReg of Temp.temp
+  datatype frag =  PROC of {body:Tree.stm, frame:frame}
+                 | STRING of Temp.label * string 
+                 
   val wordSize = 4
   val k = 4
   val debug = false
-  datatype frag =  PROC of {body:Tree.stm, frame:frame}
-                 | STRING of Temp.label * string
   
-  val argregs = [Temp.newNamedTemp("a0"),Temp.newNamedTemp("a1"),Temp.newNamedTemp("a2"),Temp.newNamedTemp("a3")]
-  val specialregs = [FP,SP,RV,Temp.newNamedTemp("zero")]
-  val calleesaves = initCalleeSaves(8)
-  val callersaves = initCallerSaves(8)
+  val FP = Temp.newNamedTemp("FP")
+  val SP = Temp.newNamedTemp("SP")
+  val RV = Temp.newNamedTemp("RV")
+  val ZERO = Temp.newNamedTemp("ZERO")
+  val RA = Temp.newNamedTemp("RA")
   
-  fun initCalleeSaves (i) =
-      if i=0
-      then []
-      else initCalleeSaves(i-1)@[Temp.newNamedTemp("s"^Int.toString(i))]
-      
-  fun initCallerSaves (i) =
-      if i=0
-      then []
-      else initCallerSaves(i-1)@[Temp.newNamedTemp("s"^Int.toString(i))]
+  val aRegNum = 4
+  val sRegNum = 8
+  val tRegNum = 10
+  val argregs = initRegs(aRegNum, someLetter) 
+  val specialregs = [FP,SP,RV,RA,ZERO]
+  val calleesaves = initRegs(sRegNum,"s") (* s0 - s7 *)
+  val callersaves = initRegs(tRegNum,"t") (* t0 - t9 *)
+  
+  fun initRegs (0,someLetter) = []
+  | initRegs(i, someLetter) = initRegs(i-1)@[Temp.newNamedTemp(someLetter^Int.toString(i))]
   
   fun string(label,s) =
      Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"

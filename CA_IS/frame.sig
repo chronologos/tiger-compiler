@@ -14,4 +14,9 @@ sig type frame
     val procEntryExit1 : frame * Tree.stm -> Tree.stm
     val exp : access -> Tree.exp -> Tree.exp (* first Tree.exp is address of the stack frame that the access lives in *)
     val string: (Temp.label * string) -> string
+    
+    val argregs: Temp.temp list 
+    val specialregs: Temp.temp list
+    val calleesaves: Temp.temp list
+    val callersaves: Temp.temp list
 end
