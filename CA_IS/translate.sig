@@ -23,7 +23,7 @@ sig
   val seqExp : exp list -> exp 
   val recordExp : (Symbol.symbol * exp) list -> exp 
   val arrayExp : exp * exp * level -> exp
-  val callExp : level * level * Temp.label * exp list -> exp
+  val callExp : level * level * Temp.label * exp list * bool -> exp
   val transIf: {test:exp, then':exp, else': exp option, pos:Absyn.pos} -> exp
   val letExp : exp list * exp -> exp
   val funDec : level * Temp.label * exp -> unit 

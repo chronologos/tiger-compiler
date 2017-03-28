@@ -20,7 +20,7 @@ struct
   exception Translate
 
   val debug = false
-  val k = 4
+  val k = Frame.k 
 
   (* val currentLevel = ref 0 *)
   val outermost = (0,ref ())
@@ -137,7 +137,6 @@ struct
     else ()
 
 
-
   fun letExp(decExpList:exp list, body:exp) =
     let
       val nxDecExpList = map(fn x => unNx(x)) decExpList
@@ -202,14 +201,18 @@ struct
             else Ex (currentFramePtr)
             )
     end
-
-  fun callExp(dLevel:level, cLevel:level, lab:Temp.label, expList:exp list) =
+    
+  fun callExp(dLevel:level, cLevel:level, lab:Temp.label, expList:exp list, procedure: bool) =
       (*| CALL of exp * exp list *)
       let
         val slExp = calcSL(cLevel,dLevel)
         val texpList = map(fn x => unEx(x)) expList
       in
-        Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList))
+        if procedure
+        then
+          Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
+        else
+          Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))
       end
 
   fun strcmp(str1:exp,str2:exp,oper:A.oper,callLevel:level): exp =
@@ -527,7 +530,7 @@ struct
         T.MOVE(T.TEMP hi', unEx hi),
         T.CJUMP(T.LE, T.TEMP loopVar'', T.TEMP hi', l2, l3),
         T.LABEL l1,
-        T.EXP (T.BINOP(T.PLUS, T.TEMP loopVar'', T.CONST 1)),
+        T.MOVE(T.TEMP loopVar'', (T.BINOP(T.PLUS, T.TEMP loopVar'', T.CONST 1))),
         T.LABEL l2,
         unNx body,
         T.CJUMP(T.LT, T.TEMP loopVar'', T.TEMP hi', l1, l3),

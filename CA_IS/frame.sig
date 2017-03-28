@@ -10,6 +10,7 @@ sig type frame
                    | STRING of Temp.label * string
     val wordSize : int
     val RV : Temp.temp
+    val k:int
     val procEntryExit1 : frame * Tree.stm -> Tree.stm
     val exp : access -> Tree.exp -> Tree.exp (* first Tree.exp is address of the stack frame that the access lives in *)
     val string: (Temp.label * string) -> string

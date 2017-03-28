@@ -20,7 +20,20 @@ struct
       temps := !temps+1;
       t
    end
-
+   
+  fun getNameFromNamedTemp(namedTemp) = 
+    (* split by colon and take string after that *)
+    let 
+      fun getStringAfterColon (SOME(x,xs)) = (
+        case (Char.toString(x), xs) of (":", _) => implode(xs)
+        | (_, []) => ""
+        | (_, _) => getStringAfterColon(List.getItem(xs))
+      )
+      | getStringAfterColon (NONE) = ""
+    in
+      getStringAfterColon(SOME(chr 1,explode(namedTemp)))
+    end 
+  
   fun makestring t = "t" ^ t
   val compare = String.compare
 

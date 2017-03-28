@@ -663,7 +663,11 @@ struct
                 in (
                   case expectedParamsResultTy of Env.FunEntry({level=dLevel,label=lab, formals = expectedParamsTyList, result = resultTy}) =>
                     if tyListEqualTo(expectedParamsTyList, actualParamsTyList)
-                    then ({exp=Translate.callExp(dLevel,level,lab,treeExpArgList), ty=resultTy})
+                    then (
+                      case resultTy of  
+                          Types.UNIT => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, true), ty=resultTy}
+                        | _ => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, false), ty=resultTy}
+                    )
                     else (
                       ErrorMsg.error pos "Illegal argument types passed to CallExp.";
                       {exp=Translate.transError(), ty=Types.BOTTOM}

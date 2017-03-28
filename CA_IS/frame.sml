@@ -7,11 +7,27 @@ struct
   val SP = Temp.newNamedTemp("SP")
   val RV = Temp.newNamedTemp("RV")
   val wordSize = 4
+  val k = 4
   val debug = false
   datatype frag =  PROC of {body:Tree.stm, frame:frame}
-                   | STRING of Temp.label * string
-
- fun string(label,s) =
+                 | STRING of Temp.label * string
+  
+  val argregs = [Temp.newNamedTemp("a0"),Temp.newNamedTemp("a1"),Temp.newNamedTemp("a2"),Temp.newNamedTemp("a3")]
+  val specialregs = [FP,SP,RV,Temp.newNamedTemp("zero")]
+  val calleesaves = initCalleeSaves(8)
+  val callersaves = initCallerSaves(8)
+  
+  fun initCalleeSaves (i) =
+      if i=0
+      then []
+      else initCalleeSaves(i-1)@[Temp.newNamedTemp("s"^Int.toString(i))]
+      
+  fun initCallerSaves (i) =
+      if i=0
+      then []
+      else initCallerSaves(i-1)@[Temp.newNamedTemp("s"^Int.toString(i))]
+  
+  fun string(label,s) =
      Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"
 
   fun procEntryExit1 (frame,body) = body
