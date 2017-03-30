@@ -21,7 +21,7 @@ sig
   val subscriptVar: exp * exp -> exp 
   val fieldVar : exp * int -> exp  (* fieldOffset as of in sorted field list *)
   val seqExp : exp list -> exp 
-  val recordExp : (Symbol.symbol * exp) list -> exp 
+  val recordExp : ((Symbol.symbol * exp) list * level) -> exp 
   val arrayExp : exp * exp * level -> exp
   val callExp : level * level * Temp.label * exp list * bool -> exp
   val transIf: {test:exp, then':exp, else': exp option, pos:Absyn.pos} -> exp

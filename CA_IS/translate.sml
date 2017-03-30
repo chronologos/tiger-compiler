@@ -374,12 +374,12 @@ struct
     end
 
 
-  fun recordExp(sortedFields:(Symbol.symbol * exp) list) =
+  fun recordExp(sortedFields:(Symbol.symbol * exp) list, cLevel:level) =
     let (*val tmp = Temp.newtemp()*)
         val tmp = Temp.newNamedTemp("recordExpHeadPointerTemp")
         val len = (List.length sortedFields)
         val ctr = ref 0
-        val addressExp = T.MOVE(T.TEMP tmp,T.CALL(T.NAME (Temp.namedlabel("malloc")), [T.CONST (len*Frame.wordSize)]))
+        val addressExp = T.MOVE(T.TEMP tmp,T.CALL(T.NAME (Temp.namedlabel("malloc")), [unEx (calcSL(cLevel,(0,ref ()))), T.CONST (len*Frame.wordSize)]))
         fun foldExpFn ((s,e),seqExp) =
           if !ctr = len
           then

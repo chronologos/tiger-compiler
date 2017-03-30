@@ -732,12 +732,12 @@ struct
                   let val found_list = get_fields_func()
                       val sorted_found_list = ListMergeSort.sort (fn(x,y) => Symbol.name(#1 x) > Symbol.name(#1 y)) found_list
                       val zipped_list = ListPair.zip (sorted_found_list, sorted_exp_fields) (*  ( (sym1,ty1),(sym2,ty2) )  *)
+
                   in (
                       if List.length(sorted_found_list) = List.length(sorted_exp_fields)
                       then (
                         foldl (fn (next_tup, equalSoFar) => if  tyEqualTo((#2 (#1 next_tup)),(#2 (#2 next_tup))) then equalSoFar else false) true zipped_list;
-                        
-                        {exp=Translate.recordExp(sorted_sym_treeExp_list), ty = Types.RECORD(get_fields_func, unique_ref)}
+                        {exp=Translate.recordExp(sorted_sym_treeExp_list, level), ty = Types.RECORD(get_fields_func, unique_ref)}
                       ) else (
                         ErrorMsg.error pos "Record creation does not assign value to all fields";
                         {exp=Translate.transError(), ty = Types.BOTTOM}

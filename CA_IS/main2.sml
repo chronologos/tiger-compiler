@@ -12,13 +12,11 @@ fun getsome (SOME x) = x
       val stms = Canon.linearize body
       (* val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
       val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
-       val _ = app (fn x => Printtree.printtree(out, x)) stms'
-      (*val instrs =   List.concat(map (Mips.codegen frame) stms')
-      val format0 = Assem.format(Temp.makestring)*)
+      val _ = app (fn x => Printtree.printtree(out, x)) stms'
+      val instrs =   List.concat(map (MipsGen.codegen frame) stms')
+      val format0 = Assem.format(Temp.makestring)
     in
-      ()
-      (*app (fn i => TextIO.output(out,format0 i)) instrs*)
-
+      app (fn i => TextIO.output(out,format0 i)) instrs
     end
   | emitproc out (F.STRING(lab,s)) = TextIO.output(out,F.string(lab,s))
 
