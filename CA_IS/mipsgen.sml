@@ -183,18 +183,19 @@ structure MipsGen :> CODEGEN = struct
       let 
         val munchE1 = munchExp(e1) 
         val munchE2 = munchExp(e2) 
+        val compTemp = Temp.newNamedTemp("comp_diff")
       in  
           case relop of 
-            T.EQ => emit(A.OPER{assem="beq 's0, 's1, " ^ S.name(label1) ^ "\n", src=[munchE1, munchE2], dst=[], jump=SOME([label1, label2])})
+            T.EQ => emit(A.OPER{assem="beq `s0, `s1, `j0 \n", src=[munchE1, munchE2], dst=[], jump=SOME([label1, label2])})
             | T.NE => emit(A.OPER{assem="bne `s0, `s1, " ^ S.name(label1) ^ "\n",src=[munchE1,munchE2],dst=[],jump=SOME([label1, label2])}) 
-            | T.LT =>  (emit(A.OPER{assem="sub `d0,`s0,`s1 \n", src=[munchE1,munchE2], dst=[munchE1], jump=NONE});
-                       emit(A.OPER{assem="bltz `s0, " ^ S.name(label1)^"\n",src=[munchE1],dst=[],jump=SOME([label1, label2])}))
-            | T.GE => (emit(A.OPER{assem="sub `d0, `s0, `s1 \n",src=[munchE1, munchE2],dst=[munchE1],jump=NONE});
-                       emit(A.OPER{assem="bgez `s0, " ^ S.name(label1) ^ "\n",src=[munchE1],dst=[],jump=SOME([label1, label2])}))
-            | T.LE => (emit(A.OPER{assem="sub `s0, `s0, `s1 \n",src=[munchE1,munchE2],dst=[munchE1],jump=NONE});
-                        emit(A.OPER{assem="blez `s0, "^S.name(label1) ^ "\n",src=[munchE1],dst=[],jump=SOME([label1, label2])}))
-            | T.GT => (emit(A.OPER{assem="sub `d0, `s0, `s1 \n",src=[munchE1, munchE2],dst=[munchE1],jump=NONE});
-                      emit(A.OPER{assem="bgtz `s0, " ^  S.name(label1) ^ "\n",src=[munchE1],dst=[],jump=SOME([label1, label2])}))
+            | T.LT =>  (emit(A.OPER{assem="sub `d0,`s0,`s1 \n", src=[munchE1,munchE2], dst=[compTemp], jump=NONE});
+                       emit(A.OPER{assem="bltz `s0, " ^ S.name(label1)^"\n",src=[compTemp],dst=[],jump=SOME([label1, label2])}))
+            | T.GE => (emit(A.OPER{assem="sub `d0, `s0, `s1 \n",src=[munchE1, munchE2],dst=[compTemp],jump=NONE});
+                       emit(A.OPER{assem="bgez `s0, " ^ S.name(label1) ^ "\n",src=[compTemp],dst=[],jump=SOME([label1, label2])}))
+            | T.LE => (emit(A.OPER{assem="sub `d0, `s0, `s1 \n",src=[munchE1,munchE2],dst=[compTemp],jump=NONE});
+                        emit(A.OPER{assem="blez `s0, "^S.name(label1) ^ "\n",src=[compTemp],dst=[],jump=SOME([label1, label2])}))
+            | T.GT => (emit(A.OPER{assem="sub `d0, `s0, `s1 \n",src=[munchE1, munchE2],dst=[compTemp],jump=NONE});
+                      emit(A.OPER{assem="bgtz `s0, " ^  S.name(label1) ^ "\n",src=[compTemp],dst=[],jump=SOME([label1, label2])}))
       end
       
     (* TODO

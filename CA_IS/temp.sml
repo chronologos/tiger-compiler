@@ -1,16 +1,17 @@
 (* make this an abstraction sometime *)
 structure Temp : TEMP =
 struct
-  type temp = string (* TODO *)
+  type temp = int*string (* TODO *)
   val temps = ref 100
   val labelCount = ref 0
+  val debug = false
 
   fun newtemp() =
     let
       val t = !temps
     in
       temps := t+1;
-      Int.toString(t)
+      (t,Int.toString(t))
     end
 
   fun newNamedTemp(title:string) =
@@ -18,10 +19,10 @@ struct
       val t = (Int.toString(!temps)^":"^title)
     in
       temps := !temps+1;
-      t
+      (!temps,t)
    end
    
-  fun getNameFromNamedTemp(namedTemp) = 
+  (*fun getNameFromNamedTemp(namedTemp) = 
     (* split by colon and take string after that *)
     let 
       fun getStringAfterColon (SOME(x,xs)) = (
@@ -32,10 +33,16 @@ struct
       | getStringAfterColon (NONE) = ""
     in
       getStringAfterColon(SOME(chr 1,explode(namedTemp)))
-    end 
+    end *)
   
-  fun makestring t = "t" ^ t
-  val compare = String.compare
+  fun makestring (intt,strt) = 
+      if debug 
+      then 
+      "t" ^ strt
+      else 
+      Int.toString(intt)
+      
+  (*val compare = String.compare*)
 
   type label = Symbol.symbol
   structure TempOrd =

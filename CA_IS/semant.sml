@@ -664,6 +664,7 @@ struct
                   case expectedParamsResultTy of Env.FunEntry({level=dLevel,label=lab, formals = expectedParamsTyList, result = resultTy}) =>
                     if tyListEqualTo(expectedParamsTyList, actualParamsTyList)
                     then (
+                      print("Label from callExp is " ^ Symbol.name(lab));
                       case resultTy of  
                           Types.UNIT => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, true), ty=resultTy}
                         | _ => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, false), ty=resultTy}
@@ -915,7 +916,12 @@ struct
                 {name: Absyn.symbol, params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list , result: (Symbol.symbol * Absyn.pos) option, body: Absyn.exp, pos: Absyn.pos} =>
                   let
                     (* add parameters to venv *)
-                    val funLabel = Temp.newlabel()
+                    (* val funLabel = Temp.newlabel() *)
+                    val funLabel = case Symbol.look(venv, name) of 
+                      SOME(Env.FunEntry{level,
+                                     label,
+                                     formals, result}) => label
+                    | _ => (ErrorMsg.error pos "Label not added to venv!"; Temp.newlabel())
                     val funLevel = Translate.newLevel({parent=level,name=funLabel,formals=paramsToFormals(params)})
                     val venv = addFunctionParamsVenv(venv,tenv,params,funLevel)
                     val actualReturn =  transExp(venv,tenv,body,funLevel,looplabel)
@@ -931,6 +937,9 @@ struct
                       end
                   in (
                     (* Translate.funDec run purely for side effect of adding PROC to fraglist *)
+                    
+                    print("Label from funDec is " ^ Symbol.name(funLabel));
+                    
                     Translate.funDec(funLevel,funLabel,#exp actualReturn);
                     
                     (* DEBUG PRINTS START
@@ -1149,6 +1158,7 @@ struct
   val {exp=exp, ty=ty} = transExp(venv,tenv, e, Translate.outermost, Temp.newlabel()); (* you can't break in outer loop so use random label *)
   in
   (
+    PrintAbsyn.print(TextIO.stdOut, e);
     Translate.funDec(Translate.outermost, Temp.newlabel(), exp);
     Translate.getResult()
   )

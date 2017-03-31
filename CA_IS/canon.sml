@@ -121,7 +121,8 @@ struct
       every block ends with a JUMP or CJUMP *)
 
   fun basicBlocks stms = 
-     let val done = Temp.newlabel()
+      let val done = Temp.newlabel() 
+      (*  let val done = Temp.namedlabel("DONE") *)
          fun blocks((head as T.LABEL _) :: tail, blist) =
 	     let fun next((s as (T.JUMP _))::rest, thisblock) =
 		                endblock(rest, s::thisblock)
@@ -139,7 +140,8 @@ struct
 	     in next(tail, [head])
 	     end
 	   | blocks(nil, blist) = rev blist
-	   | blocks(stms, blist) = blocks(T.LABEL(Temp.newlabel())::stms, blist)
+	    | blocks(stms, blist) = blocks(T.LABEL(Temp.newlabel())::stms, blist) 
+	  (* | blocks(stms, blist) = blocks(T.LABEL(Temp.namedlabel("CANON LABEL"))::stms, blist) *)
       in (blocks(stms,nil), done)
      end
 

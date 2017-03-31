@@ -212,7 +212,8 @@ struct
         then
           Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
         else
-          Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))
+         (* Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))*)
+          Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList) )
       end
 
   fun strcmp(str1:exp,str2:exp,oper:A.oper,callLevel:level): exp =
@@ -471,7 +472,16 @@ struct
           T.MOVE(T.TEMP rTemp, T.CONST 1),
           T.LABEL(doneLabel)
         ], 3371
-        ), T.TEMP rTemp)
+        ), T.MEM(
+              T.BINOP(T.PLUS,
+                    unEx varAccess,
+                    T.BINOP(T.MUL,
+                      unEx offsetExp,
+                      T.CONST Frame.wordSize
+                    )
+              )
+            )
+         )
       )
     ) end
 
@@ -495,7 +505,7 @@ struct
 
   fun funDec(funLevel:level, lab:Temp.label, body:exp) =
     let
-      val bodyStm = T.MOVE(T.TEMP Frame.RV, unEx body)
+      val bodyStm = seq([T.LABEL lab, T.MOVE(T.TEMP Frame.RV, unEx body)], ~999)
     in
       procEntryExit({level=funLevel, body=bodyStm})
     end
