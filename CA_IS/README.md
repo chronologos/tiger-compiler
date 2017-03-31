@@ -1,10 +1,13 @@
-# Intermediate Representation and Frame Analysis 
+## Run Chapter 9
+Main.compile "dir/to/file"
+
+# Intermediate Representation and Frame Analysis
 Run with:
     Main.IR "filename"
-## Debugging things 
-- We changed temp.sml so that we can have named registers which are guaranteed to be "unique". 
+## Debugging things
+- We changed temp.sml so that we can have named registers which are guaranteed to be "unique".
 - We also added named labels which are guaranteed to be "unique".
-- We added an extra parameter to seq() function for debugging purposes. 
+- We added an extra parameter to seq() function for debugging purposes.
 
 ## Future TODO
 - bounds checking [done]
