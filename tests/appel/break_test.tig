@@ -1,0 +1,8 @@
+let
+    var N:= 8
+    function func(x:int) =
+      for i:=0 to N-1
+      do for j:=break to N-1 do print("")
+ in
+    func(1)
+ end
