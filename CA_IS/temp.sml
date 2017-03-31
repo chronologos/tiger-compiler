@@ -40,11 +40,13 @@ struct
       then 
       "t" ^ strt
       else 
-      Int.toString(intt)
-      
-  (*val compare = String.compare*)
+      "t" ^ Int.toString(intt)
 
   type label = Symbol.symbol
+
+      
+  (*val compare = String.compare
+
   structure TempOrd =
   struct
     type ord_key = temp
@@ -53,7 +55,7 @@ struct
 
   structure Set = SplaySetFn(TempOrd)
   structure Map = SplayMapFn(TempOrd)
-
+*)
   local structure F = Format
       fun postinc x = let val i = !x in x := i+1; i end
       val labs = ref 0
