@@ -1,7 +1,7 @@
 (* make this an abstraction sometime *)
 structure Temp : TEMP =
 struct
-  type temp = int*string (* TODO *)
+  type temp = int * string * bool (* TODO *)
   val temps = ref 100
   val labelCount = ref 0
   val debug = false
@@ -11,7 +11,7 @@ struct
       val t = !temps
     in
       temps := t+1;
-      (t,Int.toString(t))
+      (t,Int.toString(t),false)
     end
 
   fun newNamedTemp(title:string) =
@@ -19,12 +19,20 @@ struct
       val t = (Int.toString(!temps)^":"^title)
     in
       temps := !temps+1;
-      (!temps,t)
+      (!temps,t,false)
    end
-   
-  (*fun getNameFromNamedTemp(namedTemp) = 
+
+   fun newNamedTempTrue(title:string) =
+     let
+       val t = (Int.toString(!temps)^":"^title)
+     in
+       temps := !temps+1;
+       (!temps,t,true)
+    end
+
+  (*fun getNameFromNamedTemp(namedTemp) =
     (* split by colon and take string after that *)
-    let 
+    let
       fun getStringAfterColon (SOME(x,xs)) = (
         case (Char.toString(x), xs) of (":", _) => implode(xs)
         | (_, []) => ""
@@ -34,17 +42,18 @@ struct
     in
       getStringAfterColon(SOME(chr 1,explode(namedTemp)))
     end *)
-  
-  fun makestring (intt,strt) = 
-      if debug 
-      then 
+
+  fun makestring (intt,strt,boo) =
+      if debug
+      then
       "t" ^ strt
-      else 
-      "t" ^ Int.toString(intt)
+      else (if boo
+           then "t" ^ strt
+           else "t" ^ Int.toString(intt))
 
   type label = Symbol.symbol
 
-      
+
   (*val compare = String.compare
 
   structure TempOrd =

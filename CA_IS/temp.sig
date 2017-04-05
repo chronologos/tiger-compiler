@@ -5,7 +5,7 @@ sig
   val newNamedTemp : string -> temp
   val makestring: temp -> string
   (*val compare : temp * temp -> order*)
-
+  val newNamedTempTrue : string -> temp
   type label = Symbol.symbol
   val newlabel : unit -> label
   val namedlabel : string -> label

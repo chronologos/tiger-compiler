@@ -154,7 +154,7 @@ struct
 
   fun paramsToFormals(params:{name:Symbol.symbol,escape: bool ref, typ: Symbol.symbol, pos:Absyn.pos} list) =
     let
-      fun foldFn (p,list) = 
+      fun foldFn (p,list) =
         case p of
           {name=name,escape=ecp, typ=typ, pos=pos} => (debugPrint("escape of formal "^Symbol.name(name)^" is "^Bool.toString(!ecp)^".\n",pos); !ecp::list)
     in
@@ -295,7 +295,7 @@ struct
       let
         val {exp=expLeft, ty=tyLeft} = transExp(venv,tenv,left,level,looplabel)
         val {exp=expRight, ty=tyRight} = transExp(venv,tenv,right,level,looplabel)
-      in ( 
+      in (
         case oper of
           (Absyn.PlusOp |  Absyn.MinusOp | Absyn.TimesOp | Absyn.DivideOp) =>
             (
@@ -312,9 +312,9 @@ struct
 
             case (tyLeft, tyRight) of (Types.STRING, Types.STRING) => {exp=Translate.strcmp(expLeft,expRight,oper,level),ty=Types.INT}
             | (Types.INT, Types.INT) => {exp=Translate.opExp(expLeft,expRight,oper), ty=Types.INT}
-            | (Types.RECORD(_ , x),Types.RECORD(_, y))  => 
+            | (Types.RECORD(_ , x),Types.RECORD(_, y))  =>
               if x = y then
-                {exp=Translate.refCompare(expLeft,expRight,oper), ty=Types.INT} 
+                {exp=Translate.refCompare(expLeft,expRight,oper), ty=Types.INT}
               else (
                 ErrorMsg.error pos "Both operands must be of the same type.";
                 {exp=Translate.transError(), ty=Types.BOTTOM}
@@ -362,7 +362,7 @@ struct
                   (* check init same type as t *)
                   let
                     val {exp=initExp,ty=initTyp} = transExp(venv,tenv,i,level,looplabel)
-                    val tTyp = case Symbol.look(tenv, t) of 
+                    val tTyp = case Symbol.look(tenv, t) of
                       SOME(x) => x
                     | NONE =>  (
                                 ErrorMsg.error pos "Undeclared type.";
@@ -386,13 +386,13 @@ struct
           end
           )
           | Absyn.VarExp(somevar) => transVar(venv, tenv, somevar, level, looplabel)
-          
-        (* 
+
+        (*
             let
               val res = transVar(venv, tenv, somevar, level, looplavel)
               val resTy = #ty res
               val resExp = #exp res
-            in 
+            in
               case resTy of
                     SOME(Env.FunEntry(_)) => (
                     ErrorMsg.error pos "Fun not found in venv.";
@@ -403,8 +403,8 @@ struct
                   | NONE => (
                     ErrorMsg.error pos "Var not found in venv.";
                     {exp=Translate.transError(),ty=Types.BOTTOM}
-                  )               
- 
+                  )
+
             ( case somevar of Absyn.SimpleVar(sym,pos) =>
               let
                   val dummy = debugPrint("varExp at level "^Translate.levelToString(level)^".\n",pos)
@@ -480,14 +480,14 @@ struct
                 )
               end
           *)
-          
+
           | Absyn.LetExp({decs, body, pos}) =>
             let
               fun first  (a, _) = a
               fun second (_, b) = b
               val dummy = debugPrint("LetExp at level "^Translate.levelToString(level)^".\n",pos)
               val myLevel = level
-              fun foldFn (dec,({venv=venv,tenv=tenv},expList)) = 
+              fun foldFn (dec,({venv=venv,tenv=tenv},expList)) =
                 let val {venv=venv,tenv=tenv,exp=expOpt} = transDec(venv, tenv, dec, myLevel, looplabel)
                     val newEnv = {venv=venv,tenv=tenv}
                 in
@@ -506,7 +506,7 @@ struct
           | Absyn.SeqExp(xs) => let
             val dummy = debugPrint("SeqExp at level "^Translate.levelToString(level)^".\n",0)
             (* need Translate.exp list to pass to Translate.seqExp *)
-            fun foldSeqExp((absExp,pos),(treeExpList,endType)) = 
+            fun foldSeqExp((absExp,pos),(treeExpList,endType)) =
                 let val {exp=treeExp,ty=typ} = transExp(venv, tenv, absExp, level, looplabel)
                 in
                     (treeExp::treeExpList,typ)
@@ -517,7 +517,7 @@ struct
             end
           | Absyn.IfExp({test: Absyn.exp, then': Absyn.exp, else': Absyn.exp option, pos: Absyn.pos}) =>
             (* get the type of test, must be int *)
-            let 
+            let
                 val {exp=testExp,ty=testTyp} = transExp(venv, tenv, test, level,looplabel)
             in
                 if (not (tyEqualTo(testTyp, Types.INT)))
@@ -564,7 +564,7 @@ struct
               val dummy = debugPrint("WhileExp at level "^Translate.levelToString(level)^".\n",pos)
               val donelabel = Temp.newlabel()
               val test' = transExp(venv, tenv, test, level, donelabel)
-              val testType = #ty test' 
+              val testType = #ty test'
             in
               (
               breakable := (!breakable + 1);
@@ -605,7 +605,7 @@ struct
               val lo' = transExp(venv, tenv, lo, level,looplabel)
               val loType = #ty lo'
               val hi' = transExp(venv, tenv, hi, level,looplabel)
-              val hiType = #ty hi' 
+              val hiType = #ty hi'
               val forLoopLevel = level
               val dumm = debugPrint("forExp at level "^Translate.levelToString(forLoopLevel)^"\n",pos)
             in
@@ -629,8 +629,8 @@ struct
                     val venv = Symbol.enter(venv, var, Env.VarEntry({access=loopVar,ty=Types.INT}))
                     val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(var)^" at level "^Translate.levelToString(forLoopLevel)^".\n",pos)
                   in
-                    let 
-                      val body' = transExp(venv, tenv, body, forLoopLevel,looplabel) 
+                    let
+                      val body' = transExp(venv, tenv, body, forLoopLevel,looplabel)
                       val bodyType = #ty body'
                     in
                       if not (tyEqualTo(bodyType, Types.UNIT))
@@ -648,7 +648,7 @@ struct
                 )
               )
           end
-            
+
           | Absyn.CallExp({func:Symbol.symbol, args: Absyn.exp list, pos: Absyn.pos}) =>
             (* Compare type of each exp in exp list against param list of func*)
             let
@@ -664,8 +664,7 @@ struct
                   case expectedParamsResultTy of Env.FunEntry({level=dLevel,label=lab, formals = expectedParamsTyList, result = resultTy}) =>
                     if tyListEqualTo(expectedParamsTyList, actualParamsTyList)
                     then (
-                      print("Label from callExp is " ^ Symbol.name(lab));
-                      case resultTy of  
+                      case resultTy of
                           Types.UNIT => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, true), ty=resultTy}
                         | _ => {exp=Translate.callExp(dLevel,level,lab,treeExpArgList, false), ty=resultTy}
                     )
@@ -689,14 +688,14 @@ struct
                   val {exp=initExp,ty=expTyp} = (transExp(venv, tenv, exp, level,looplabel))
               in
 
-                case (varTyp, expTyp) of (Types.RECORD(_, _), Types.RECORD(_, _)) => 
-                  if recordTyEqualTo(varTyp, expTyp) then {exp=Translate.assignExp(varExp,initExp), ty=Types.UNIT} 
+                case (varTyp, expTyp) of (Types.RECORD(_, _), Types.RECORD(_, _)) =>
+                  if recordTyEqualTo(varTyp, expTyp) then {exp=Translate.assignExp(varExp,initExp), ty=Types.UNIT}
                   else (
                     ErrorMsg.error pos "Yo Noid Record types are different";
                     {exp = Translate.transError(), ty = Types.BOTTOM}
                   )
                 | (Types.ARRAY(_, _), Types.ARRAY(_, _)) => (
-                  if (arrayTyEqualTo(varTyp, expTyp)) then {exp=Translate.assignExp(varExp,initExp),ty=Types.UNIT} 
+                  if (arrayTyEqualTo(varTyp, expTyp)) then {exp=Translate.assignExp(varExp,initExp),ty=Types.UNIT}
                   else (
                     ErrorMsg.error pos "Array types are different.";
                     {exp=Translate.transError(), ty=Types.BOTTOM}
@@ -756,7 +755,7 @@ struct
 
       (* Just handle non-recursive tydecs first *)
       and transDec(venv, tenv, dec, level, looplabel): {venv:Env.enventry Symbol.table, tenv:Types.ty Symbol.table, exp:Translate.exp option} =
-        (* exp is option type because TypeDec and FunDec do not have IR representation *) 
+        (* exp is option type because TypeDec and FunDec do not have IR representation *)
         case dec of Absyn.TypeDec(tydecList) =>
           (* add non array/record to tenv; create table symbol=>unit ref for array/record; *)
           let
@@ -805,7 +804,7 @@ struct
           )
         end
 
-        | Absyn.VarDec({name, escape:bool ref, typ, init, pos}) => 
+        | Absyn.VarDec({name, escape:bool ref, typ, init, pos}) =>
           (* if isSome typ then need to do type checking of init against typ, else just save the type of init for var name in venv*)
            if isSome typ then
             (
@@ -818,7 +817,7 @@ struct
                 )
               | (_) =>
                 (
-                    let 
+                    let
                       val actual = transExp(venv, tenv, init, level,looplabel)
                       val actualType = (#ty actual)
                       val newAlloc = Translate.allocLocal(level)(!escape)
@@ -883,7 +882,7 @@ struct
 
              ) else (
               (* typ is NONE, so nothing to check, just put actualType of init in table *)
-              let 
+              let
                 val actual = transExp(venv, tenv, init, level,looplabel)
                 val actualType = (#ty actual)
                 val newAlloc = Translate.allocLocal(level)(!escape)
@@ -891,16 +890,16 @@ struct
                 val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(name)^".\n",pos)
                 val res = Translate.varDecAlloc(newAlloc, #exp actual)
               in
-                case actualType of 
+                case actualType of
                   Types.NIL => (
                       ErrorMsg.error pos "Assign nil to new var\n";
                       {venv=venv,tenv=tenv,exp=SOME(res)}
                     )
                   | (_) => {venv=Symbol.enter(venv, name, newVarEntry), tenv=tenv, exp=SOME(res)}
-                
+
               end
             )
-            
+
         | Absyn.FunctionDec(fundeclist) =>
           (* add function headers to venv *)
           (* foldl with transExp on body; returns boolean *)
@@ -917,7 +916,7 @@ struct
                   let
                     (* add parameters to venv *)
                     (* val funLabel = Temp.newlabel() *)
-                    val funLabel = case Symbol.look(venv, name) of 
+                    val funLabel = case Symbol.look(venv, name) of
                       SOME(Env.FunEntry{level,
                                      label,
                                      formals, result}) => label
@@ -925,7 +924,7 @@ struct
                     val funLevel = Translate.newLevel({parent=level,name=funLabel,formals=paramsToFormals(params)})
                     val venv = addFunctionParamsVenv(venv,tenv,params,funLevel)
                     val actualReturn =  transExp(venv,tenv,body,funLevel,looplabel)
-                    val actualReturnType = #ty actualReturn 
+                    val actualReturnType = #ty actualReturn
                     val expectedReturnType =
                       let
                         val expectedReturnTypeOpt = Symbol.look(venv, name)
@@ -937,11 +936,9 @@ struct
                       end
                   in (
                     (* Translate.funDec run purely for side effect of adding PROC to fraglist *)
-                    
-                    print("Label from funDec is " ^ Symbol.name(funLabel));
-                    
+
                     Translate.funDec(funLevel,funLabel,#exp actualReturn);
-                    
+
                     (* DEBUG PRINTS START
                     print("Type of expected return type:\n");
                     printDatatype(expectedReturnType);
@@ -949,19 +946,19 @@ struct
                     printDatatype(actualReturnType);
                     print("\n");
                     DEBUG PRINTS END *)
-                    
+
                     if tyEqualTo(expectedReturnType, actualReturnType) then true
                     else (ErrorMsg.error pos "Function return type mismatch.";false)
                     )
                   end
               )
             (**** END OF foldFn ****)
-            val foldAns = foldl foldFn true fundeclist 
+            val foldAns = foldl foldFn true fundeclist
           in (
             if foldAns <> true andalso foldAns <> false then print("wut?") else ();
-            case (dupErr, foldAns) of 
+            case (dupErr, foldAns) of
               (1,_) => {venv=venv,tenv=tenv,exp=NONE}
-            | (0, true) => {venv=venv,tenv=tenv,exp=NONE} 
+            | (0, true) => {venv=venv,tenv=tenv,exp=NONE}
             | (0, false) => (ErrorMsg.error 0 "Fundecs do not type check\n"; {venv=venv,tenv=tenv,exp=NONE})
             | _ => (ErrorMsg.error 0 "GGXX dupErr is not 0 or 1"; print(((Int.toString dupErr)^"asfdafad"));{venv=venv,tenv=tenv,exp=NONE})
             )
@@ -1120,8 +1117,8 @@ struct
                     (* find idx of symobol in sorted field list *)
                     let
                       fun indexFoldFn ((x,xType),(idx,currIdx)) = if x = sym then(currIdx, currIdx+1) else (idx, currIdx + 1)
-                      val idx = #1(foldl indexFoldFn (0,0) fieldList) 
-                    in  
+                      val idx = #1(foldl indexFoldFn (0,0) fieldList)
+                    in
                       {exp=Translate.fieldVar(varExp,idx),ty=typ}
                     end
                   )
@@ -1153,12 +1150,12 @@ struct
           )
       )
       end
-      
+
   (* end all mutually recursive function defs and start in block of transProg *)
   val {exp=exp, ty=ty} = transExp(venv,tenv, e, Translate.outermost, Temp.newlabel()); (* you can't break in outer loop so use random label *)
   in
   (
-    PrintAbsyn.print(TextIO.stdOut, e);
+    (*PrintAbsyn.print(TextIO.stdOut, e); *)
     Translate.funDec(Translate.outermost, Temp.newlabel(), exp);
     Translate.getResult()
   )

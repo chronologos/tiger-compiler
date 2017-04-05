@@ -3,49 +3,49 @@ struct
   structure T = Tree
   structure A = Assem
   datatype access = InFrame of int | InReg of Temp.temp
-  
+
   type frame = {name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref}
 
   datatype frag =  PROC of {body:Tree.stm, frame:frame}
-                 | STRING of Temp.label * string 
-                 
-                 
+                 | STRING of Temp.label * string
+
+
   val wordSize = 4
   val k = 4
   val debug = false
-  
-  val FP = Temp.newNamedTemp("FP")
-  val SP = Temp.newNamedTemp("SP")
-  val RV = Temp.newNamedTemp("RV")
-  val ZERO = Temp.newNamedTemp("ZERO")
-  val RA = Temp.newNamedTemp("RA")
-  
+
+  val FP = Temp.newNamedTempTrue("FP")
+  val SP = Temp.newNamedTempTrue("SP")
+  val RV = Temp.newNamedTempTrue("RV")
+  val ZERO = Temp.newNamedTempTrue("ZERO")
+  val RA = Temp.newNamedTempTrue("RA")
+
   fun initRegs (0,someLetter) = []
-  | initRegs(i, someLetter) = initRegs(i-1,someLetter) @ [Temp.newNamedTemp(someLetter^Int.toString(i-1))]
-  
+  | initRegs(i, someLetter) = initRegs(i-1,someLetter) @ [Temp.newNamedTempTrue(someLetter^Int.toString(i-1))]
+
   val aRegNum = 4
   val sRegNum = 8
   val tRegNum = 10
-  val argregs = initRegs(aRegNum, "a") 
+  val argregs = initRegs(aRegNum, "a")
   val specialregs = [FP,SP,RV,RA,ZERO]
   val calleesaves = initRegs(sRegNum,"s") (* s0 - s7 *)
   val callersaves = initRegs(tRegNum,"t") (* t0 - t9 *)
   
-  
+
   fun string(label,s) =
      Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"
       (* 7 implemented by translate *)
   fun procEntryExit1 (frame,body) = body (* 4 5 8 *)
-  
-  fun procEntryExit2 (frame,instrlist) = 
+
+  fun procEntryExit2 (frame,instrlist) =
     instrlist @ [A.OPER{assem="", src=[ZERO,RA,SP]@calleesaves, dst=[], jump=SOME[]}] (* TODO why is this SOME *)
   (* sink liveness *)
-  
-  fun procEntryExit3(frame':{name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref},body) = 
+
+  fun procEntryExit3(frame':{name:Temp.label, kFormals:access list, moreFormals:access list, fpMaxOffset:int ref},body) =
       {prolog = "PROCEDURE "^Symbol.name(#name frame') ^ " \n",
        body = body,
        epilog = "END " ^ Symbol.name (#name frame') ^ " \n"}
-    
+
 
   fun debugPrint(msg:string, pos:int) =
     if debug
@@ -94,7 +94,7 @@ struct
 
   fun name (f:frame) = #name f
   fun formals (f:frame) = List.drop((#kFormals f) @ (#moreFormals f), 1)
-  
+
 
   fun allocLocal ({name=label:Temp.label, kFormals=list:access list, moreFormals=moreFormals, fpMaxOffset=offset: int ref}) =
     let
