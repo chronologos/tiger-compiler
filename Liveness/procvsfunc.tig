@@ -1,0 +1,10 @@
+let
+    function f(n: int):int = 999
+    function do_nothing1(a: int, b: string)=
+            do_nothing2(a+1)
+
+    function do_nothing2(d: int) =
+            do_nothing1(d, "str")
+in
+    1
+end
