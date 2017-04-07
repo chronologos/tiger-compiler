@@ -1,5 +1,7 @@
 structure Flow =
 struct
+    structure Graph = FuncGraph(FuncGraph.nodeID)
+    
     datatype flowgraph = FGRAPH of {control: Graph.graph,
 				    def: Temp.temp list Graph.Table.table,
 				    use: Temp.temp list Graph.Table.table,
@@ -21,3 +23,7 @@ struct
    *)
 
 end
+
+structure MakeGraph:
+sig
+    val instrs2graph: Assem.instr list -> Flow.flowgraph * Flow.Graph.node list

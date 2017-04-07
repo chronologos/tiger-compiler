@@ -4,7 +4,6 @@ structure Main = struct
   structure F = MipsFrame
   (*structure R = RegAlloc*)
 
-fun getsome (SOME x) = x
 
   fun emitproc out (F.PROC({body,frame})) =
     let
@@ -15,6 +14,7 @@ fun getsome (SOME x) = x
       val _ = app (fn x => Printtree.printtree(out, x)) stms'
       val instrs =   List.concat(map (MipsGen.codegen frame) stms')
       val format0 = Assem.format(Temp.makestring)
+      val graph = MakeGraph.instrs2graph(instrs)
     in
       app (fn i => TextIO.output(out,format0 i)) instrs
     end
@@ -29,7 +29,8 @@ fun getsome (SOME x) = x
   fun compile filename =
     let val absyn = Parse.parse filename
         val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
-    in
+        
+    in 
       withOpenFile (filename ^ ".s")
       (fn out => (app (emitproc out) frags))
     end
