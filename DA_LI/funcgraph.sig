@@ -10,6 +10,8 @@ exception NoSuchEdge of nodeID * nodeID
 
 val empty: 'a graph
 
+val getMaxNodeID: unit -> int
+
 (* add a node*)
 val addNode: 'a graph * nodeID * 'a -> 'a graph
 (* add a node, and return it immediately w/ the new graph*)
@@ -106,5 +108,8 @@ val isAdjacent: 'a node * 'a node -> bool
  * string, and it will print everything out 
  *)
 val printGraph:  ((nodeID * 'a) -> string) -> 'a graph  -> unit
+
+(* takes two functions, first for main node, second for preds/succs *)
+val printGraph2: ((nodeID * 'a) -> string) -> (('a graph * nodeID) -> string) -> 'a graph  -> unit 
 
 end

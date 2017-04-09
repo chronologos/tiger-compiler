@@ -1,10 +1,12 @@
 structure MakeGraph:
 (*'a = (uses:Temp.temp list * defs:Temp.temp list * instruction/label * isMove:bool)*)
 sig 
-    type flowgraph
-    type nodeDataType
-    val instrs2graph: Assem.instr list -> flowgraph
+    (*val instrs2graph: Assem.instr list -> 'a IntFuncGraph.graph*)
+    (*val instrs2graph: Assem.instr list -> flowgraph*)
+    val instrs2graph:  Assem.instr list -> FlowGraph.graph
     val stringify: int * ('a * 'b * string * 'c * 'd * 'e) -> string 
+    val getMaxNodeID: unit -> int
+
 end
 
 = struct 
@@ -12,18 +14,12 @@ end
     structure A = Assem
     structure H = HashTable
     exception MakeGraph
-    structure fg = FuncGraph(type ord_key=graphOrdKeyType
-                                    fun compare(x,y) = 
-                                        if x<y then LESS
-                                        else(
-                                            if x>y then GREATER
-                                            else EQUAL
-                                            )
-                                    )
+    structure fg = IntFuncGraph
+    structure LiveSet = FlowGraph.LiveSet 
     
-    structure LiveSet = SplaySetFn(type ord_key = Temp.temp fun compare(x,y)=String.compare(Temp.makestring x, Temp.makestring y))
+    (*structure LiveSet = SplaySetFn(type ord_key = Temp.temp fun compare(x,y)=String.compare(Temp.makestring x, Temp.makestring y))
     type nodeDataType = (LiveSet.set * LiveSet.set * string * bool * LiveSet.set * LiveSet.set)
-    type flowgraph =  nodeDataType fg.graph
+    type flowgraph =  nodeDataType fg.graph*)
     
     
     (*val labelNodesMap = Symbol.enter(Symbol.empty,Symbol.symbol("")) (* label -> Node map *)*)
@@ -49,6 +45,8 @@ end
             nodeID)
         end
         
+    fun getMaxNodeID () = !maxNodeID
+    
     
     fun foldAssemCreateNodesFn (nextInst, graphSoFar) =
         (* nodes for labels *)
@@ -72,7 +70,7 @@ end
         | A.MOVE({assem = ass, dst = dst, src = src}) =>
             let val src = [src]
                 val dst = [dst]
-                val (newGraph, _) = (fg.addNode'(graphSoFar, getNextNodeID(), (LiveSet.addList(LiveSet.empty, src), LiveSet.addList(LiveSet.empty, dst), ass, false, LiveSet.empty, LiveSet.empty)))
+                val (newGraph, _) = (fg.addNode'(graphSoFar, getNextNodeID(), (LiveSet.addList(LiveSet.empty, src), LiveSet.addList(LiveSet.empty, dst), ass, true, LiveSet.empty, LiveSet.empty)))
             in  
                 newGraph
             end
@@ -126,19 +124,6 @@ end
                | (_) => addNextInsEdge(myID,graphSoFar)
         end
     
-    fun buildString(list) =
-        let fun foldList (tmp, str) =
-                str^", "^Temp.makestring(tmp)
-        in
-            if List.length(list) >= 1
-            then foldl foldList (Temp.makestring(List.hd(list))) (List.drop(list,1))
-            else ""
-        end
-    
-    fun nodeToString (nodeID,nodeData) =
-        case nodeData of 
-            (uses, defs, instr, isMove, liveIns, liveOuts) => "NodeID "^Int.toString(nodeID)^" "^instr^" \n"^"defs: "^buildString(defs)^" \n"^"uses: "^buildString(uses)^" \n"
-    
     
     fun stringify(nodeID, data) : string =
         (* Check data type of data, whether 4-tup or 6-tup *)
@@ -158,12 +143,12 @@ end
         let val completeGraph = foldl foldAssemCreateNodesFn fg.empty instrs 
             val dumdum = resetNodeID()
             val completeLinkGraph = foldl foldAssemLinkFn completeGraph instrs 
-        in  (
-            print("instrs2graph result: \n");
-            (* Flow.flowgraph * Flow.Graph.node list *)
+        in  
+            (*print("instrs2graph result: \n");
             (fg.printGraph stringify completeLinkGraph;
-            completeLinkGraph)
-            )
+            *)
+            
+            completeLinkGraph
         end
             
 end

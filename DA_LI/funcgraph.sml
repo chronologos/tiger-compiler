@@ -23,16 +23,30 @@ exception NoSuchEdge of nodeID * nodeID
 
 
 val empty = NodeMap.empty
+val maxNodeID = ref (0-1)
+
+
+fun getMaxNodeID() = !maxNodeID
+
+
 fun getNode(g,nid) = case NodeMap.find(g,nid) of
    NONE => raise NoSuchNode(nid)
          | SOME x=> x
-fun addNode(g,nid,d) = NodeMap.insert(g,nid,(nid,d,NodeSet.empty,NodeSet.empty))
+fun addNode(g,nid,d) = (
+    maxNodeID := !maxNodeID + 1;
+    NodeMap.insert(g,nid,(nid,d,NodeSet.empty,NodeSet.empty))
+)
+
 fun addNode'(g,nid,d) =
     let val n = (nid,d,NodeSet.empty,NodeSet.empty)
   val g' = NodeMap.insert(g,nid,n)
-    in
-  (g',n)
+    in  
+        (
+        maxNodeID := !maxNodeID + 1;
+        (g',n)
+        )
     end
+    
 fun changeNodeData(g,nid,d) =
     let val (_,_,s,p) = getNode(g,nid)
     in
@@ -132,6 +146,24 @@ fun printGraph stringify g =
       end
     in
   NodeMap.app prOneNode g
+    end
+
+
+fun printGraph2 stringify stringify2 g =
+    let fun println x = print(x ^"\n")
+        fun prSet s = NodeSet.app (fn(x)=>print(stringify2(g, x))) s
+        fun prOneNode(nid,data,succs,preds) =
+          let val s = stringify(nid,data)
+              val () = println("====================\n Node: " ^ s)
+              val () = println(" -> Successors:")
+              val () = prSet succs
+              val () = println(" -> Predecessors:")
+              val () = prSet preds
+          in
+                ()
+          end
+    in
+        NodeMap.app prOneNode g
     end
 
 end

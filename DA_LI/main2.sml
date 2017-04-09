@@ -15,6 +15,8 @@ structure Main = struct
       val instrs =   List.concat(map (MipsGen.codegen frame) stms')
       val format0 = Assem.format(Temp.makestring)
       val graph = MakeGraph.instrs2graph(instrs)
+      val (_) = print("proceeding to fixedPointLoop\n")
+      val updatedGraph = Liveness.fixedPointLoop(graph)
     in
       app (fn i => TextIO.output(out,format0 i)) instrs
     end
