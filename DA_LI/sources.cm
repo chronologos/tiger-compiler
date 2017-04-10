@@ -31,6 +31,6 @@ mipsgen.sml
 funcgraph.sml
 funcgraph.sig
 makegraph.sml
-liveness.sml
+liveness2.sml
 $/basis.cm
 $/smlnj-lib.cm

@@ -17,11 +17,36 @@ struct
     structure A = Assem
     structure H = HashTable
     structure fg = IntFuncGraph
+    structure tg = TempFuncGraph
 
+  fun makeIGraphNodes(graph:FlowGraph.graph) =
+  let
+    val nodes = fg.nodes(graph)
+    val temps =
+      foldl (fn(x,s)=>
+        let
+          val (_,_,_,_,li,lo):FlowGraph.nodeDataType = fg.nodeInfo(x)
+        in
+          FlowGraph.LiveSet.union((FlowGraph.LiveSet.union(s,lo)),li)
+        end
+        ) FlowGraph.LiveSet.empty nodes
+    val tempsList = FlowGraph.LiveSet.listItems(temps)
+  in
+    foldl (fn(x,g) =>
+      tg.addNode(g,Temp.makestring(x),x)
+    ) tg.empty tempsList
+  end
+  
   fun stringify2(g, nodeID) = 
     let val (_, _, ass, _, _, _) = fg.nodeInfo(fg.getNode(g, nodeID))
     in
       "NodeID " ^ Int.toString(nodeID) ^ " : " ^ ass ^ "\n"
+    end
+  
+  fun stringify2Temp(g, nodeID) = 
+    let val tmp = TempFuncGraph.nodeInfo(TempFuncGraph.getNode(g, nodeID))
+    in
+      "NodeID " ^ nodeID ^ " : " ^ Temp.makestring(tmp) ^ "\n"
     end
    
         (* Perform the LiveIns[node] = uses U (LiveOuts[node] - defs) *)     
@@ -89,6 +114,12 @@ fun printLiveSets(set) = (
       (uses, defs, instr, isMove, liveIns, liveOuts) => (
         "NodeID "^ Int.toString(nodeID) ^ " " ^ instr ^ " \n" ^ "live-in: \n" ^ printLiveSets(liveIns) ^ "live-outs: \n" ^ printLiveSets(liveOuts)
       )
+  
+  fun nodeToStringTemp (nodeID,nodeData) =
+  case nodeData of 
+      tmp => (
+        "NodeID "^ Temp.makestring(tmp) ^"\n"
+      )
     
   (* Perform 1 iteration of the update with live-ins and live-outs *)
   fun fixedPointLoop(graph) =
@@ -106,12 +137,7 @@ fun printLiveSets(set) = (
          graphRes
        )
     end    
-  
-  
-      
-  
-  
-  
+
   (*
   fun dfs([], (graph, changed)) = (graph, changed)
     | dfs(predList, (graph, changed)) = 
@@ -138,10 +164,10 @@ fun printLiveSets(set) = (
     (tGraph, foundNode)
     end
     
-    handle NoSuchNode => (
-      print("Node " ^ Temp.makestring(temp) ^ " does not exist yet");
+    handle TempFuncGraph.NoSuchNode(nid) => (
+      print("Node " ^ Temp.makestring(temp) ^ " does not exist yet\n");
       let val newGraph = TempFuncGraph.addNode(tGraph, Temp.makestring temp, temp)
-          val newNode = TempFuncGraph.getNode(tGraph, Temp.makestring temp)
+          val newNode = TempFuncGraph.getNode(newGraph, Temp.makestring temp)
       in
           (newGraph,newNode)
       end
@@ -160,20 +186,21 @@ fun printLiveSets(set) = (
       end
 
     fun sameTempNode(n1, n2) = (* LESS | EQUAL |  *)
-      case String.compare(TempFuncGraph.getNodeID(n1), TempFuncGraph.getNodeID(n2)) of 
+      case String.compare(Temp.makestring(n1),Temp.makestring(n2))  of 
           EQUAL => true
          | (_) => false
 
     fun interferenceGraph (flowGraph) =
-      let val tempGraph = TempFuncGraph.empty
-          
+      let val tempGraph = makeIGraphNodes(flowGraph)
           fun buildMoveList(g) =
             let val flowGraphList = IntFuncGraph.nodes(g)
             in
             foldl (fn (x,res) => 
                       let val (uses,defs,_,isMove,_,_) = IntFuncGraph.nodeInfo(x)  
                       in
-                        if (isMove andalso List.length(uses) = 1 andalso List.length(defs) = 1) then (hd uses, hd defs)::res else res
+                        if (isMove andalso FlowGraph.LiveSet.numItems(uses) = 1 andalso FlowGraph.LiveSet.numItems(defs) = 1) 
+                        then (hd(FlowGraph.LiveSet.listItems(uses)), hd(FlowGraph.LiveSet.listItems(defs)))::res
+                        else res
                       end
                   ) [] flowGraphList
             end
@@ -182,7 +209,7 @@ fun printLiveSets(set) = (
           fun interfereNode(fgNode, tempGraph) =
             let val (_, defs, _, _, _, liveOuts) = fg.nodeInfo(fgNode)
                 (* make double-edge between this node and each graph node in defs::liveOuts *)
-                val nodeList = FlowGraph.LiveSet.union(defs, liveOuts)
+                val nodeList = FlowGraph.LiveSet.listItems(FlowGraph.LiveSet.union(defs, liveOuts))
                 
                 fun innerFoldFn(innerNode, (nodeList, tempGraphSoFar)) =
                 
@@ -192,8 +219,10 @@ fun printLiveSets(set) = (
                         if not (sameTempNode(tempNode, nextLiveOut)) then
                           (nextLiveOut,TempFuncGraph.doubleEdge(tGraph, getIDFromTemp(tGraph, nextLiveOut), Temp.makestring(tempNode)))
                         else (nextLiveOut,tGraph)
+                      val (node',graphRes) = foldl addDoubleEdge (innerNode,tempGraphSoFar) nodeList;
+
                   in
-                    foldl addDoubleEdge (innerNode,tempGraphSoFar) nodeList
+                    (nodeList,graphRes)
                   end
                     
             in
@@ -222,10 +251,10 @@ fun printLiveSets(set) = (
             end
             
             *)
-            val graph = foldl interfereNode tempGraph TempFuncGraph.nodes(flowGraph)
+            val graph = foldl interfereNode tempGraph (IntFuncGraph.nodes(flowGraph))
       in
           print("Printing interference graph");
-          TempFuncGraph.printGraph2(stringify2(graph));
+          TempFuncGraph.printGraph2 nodeToStringTemp stringify2Temp graph;
           (graph, moveList)
       end    
         

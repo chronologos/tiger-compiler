@@ -17,6 +17,8 @@ structure Main = struct
       val graph = MakeGraph.instrs2graph(instrs)
       val (_) = print("proceeding to fixedPointLoop\n")
       val updatedGraph = Liveness.fixedPointLoop(graph)
+      val (_) = print("proceeding to ig\n")
+      val updatedGraph' = Liveness.interferenceGraph(updatedGraph)
     in
       app (fn i => TextIO.output(out,format0 i)) instrs
     end

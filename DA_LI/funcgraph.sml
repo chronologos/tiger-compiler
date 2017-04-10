@@ -30,7 +30,7 @@ fun getMaxNodeID() = !maxNodeID
 
 
 fun getNode(g,nid) = case NodeMap.find(g,nid) of
-   NONE => raise NoSuchNode(nid)
+   NONE => (raise NoSuchNode(nid))
          | SOME x=> x
 fun addNode(g,nid,d) = (
     maxNodeID := !maxNodeID + 1;
