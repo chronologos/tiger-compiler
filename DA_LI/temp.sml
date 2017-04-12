@@ -4,7 +4,7 @@ struct
   type temp = int * string * bool (* TODO *)
   val temps = ref 100
   val labelCount = ref 0
-  val debug = true
+  val debug = false
 
   fun newtemp() =
     let
@@ -17,9 +17,10 @@ struct
   fun newNamedTemp(title:string) =
     let
       val t = (Int.toString(!temps)^":"^title)
+      val prevTemp = !temps
     in
       temps := !temps+1;
-      (!temps,t,false)
+      (prevTemp,t,false)
    end
 
    fun newNamedTempTrue(title:string) =

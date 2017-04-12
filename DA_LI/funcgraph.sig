@@ -110,6 +110,6 @@ val isAdjacent: 'a node * 'a node -> bool
 val printGraph:  ((nodeID * 'a) -> string) -> 'a graph  -> unit
 
 (* takes two functions, first for main node, second for preds/succs *)
-val printGraph2: ((nodeID * 'a) -> string) -> (('a graph * nodeID) -> string) -> 'a graph  -> unit 
+(*val printGraph2: ((nodeID * 'a) -> string) -> (('a graph * nodeID) -> string) -> 'a graph  -> unit *)
 
 end

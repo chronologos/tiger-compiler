@@ -10,6 +10,9 @@ sig
 
     val interferenceGraph:
           FlowGraph.graph -> (FlowGraph.iGraph * (Temp.temp * Temp.temp) list)
+          
+    val show:
+      (FlowGraph.iGraph * (Temp.temp * Temp.temp) list) -> unit
 end
 =
 struct
@@ -20,14 +23,18 @@ struct
     structure tg = TempFuncGraph
 
   fun stringify2(g, nodeID) =
-    let val (_, _, ass, _, _, _) = fg.nodeInfo(fg.getNode(g, nodeID))
+    let 
+      (*val (_) = print("Calling stringify on nodeID " ^ Int.toString(nodeID))*)
+      val (_, _, ass, _, _, _) = fg.nodeInfo(fg.getNode(g, nodeID))
     in
       "NodeID " ^ Int.toString(nodeID) ^ " : " ^ ass ^ "\n"
     end
 
         (* Perform the LiveIns[node] = uses U (LiveOuts[node] - defs) *)
   fun updateLiveIns(liveGraph, nodeID) =
-    let val nodeFound = fg.getNode(liveGraph, nodeID)
+    let 
+      (*val (_) = print("Calling stringify on nodeID " ^ Int.toString(nodeID))*)
+      val nodeFound = fg.getNode(liveGraph, nodeID)
        val (src, dst, ass, isMove, liveIns, liveOuts) = fg.nodeInfo(nodeFound)
        val updatedLiveIns = FlowGraph.LiveSet.union(src, FlowGraph.LiveSet.difference(liveOuts, dst))
        val updatedGraph = fg.changeNodeData(liveGraph, nodeID, (src, dst, ass, isMove, updatedLiveIns, liveOuts))
@@ -37,17 +44,20 @@ struct
 
     (* Perform the LiveOuts[node] = LiveOuts[node] U (LiveIns[succ] for succ in succs[node]) step  *)
   fun addSuccLiveInsToLiveOut(liveGraph, nodeID) =
-    let val nodeFound = fg.getNode(liveGraph, nodeID)
+    let (*val (_) = print("Calling stringify on nodeID " ^ Int.toString(nodeID))*)
+        val nodeFound = fg.getNode(liveGraph, nodeID)
       val (src, dst, ass, isMove, liveIns, liveOuts) = fg.nodeInfo(nodeFound)
       val successorsList = fg.succs(nodeFound)
       val result = foldl (fn (x, y) =>
-        let val successorNode = fg.getNode(liveGraph, x)
+        let 
+            (*val (_) = print("Calling stringify on nodeID " ^ Int.toString(x))*)
+            val successorNode = fg.getNode(liveGraph, x)
             val (_, _, _, _, succLiveIns, _) = fg.nodeInfo(successorNode)
         in
           FlowGraph.LiveSet.union(succLiveIns, y)
         end) liveOuts successorsList
     in
-      print("Length of new live-outs for nodeID " ^ Int.toString(nodeID) ^ " : " ^ Int.toString(FlowGraph.LiveSet.numItems(result)));
+      (*print("Length of new live-outs for nodeID " ^ Int.toString(nodeID) ^ " : " ^ Int.toString(FlowGraph.LiveSet.numItems(result)));*)
       (fg.changeNodeData(liveGraph, nodeID, (src, dst, ass, isMove, liveIns, result)), (FlowGraph.LiveSet.numItems(liveOuts) <> FlowGraph.LiveSet.numItems(result)))
     end
 
@@ -62,7 +72,7 @@ struct
 
   fun oneIter(graph) =
     let val nodes = fg.nodes(graph)
-      val nodeIDList = map (fg.getNodeID) nodes
+        val nodeIDList = map (fg.getNodeID) nodes
       fun iterFoldFn(nextID, (graphSoFar, changed)) =
         let val (newGraph, changedNow) = update(graphSoFar, nextID)
         in
@@ -91,27 +101,43 @@ struct
   (* Perform 1 iteration of the update with live-ins and live-outs *)
   fun fixedPointLoop(graph) =
     let
-        val (_) = print("in fixedPointLoop\n")
+        (*val (_) = print("in fixedPointLoop\n")*)
         val (graphRes, changed) = oneIter(graph)
     in
       if changed
       then fixedPointLoop(graphRes)
       else (
         (*fg.printGraph nodeToString stringify graphRes;*)
-        print("Printing graph without interference");
-        fg.printGraph2 nodeToString stringify2 graphRes;
+        (*print("Printing graph without interference");*)
+        (*fg.printGraph2 nodeToString stringify2 graphRes;*)
         graphRes
       )
     end
-
+    handle fg.NoSuchNode(_) =>(
+      print("no such node exception in fixed point loop");
+      graph
+    )
 
   fun interfereNode(fgNode, igraph) =
     let
-      val (_) = print("getting node info\n")
       val (_, defs, _, _, _, liveouts):FlowGraph.nodeDataType = fg.nodeInfo(fgNode)
-      val (_) = print("getting node info 2\n")
+      val numDef = FlowGraph.LiveSet.numItems(defs)
+      fun fold1(def, ig) =
+            FlowGraph.LiveSet.foldl (fn(liveout,graph) =>
+              let val l = Temp.makestring(liveout)
+                  val d = Temp.makestring(def)
+              in
+                  case String.compare(l,d) of
+                    EQUAL => graph
+                  | _ => tg.doubleEdge(graph,l,d)
+              end
+            ) ig liveouts
     in
-      case Int.compare(FlowGraph.LiveSet.numItems(defs), 1) of GREATER => (ErrorMsg.error 0 "impossible!"; igraph)
+      case Int.compare(numDef, 1) of 
+        GREATER => (
+          (* NOT AN ERROR. could be trashed regs from function call *)
+          FlowGraph.LiveSet.foldl fold1 igraph defs
+        )
       | LESS => igraph
       | EQUAL => (
         (* only here if numitems is 1 *)
@@ -123,10 +149,10 @@ struct
             val l = Temp.makestring(liveout)
             val d = Temp.makestring(def)
           in
-            case String.compare(l,d) of EQUAL => igraph
+            case String.compare(l,d) of 
+            EQUAL => igraph
             | _ => (
-            
-            print("getting edge info\n");
+            (* print("getting edge info\n"); *)
             tg.doubleEdge(igraph, l, d)
             )
           end
@@ -163,12 +189,13 @@ struct
         "NodeID "^ Temp.makestring(tmp) ^"\n"
       )
 
-  fun stringify2Temp(g, nodeID) =
+  fun stringify2Temp(g, nodeID) = (
+    (* print("Getting node info for ID " ^ nodeID); *)
     let val tmp = tg.nodeInfo(tg.getNode(g, nodeID))
     in
       "NodeID " ^ nodeID ^ " : " ^ Temp.makestring(tmp) ^ "\n"
     end
-
+    )
   fun interferenceGraph(flowGraph:FlowGraph.graph) =
     let
       val tempGraph = tg.empty
@@ -186,9 +213,25 @@ struct
       val iGraph: FlowGraph.iGraph = makeIGraphNodes(flowGraph)
       val iGraph':FlowGraph.iGraph = foldl interfereNode iGraph (fg.nodes(flowGraph))
     in
-      print("Printing interference graph");
-      tg.printGraph2 nodeToStringTemp stringify2Temp iGraph';
+      (*print("************** Printing interference graph ***************");
+      tg.printGraph2 nodeToStringTemp stringify2Temp iGraph'; *)
       (iGraph', moveList)
     end
-
+    
+  fun show(g,list) = 
+    let
+        val nodes = tg.nodes(g)
+        fun println x = print(x ^"\n")
+        fun prOneNode(g,temp) = 
+            let val adjs = TempFuncGraph.adj' g temp 
+                val temps = map(tg.nodeInfo) adjs
+                val strs = map (Temp.makestring) temps
+                val res = foldr (fn(x,res) => x ^ " " ^ res) "" strs
+            in
+                Temp.makestring(tg.nodeInfo(temp)) ^ "->" ^ res
+            end
+    in
+        app (fn(x)=>println(prOneNode(g,x))) nodes
+    end
+     
 end

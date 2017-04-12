@@ -148,16 +148,25 @@ fun printGraph stringify g =
   NodeMap.app prOneNode g
     end
 
-
+(*
 fun printGraph2 stringify stringify2 g =
     let fun println x = print(x ^"\n")
         fun prSet s = NodeSet.app (fn(x)=>print(stringify2(g, x))) s
-        fun prOneNode(nid,data,succs,preds) =
+        (* fun prOneNode(nid,data,succs,preds) = *)
+        fun prOneNode(temp) = 
+            let val adjs = TempFuncGraph.adj' g temp 
+                val strs = map (Temp.makestring) adjs
+                val res = foldr (fn(x,res) => x ^ " " ^ res) "" strs
+            in
+                Temp.makestring(temp) ^ "->" ^ res
           let val s = stringify(nid,data)
               val () = println("====================\n Node: " ^ s)
+              val () = println("Interferes with")
+              (*
               val () = println(" -> Successors:")
               val () = prSet succs
               val () = println(" -> Predecessors:")
+              *)
               val () = prSet preds
           in
                 ()
@@ -165,5 +174,5 @@ fun printGraph2 stringify stringify2 g =
     in
         NodeMap.app prOneNode g
     end
-
+*)
 end

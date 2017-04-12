@@ -40,8 +40,8 @@ end
         in
             (nextNodeID := nodeID + 1;
             if nodeID > !maxNodeID then maxNodeID := nodeID else ();
-            print(Int.toString(nodeID) ^ "\n");
-            print("Max nodeID: " ^ Int.toString(!maxNodeID) ^ "\n");
+            (*print("nextNodeID:" ^ Int.toString(nodeID) ^ "\n");
+            print("Max nodeID: " ^ Int.toString(!maxNodeID) ^ "\n");*)
             nodeID)
         end
         
@@ -106,7 +106,9 @@ end
                     (case jmp of 
                         NONE => addNextInsEdge(myID,graphSoFar) 
                       | SOME(jList) => 
-                            let val graphWithNextLine = addNextInsEdge(myID,graphSoFar) 
+                            let 
+                                (*val (_) = print("My ID is " ^ Int.toString(myID) ^ "\n")*)
+                                val graphWithNextLine = addNextInsEdge(myID,graphSoFar) 
                                 val jumpNodeIDOpt = H.find labelNodesMap (Symbol.name(List.hd(jList)))
                                 val len = List.length(jList)
                             in
@@ -114,7 +116,7 @@ end
                                 then graphSoFar
                                 else(
                                     case jumpNodeIDOpt of 
-                                        NONE => (ErrorMsg.error 0 ("missing nodeID for jump label "^Symbol.name(List.hd(jList))); graphWithNextLine)
+                                        NONE => (graphWithNextLine)
                                       | SOME(x) => 
                                             fg.addEdge(graphWithNextLine, {from = myID, to=x})
                                 )
@@ -123,7 +125,11 @@ end
                  
                | (_) => addNextInsEdge(myID,graphSoFar)
         end
-    
+        handle fg.NoSuchNode(nid) =>(
+          print("no such node exception in foldAssemLinkFn "^ Int.toString(nid) ^ "\n");
+          graphSoFar
+        )
+
     
     fun stringify(nodeID, data) : string =
         (* Check data type of data, whether 4-tup or 6-tup *)
@@ -144,11 +150,12 @@ end
             val dumdum = resetNodeID()
             val completeLinkGraph = foldl foldAssemLinkFn completeGraph instrs 
         in  
-            (*print("instrs2graph result: \n");
-            (fg.printGraph stringify completeLinkGraph;
-            *)
-            
-            completeLinkGraph
+            (*print("instrs2graph result: \n");*)
+            (*(print(" ================ COMPLETE GRAPH ==================  ");*)
+            (*fg.printGraph stringify completeGraph;*)
+            (nextNodeID := 0;
+            maxNodeID := 0;
+            completeLinkGraph)
         end
             
 end

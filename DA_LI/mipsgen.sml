@@ -28,7 +28,11 @@ structure MipsGen :> CODEGEN = struct
     | relopToString(T.NE) = "bne"
     | relopToString()
     *)
-
+    
+    fun intToAssemStr(i:int) = 
+      if i >= 0 then (Int.toString(i)) 
+      else String.implode(hd(String.explode("-")) :: (tl (String.explode(Int.toString(i)))))
+      
     fun munchArgs(i:int, args: Tree.exp list) =
 
       let
@@ -76,7 +80,7 @@ structure MipsGen :> CODEGEN = struct
       let val munchE1 = munchExp(e1)
           val munchE2 = munchExp(e2)
       in
-        emit(A.OPER{assem="sw `s1, " ^ Int.toString(i) ^ "(`s0)\n",
+        emit(A.OPER{assem="sw `s1, " ^ intToAssemStr(i) ^ "(`s0)\n",
                     src=[munchE1, munchE2],
                     dst=[],
                     jump=NONE})
@@ -86,7 +90,7 @@ structure MipsGen :> CODEGEN = struct
       let val munchE1 = munchExp(e1)
           val munchE2 = munchExp(e2)
       in
-        emit(A.OPER{assem="sw `s1, " ^ Int.toString(i) ^ "(`s0)\n",
+        emit(A.OPER{assem="sw `s1, " ^ intToAssemStr(i) ^ "(`s0)\n",
                     src=[munchE1, munchE2],
                     dst=[],
                     jump=NONE})
@@ -96,7 +100,7 @@ structure MipsGen :> CODEGEN = struct
       let val munchE1 = munchExp(e1)
           val munchE2 = munchExp(e2)
       in
-        emit(A.OPER{assem="sw `s1, " ^ Int.toString(~i) ^ "(`s0)\n",
+        emit(A.OPER{assem="sw `s1, " ^ intToAssemStr(~i) ^ "(`s0)\n",
                     src=[munchE1, munchE2],
                     dst=[],
                     jump=NONE})
@@ -158,7 +162,7 @@ structure MipsGen :> CODEGEN = struct
 
     (* constant to reg *)
     | munchStm(T.MOVE(T.TEMP t, T.CONST i)) =
-      emit(A.OPER{assem="li `d0, " ^ Int.toString(i) ^ "\n",
+      emit(A.OPER{assem="li `d0, " ^ intToAssemStr(i) ^ "\n",
                   src=[],
                   dst=[t],
                   jump=NONE})
@@ -247,19 +251,19 @@ structure MipsGen :> CODEGEN = struct
       let
         val munchE1 = munchExp(e1)
       in
-        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0 " ^ Int.toString(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
+        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0 " ^ intToAssemStr(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
       end
     | munchExp(T.MEM(T.BINOP(T.PLUS,T.CONST i,e1))) =
         let
           val munchE1 = munchExp(e1)
         in
-          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0 " ^ Int.toString(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
+          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0 " ^ intToAssemStr(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
         end
 
     | munchExp(T.MEM(T.CONST i)) =
       (
         ErrorMsg.error 0 "MEM[CONST] \n";
-        result("T.MEM(T.CONST i)",fn r => emit(A.OPER{assem="addi `d0, `s0 " ^ Int.toString(i),src=[r],dst=[r],jump=NONE}))
+        result("T.MEM(T.CONST i)",fn r => emit(A.OPER{assem="addi `d0, `s0 " ^ intToAssemStr(i),src=[r],dst=[r],jump=NONE}))
       )
     | munchExp(T.MEM(e1)) =
       result("T.MEM(e1)",fn r => emit(A.OPER{assem="lw `d0, 0(`s0)\n", src=[munchExp e1], dst=[r], jump=NONE}))
@@ -268,7 +272,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.PLUS, e1, T.CONST i)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.PLUS, e1, T.CONST i)", fn r => emit(A.OPER{assem="addi `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.PLUS, e1, T.CONST i)", fn r => emit(A.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -277,7 +281,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.PLUS, T.CONST i, e1)",fn r => emit(A.OPER{assem="addi `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.PLUS, T.CONST i, e1)",fn r => emit(A.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -286,7 +290,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.XOR, T.CONST i, e1)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.XOR, T.CONST i, e1)",fn r => emit(A.OPER{assem="xori `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.XOR, T.CONST i, e1)",fn r => emit(A.OPER{assem="xori `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -295,7 +299,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.XOR, e1, T.CONST i)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.XOR, e1, T.CONST i)",fn r => emit(A.OPER{assem="xori `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.XOR, e1, T.CONST i)",fn r => emit(A.OPER{assem="xori `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -304,7 +308,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.OR, T.CONST i, e1)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.OR, T.CONST i, e1)",fn r => emit(A.OPER{assem="ori `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.OR, T.CONST i, e1)",fn r => emit(A.OPER{assem="ori `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -313,7 +317,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.OR, e1, T.CONST i)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.OR, e1, T.CONST i)",fn r => emit(A.OPER{assem="ori `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.OR, e1, T.CONST i)",fn r => emit(A.OPER{assem="ori `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -322,7 +326,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.AND, T.CONST i, e1)) =
     let val s = munchExp(e1)
     in
-      result("T.BINOP(T.AND, T.CONST i, e1)",fn r => emit(A.OPER{assem="andi `d0, `s0, " ^ Int.toString(i) ^ "\n",
+      result("T.BINOP(T.AND, T.CONST i, e1)",fn r => emit(A.OPER{assem="andi `d0, `s0, " ^ intToAssemStr(i) ^ "\n",
                   src=[s],
                   dst=[r],
                   jump=NONE}))
@@ -331,7 +335,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.BINOP(T.AND, e1, T.CONST i)) =
       let val s = munchExp(e1)
       in
-        result("T.BINOP(T.AND, e1, T.CONST i)",fn r => emit(A.OPER{assem="andi `d0, `s0, "^Int.toString(i) ^ "\n",
+        result("T.BINOP(T.AND, e1, T.CONST i)",fn r => emit(A.OPER{assem="andi `d0, `s0, "^intToAssemStr(i) ^ "\n",
                     src=[s],
                     dst=[r],
                     jump=NONE}))
@@ -349,7 +353,7 @@ structure MipsGen :> CODEGEN = struct
       end
 
     | munchExp(T.CONST i) =
-      result("T.CONST i",fn r=> emit(A.OPER{assem="addi `d0, $zero,"^Int.toString(i)^"  \n",src=[],dst=[r],jump=NONE}) )
+      result("T.CONST i",fn r=> emit(A.OPER{assem="addi `d0, $zero,"^intToAssemStr(i)^"  \n",src=[],dst=[r],jump=NONE}) )
 
     | munchExp (T.TEMP t) = t
 
