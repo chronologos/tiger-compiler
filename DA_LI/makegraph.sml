@@ -116,7 +116,8 @@ end
                                 then graphSoFar
                                 else(
                                     case jumpNodeIDOpt of 
-                                        NONE => (graphWithNextLine)
+                                        NONE => (print("NODE NOT FOUND " ^
+                                        Symbol.name(List.hd(jList)) ^ "GG"); graphWithNextLine)
                                       | SOME(x) => 
                                             fg.addEdge(graphWithNextLine, {from = myID, to=x})
                                 )
@@ -146,7 +147,8 @@ end
                          update uses and defs (src, dst fields in Assem.Oper);
           
         *)
-        let val completeGraph = foldl foldAssemCreateNodesFn fg.empty instrs 
+        let val _ = H.clear(labelNodesMap)
+            val completeGraph = foldl foldAssemCreateNodesFn fg.empty instrs 
             val dumdum = resetNodeID()
             val completeLinkGraph = foldl foldAssemLinkFn completeGraph instrs 
         in  
