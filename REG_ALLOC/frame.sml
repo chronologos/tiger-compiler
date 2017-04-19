@@ -19,6 +19,7 @@ struct
   val RV = Temp.newNamedTempTrue("RV")
   val ZERO = Temp.newNamedTempTrue("ZERO")
   val RA = Temp.newNamedTempTrue("RA")
+  val ERROR = Temp.newNamedTemp("ERROR")
 
   fun initRegs (0,someLetter) = []
   | initRegs(i, someLetter) = initRegs(i-1,someLetter) @ [Temp.newNamedTempTrue(someLetter^Int.toString(i-1))]
@@ -30,7 +31,26 @@ struct
   val specialregs = [FP,SP,RV,RA,ZERO]
   val calleesaves = initRegs(sRegNum,"s") (* s0 - s7 *)
   val callersaves = initRegs(tRegNum,"t") (* t0 - t9 *)
-  
+  val usableRegisters = Temp.Set.addList(Temp.Set.empty, (callersaves @ calleesaves))
+  val allRegisters = Temp.Set.addList(Temp.Set.empty, (calleesaves @ callersaves @ specialregs @  argregs))
+
+  val regsMap:Temp.temp StringMap.map = (Temp.Set.foldl (fn (nextReg, mapSofar) =>
+                StringMap.insert(mapSofar, Temp.makestring(nextReg), nextReg)) StringMap.empty usableRegisters)
+                
+  val NUMREG = Temp.Set.numItems(usableRegisters)
+
+  fun getInitialAlloc(regs, startTable) =
+    let fun foldFn(nextReg, tab) = Temp.Map.insert(tab, nextReg, nextReg)
+    in
+      Temp.Set.foldl foldFn startTable regs
+    end
+
+  val regTable = 
+    let 
+      val t = Temp.Map.empty
+    in
+      getInitialAlloc(allRegisters, t)
+    end
 
   fun string(label,s) =
      Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"
@@ -111,3 +131,4 @@ struct
       allocLocalBool
     end
 end
+

@@ -2,12 +2,19 @@ signature COLOR =
 sig
   structure Frame : FRAME
   
-  type allocation = Frame.register Temp.Table.table
+  type allocation = Temp.temp Temp.Map.map
 
-  val color: {interference: FlowGraph.igraph,
-              moves: (Temp.temp * Temp.temp) list,
-              initial: allocation,
-              spillCost: Graph.node -> int,
-              registers: Frame.register list}
+  val color: FlowGraph.iGraph *
+              allocation
+              -> allocation * Temp.temp list
+  end
+signature COLOR =
+sig
+  structure Frame : FRAME
+  
+  type allocation = Temp.temp Temp.Map.map
+
+  val color: FlowGraph.iGraph *
+              allocation
               -> allocation * Temp.temp list
   end

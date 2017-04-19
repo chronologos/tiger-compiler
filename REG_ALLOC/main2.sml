@@ -12,18 +12,19 @@ structure Main = struct
       (* val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
       val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
       val _ = app (fn x => Printtree.printtree(out, x)) stms'
-      val instrs =   List.concat(map (MipsGen.codegen frame) stms')
-      val format0 = Assem.format(Temp.makestring)
-      val graph = MakeGraph.instrs2graph(instrs)
-      (*val (_) = print("proceeding to fixedPointLoop\n")*)
-      val updatedGraph = Liveness.fixedPointLoop(graph) 
-      (*val (_) = print("proceeding to ig\n")*)
-      val updatedGraph' = Liveness.interferenceGraph(updatedGraph)
-      val _ = Liveness.show(updatedGraph')
+      val instrs0 = List.concat(map (MipsGen.codegen frame) stms')
+      val format0 = Assem.makeformat(Temp.makestring)
+      val (instrs,alloc) = Regalloc.alloc(instrs0,frame)
+      val saytemp = Regalloc.makeSayTemp alloc
+      val format1 = Assem.makeformat(saytemp)
+      
     in
-      app (fn i => TextIO.output(out,format0 i)) instrs
+      app (fn i => TextIO.output(out,format0 i)) instrs0;
+      app (fn i => TextIO.output(out,format1 i)) instrs
+      
     end
   | emitproc out (F.STRING(lab,s)) = TextIO.output(out,F.string(lab,s))
+
 
   fun withOpenFile fname f =
     let val out = TextIO.openOut fname

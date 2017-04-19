@@ -6,9 +6,14 @@ structure IntFuncGraph = FuncGraph(type ord_key=int
                                                 else EQUAL
                                                 )
                                         )
+
 structure TempFuncGraph = FuncGraph(type ord_key=string
-                                        fun compare(x,y) = 
-                                            String.compare(x,y))
+                                        fun compare(x,y) = String.compare(x,y))
+
+structure StringMap = SplayMapFn(type ord_key=string
+                                 fun compare(x, y) = String.compare(x, y))
+
+(*functor SplayMapFn (ORD_KEY) : ORD_MAP*)
                                         
 structure FlowGraph =
     struct

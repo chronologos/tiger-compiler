@@ -55,7 +55,7 @@ struct
             val (_, _, _, _, succLiveIns, _) = fg.nodeInfo(successorNode)
         in
           FlowGraph.LiveSet.union(succLiveIns, y)
-        end) liveOuts successorsList
+        end) FlowGraph.LiveSet.empty successorsList
     in
       (*print("Length of new live-outs for nodeID " ^ Int.toString(nodeID) ^ " : " ^ Int.toString(FlowGraph.LiveSet.numItems(result)));*)
       (fg.changeNodeData(liveGraph, nodeID, (src, dst, ass, isMove, liveIns, result)), (FlowGraph.LiveSet.numItems(liveOuts) <> FlowGraph.LiveSet.numItems(result)))

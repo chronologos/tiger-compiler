@@ -13,7 +13,8 @@ structure Assem = struct
                             dst: temp,
                             src: temp}
 
-  fun format saytemp =
+  
+  fun makeformat saytemp =
     let
     
   fun speak(assem,dst,src,jump) =

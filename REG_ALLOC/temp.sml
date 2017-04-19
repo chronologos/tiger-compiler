@@ -31,7 +31,7 @@ struct
        (!temps,t,true)
     end
 
-  (*fun getNameFromNamedTemp(namedTemp) =
+  fun getNameFromNamedTemp(namedTemp) =
     (* split by colon and take string after that *)
     let
       fun getStringAfterColon (SOME(x,xs)) = (
@@ -41,8 +41,8 @@ struct
       )
       | getStringAfterColon (NONE) = ""
     in
-      getStringAfterColon(SOME(chr 1,explode(namedTemp)))
-    end *)
+      "$" ^ getStringAfterColon(SOME(chr 1,explode(namedTemp)))
+    end 
 
   fun makestring (intt,strt,boo) =
       if debug
@@ -55,17 +55,15 @@ struct
   type label = Symbol.symbol
 
 
-  (*val compare = String.compare
-
   structure TempOrd =
   struct
     type ord_key = temp
-    val compare = compare
+    fun compare(t1,t2) = String.compare(makestring(t2), makestring(t1))
   end
 
   structure Set = SplaySetFn(TempOrd)
   structure Map = SplayMapFn(TempOrd)
-*)
+  
   local structure F = Format
       fun postinc x = let val i = !x in x := i+1; i end
       val labs = ref 0

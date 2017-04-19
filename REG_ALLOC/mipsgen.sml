@@ -151,8 +151,8 @@ structure MipsGen :> CODEGEN = struct
       let val munchE1 = munchExp(e1)
       in
         emit(
-        (*A.OPER{assem="add `d0, $zero, `s0 \n", src=[t], dst=[munchE1],jump=NONE}*)
-        A.MOVE{assem= "add `d0, $zero, `s0 \n",
+        (*A.OPER{assem="move `d0, $zero, `s0 \n", src=[t], dst=[munchE1],jump=NONE}*)
+        A.MOVE{assem= "move `d0, `s0 \n",
                             dst=munchE1,
                             src=t}
         )
@@ -177,8 +177,8 @@ structure MipsGen :> CODEGEN = struct
       let val munchE2 = munchExp(e2)
       in
         emit(
-          (*A.OPER{assem="add `d0, $zero, `s0 \n", src=[munchE2], dst=[tmp],jump=NONE}*)
-          A.MOVE {assem= "add `d0, $zero, `s0 \n",
+          (*A.OPER{assem="move `d0, $zero, `s0 \n", src=[munchE2], dst=[tmp],jump=NONE}*)
+          A.MOVE {assem= "move `d0, `s0 \n",
                             dst=tmp,
                             src=munchE2}
         )
@@ -189,8 +189,8 @@ structure MipsGen :> CODEGEN = struct
           val munchE2 = munchExp(e2)
       in
           emit(
-            (*A.OPER{assem="add `d0, $zero, `s0 \n", src = [munchE2], dst = [munchE1], jump = NONE}*)
-            A.MOVE{assem= "add `d0, $zero, `s0 \n",
+            (*A.OPER{assem="move `d0, $zero, `s0 \n", src = [munchE2], dst = [munchE1], jump = NONE}*)
+            A.MOVE{assem= "move `d0, `s0 \n",
                             dst=munchE1,
                             src=munchE2}
           )
