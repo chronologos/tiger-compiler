@@ -13,13 +13,13 @@ structure Main = struct
       val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
       val _ = app (fn x => Printtree.printtree(out, x)) stms'
       val instrs0 = List.concat(map (MipsGen.codegen frame) stms')
-      val format0 = Assem.makeformat(Temp.makestring)
+      (*val format0 = Assem.makeformat(Temp.makestring)*)
       val (instrs,alloc) = Regalloc.alloc(instrs0,frame)
       val saytemp = Regalloc.makeSayTemp alloc
       val format1 = Assem.makeformat(saytemp)
       
     in
-      app (fn i => TextIO.output(out,format0 i)) instrs0;
+      (*app (fn i => TextIO.output(out,format0 i)) instrs0;*)
       app (fn i => TextIO.output(out,format1 i)) instrs
       
     end
