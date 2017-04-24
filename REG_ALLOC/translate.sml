@@ -24,7 +24,7 @@ struct
 
   (* val currentLevel = ref 0 *)
   val outermost = (0,ref ())
-  val outermostFrame = SOME(Frame.newFrame({name=Temp.newlabel(), kFormals=[], moreFormals=[]}))
+  val outermostFrame = SOME(Frame.newFrame(Temp.newlabel(), []))
   val sizeHintFrameTable = 16
   val sizeHintLevelTable = 128
   val frameTable : (level,Frame.frame) H.hash_table =
@@ -70,7 +70,6 @@ struct
     in
       if count = 1 then List.hd(stmList)
       else foldr foldStmFn (List.last stmList) (List.take(stmList,(List.length stmList) -1)) 
-
         (*foldl foldStmFn [] stmList*)
     end
 
@@ -207,13 +206,19 @@ struct
       let
         val slExp = calcSL(cLevel,dLevel)
         val texpList = map(fn x => unEx(x)) expList
-      in
+        val frame = case (H.find frameTable dLevel) of  
+                        SOME(f) => f
+                      | NONE => ((ErrorMsg.error 0 ("frame not found in Translate.callExp\n")); valOf (outermostFrame))
+        val updatedFrame = Frame.setCallArgs(frame, List.length(expList))
+      in(
+        H.insert frameTable (dLevel,updatedFrame);
         if procedure
         then
           Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
         else
          (* Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))*)
           Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList) )
+        )
       end
 
   fun strcmp(str1:exp,str2:exp,oper:A.oper,callLevel:level): exp =
@@ -499,8 +504,9 @@ struct
   let val frame = case frameAtLevel(funLevel) of
                         SOME(f) => f
                       | NONE => (debugPrint("fundec level does not exist\n",0); valOf outermostFrame)
+      val body' = Frame.procEntryExit1(frame, bodyStm)
   in
-    fragList := Frame.PROC({body=bodyStm,frame=frame}) :: !fragList
+    fragList := Frame.PROC({body=body',frame=frame}) :: !fragList
   end
 
   fun funDec(funLevel:level, lab:Temp.label, body:exp) =
@@ -595,12 +601,15 @@ struct
   fun levelToString (lev:level) =
     case lev of
       (lint, lref) => Int.toString(lint)
+  
   (* call Frame.newFrame to create new frame, add (level,frame) to frame table, add (level, parent) to levelTable *)
   fun newLevel ({parent=lev:level, name=label, formals=formals}) =
     let
         val nextLevel = case lev of (lint, lref) => (lint+1, ref ())
         val parentFrameOpt = H.find frameTable lev
-        val nextFrame = if List.length(formals) <= k
+        val nextFrame = Frame.newFrame(label,formals)
+        
+(*                  if List.length(formals) <= k
                         then Frame.newFrame({name=label, kFormals=formals, moreFormals=[]})
                         else  case parentFrameOpt of
                                 SOME(parentFrame) => (
@@ -614,6 +623,7 @@ struct
                                   end
                                 )
                               | NONE => (ErrorMsg.error 0 ("[ TRANSLATE ] Parent frame at level "^levelToString(lev)^" not found.\n"); Frame.newFrame({name=label,kFormals=[],moreFormals=[]}))
+*)    
     in
         H.insert frameTable (nextLevel,nextFrame);
         if debug
@@ -650,7 +660,7 @@ struct
             )
           | NONE => (
             ErrorMsg.error 0 ("Frame at level "^levelToString(level)^" does not exist.\n");
-            ((0-1, ref ()),Frame.allocLocal(Frame.newFrame({name=Temp.newlabel(), kFormals=[], moreFormals=[]}))(ecp) )
+            ((0-1, ref ()),Frame.allocLocal(Frame.newFrame(Temp.newlabel(), []))(ecp) )
             )
 
     in

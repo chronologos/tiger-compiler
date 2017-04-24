@@ -1,7 +1,7 @@
 signature FRAME =
 sig type frame
     type access
-    val newFrame: {name: Temp.label, kFormals: bool list, moreFormals:access list} -> frame
+    val newFrame: (Temp.label * bool list) -> frame
     val name: frame -> Temp.label
     val formals: frame -> access list
     val allocLocal: frame -> bool -> access
@@ -13,6 +13,8 @@ sig type frame
     val ZERO : Temp.temp
     val ERROR: Temp.temp
     val regsMap: Temp.temp StringMap.map
+    val maxCallArgs : frame -> int
+    val setCallArgs : frame * int -> frame
     
     datatype frag =  PROC of {body:Tree.stm, frame:frame}
                    | STRING of Temp.label * string
@@ -22,7 +24,7 @@ sig type frame
     val NUMREG: int
     val procEntryExit1 : (frame * Tree.stm) -> Tree.stm
     val procEntryExit2 : (frame * Assem.instr list) -> Assem.instr list
-    val procEntryExit3 : (frame * Tree.stm) -> {prolog:string, body:Tree.stm, epilog:string}
+    val procEntryExit3 : frame -> {prolog:Assem.instr list, epilog:Assem.instr list}
     val exp : access -> Tree.exp -> Tree.exp (* first Tree.exp is address of the stack frame that the access lives in *)
     val string: (Temp.label * string) -> string
 

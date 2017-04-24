@@ -54,17 +54,16 @@ structure MipsGen :> CODEGEN = struct
           pushToStack(pushedSoFar, nextArg); pushedSoFar + 1 )
 
         val aRegArgExpTuple =  (ListPair.zip (Frame.argregs, args))
-        val aRegsUsed = (map (fn(nextArgReg, e1) => (emit(
-        (*A.OPER{assem="move `d0,`s0 \n", src=[munchExp e1], dst=[nextArgReg], jump=NONE}*)
-        A.MOVE{assem="move `d0,`s0 \n",
-               dst=nextArgReg,
-               src=munchExp(e1)}
-        ); nextArgReg)) aRegArgExpTuple
+        val aRegsUsed = (map (fn(nextArg, e1) => (
+                                    emit(
+                                      A.MOVE{assem="move `d0,`s0 \n",
+                                           dst=nextArg,
+                                           src=munchExp(e1)}
+                                    ); nextArg)) aRegArgExpTuple)
         
-        )
       in
-        growStack(numStackArgs);
-        foldr pushArgsFoldFn 0 stackArgs; (* NOTE : TRANSLATE SAVES ARG 0 CLOSEST TO SP, THIS IS CONSISTENT WITH TRANSLATE*)
+      (*  growStack(numStackArgs); *)
+        foldr pushArgsFoldFn Frame.k stackArgs; (* NOTE : TRANSLATE SAVES ARG 0 CLOSEST TO SP, THIS IS CONSISTENT WITH TRANSLATE*)
         aRegsUsed
       end
 
@@ -251,13 +250,13 @@ structure MipsGen :> CODEGEN = struct
       let
         val munchE1 = munchExp(e1)
       in
-        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0 " ^ intToAssemStr(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
+        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0 )\n", src = [munchE1], dst=[r], jump = NONE}))
       end
     | munchExp(T.MEM(T.BINOP(T.PLUS,T.CONST i,e1))) =
         let
           val munchE1 = munchExp(e1)
         in
-          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0 " ^ intToAssemStr(i) ^ "(`s0 )", src = [munchE1], dst=[r], jump = NONE}))
+          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0 )\n", src = [munchE1], dst=[r], jump = NONE}))
         end
 
     | munchExp(T.MEM(T.CONST i)) =
@@ -381,12 +380,11 @@ structure MipsGen :> CODEGEN = struct
 
   in
     let
-        val {prolog=p, epilog=ep, body=body}=Frame.procEntryExit3(frame,stm)
-        (*ilist := p :: (!ilist)*)
+        val {prolog=p, epilog=ep}=Frame.procEntryExit3(frame)
     in
+        ilist := (!ilist) @ p;
         munchStm stm;
-        (*List.rev(ep::(!ilist)) (* maximal munch is top down so need to reverse *)*)
-        List.rev(!ilist)
+        List.rev(ep @ !ilist) (* maximal munch is top down so need to reverse *)
     end
 
   end

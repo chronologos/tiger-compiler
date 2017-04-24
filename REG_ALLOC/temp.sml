@@ -45,12 +45,12 @@ struct
     end 
 
   fun makestring (intt,strt,boo) =
-      if debug
-      then
-      "t" ^ strt
-      else (if boo
-           then "t" ^ strt
-           else "t" ^ Int.toString(intt))
+    if debug
+    then
+    "t" ^ strt
+    else (if boo
+         then "t" ^ strt
+         else "t" ^ Int.toString(intt))
 
   type label = Symbol.symbol
 
