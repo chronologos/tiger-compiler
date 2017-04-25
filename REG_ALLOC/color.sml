@@ -49,8 +49,11 @@ structure Color :> COLOR
             (graph, stack, false)
         ) else
             let val newStackHead = hd spillWorklist
-            in
+            in (
+                print("spilling\n");
+                app (fn x =>print(Temp.makestring(TG.nodeInfo(x)))) spillWorklist;
                 (TG.removeNode(graph, TG.getNodeID(newStackHead)), newStackHead::stack, true)
+                )
             end
     end
     
@@ -75,12 +78,12 @@ structure Color :> COLOR
         
         val colorSet = StringSet.map (fn (n) => case Temp.Map.find(assignment,TG.nodeInfo(TG.getNode(iG, n))) of
                                                     SOME(temp) => Temp.makestring(temp)
-                                                    | NONE => (ErrorMsg.error 0 ("GG temp color not found.\n"); Temp.makestring(Frame.ERROR))
+                                                    | NONE => (ErrorMsg.error 0 ("SPILL WARNING\n"); Temp.makestring(Frame.ERROR))
                                      ) intersectAdj 
     (*    val remainingColors = StringSet.difference( (Temp.Set.map (Temp.makestring) Frame.usableRegisters), colorSet) *)
         val remainingColors = StringSet.difference(tempSet2StrSet(Frame.usableRegisters), colorSet)
     in
-        if StringSet.numItems(remainingColors) = 0 then Temp.makestring(Frame.ERROR)
+        if StringSet.numItems(remainingColors) = 0 then (ErrorMsg.error 0 ("SPILL WARNING\n");Temp.makestring(Frame.ERROR))
         else hd (StringSet.listItems(remainingColors))
     end
    handle TG.NoSuchNode(_) =>(
@@ -97,15 +100,12 @@ structure Color :> COLOR
                 in
                     if validColor <> EQUAL then
                         let 
-                            val (_) = print("in valid color\n")
+                            (*val (_) = print("in valid color\n")*)
                             val node = case StringMap.find (Frame.regsMap, chosenColor) of 
                                             SOME(t) => t
                                             | NONE => (ErrorMsg.error 0 "invalid color"; Frame.ERROR)
-                            (*val (_) = print("got node")*)
                             val newAss = Temp.Map.insert(assSoFar, TG.nodeInfo(nextNode), node)
-                            (*val (_) = print("new ass... ")*)
                             val newGraph = TG.addNode(graphSoFar, TG.getNodeID(nextNode), TG.nodeInfo(nextNode))
-                            (*val (_) = print("new graph...\n")*)
                         in                    
                             (newAss, newGraph)
                         end
@@ -131,6 +131,7 @@ structure Color :> COLOR
     fun color(iG, initial) =
         let
             val (iG',stack) = colorLoop(iG, [])
+            val _ = Liveness.show(iG)
         in
             (allocColors(iG, iG', initial, stack), [])
         end

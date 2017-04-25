@@ -19,7 +19,7 @@ struct
 
   exception Translate
 
-  val debug = false
+  val debug = true
   val k = Frame.k 
 
   (* val currentLevel = ref 0 *)
@@ -29,19 +29,9 @@ struct
   val sizeHintLevelTable = 128
   val frameTable : (level,Frame.frame) H.hash_table =
   		H.mkTable(fn (x,xref) => Word.fromInt(x), op = ) (sizeHintFrameTable,Translate)
-(*  val levelTable : (level, level) H.hash_table =
-      H.mkTable(fn x:int => Word.fromInt(x), op =) (sizeHintLevelTable,Translate)
-*)
 
-(*  fun symbol name =
-      case H.find hashtable name
-       of SOME i => (name,i)
-        | NONE => let val i = !nextsym
-	           in nextsym := i+1;
-		      H.insert hashtable (name,i);
-		      (name,i)
-		  end
-*)
+  val _ = H.insert frameTable (outermost,(valOf outermostFrame))
+
 
   fun isRelop(oper) =
     case oper of
@@ -208,14 +198,15 @@ struct
         val texpList = map(fn x => unEx(x)) expList
         val frame = case (H.find frameTable dLevel) of  
                         SOME(f) => f
-                      | NONE => ((ErrorMsg.error 0 ("frame not found in Translate.callExp\n")); valOf (outermostFrame))
+                      | NONE => ((ErrorMsg.error 0 ("frame lev= "^ Int.toString(#1 dLevel) ^" not found in Translate.callExp\n")); valOf (outermostFrame))
+        
         val updatedFrame = Frame.setCallArgs(frame, List.length(expList))
-      in(
+      in
         H.insert frameTable (dLevel,updatedFrame);
         if procedure
         then
           Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
-        else
+        else (
          (* Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))*)
           Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList) )
         )
@@ -500,7 +491,7 @@ struct
       Nx (T.MOVE(Frame.exp(fAccess)(fpExp), unEx initExp))
     end
 
-  fun procEntryExit({level=funLevel,body=bodyStm}) =
+(*  fun procEntryExit({level=funLevel,body=bodyStm}) =
   let val frame = case frameAtLevel(funLevel) of
                         SOME(f) => f
                       | NONE => (debugPrint("fundec level does not exist\n",0); valOf outermostFrame)
@@ -508,12 +499,15 @@ struct
   in
     fragList := Frame.PROC({body=body',frame=frame}) :: !fragList
   end
-
+*)
   fun funDec(funLevel:level, lab:Temp.label, body:exp) =
     let
       val bodyStm = seq([T.LABEL lab, T.MOVE(T.TEMP Frame.RV, unEx body)], ~999)
+      val frame = case frameAtLevel(funLevel) of
+                        SOME(f) => f
+                      | NONE => (debugPrint("fundec level does not exist\n",0); valOf outermostFrame)
     in
-      procEntryExit({level=funLevel, body=bodyStm})
+      fragList := Frame.PROC({body=bodyStm,frame=frame}) :: !fragList
     end
 
   (*| WhileExp of {test: exp, body: exp, pos: pos} *)

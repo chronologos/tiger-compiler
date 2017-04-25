@@ -4,7 +4,7 @@ struct
   type temp = int * string * bool (* TODO *)
   val temps = ref 100
   val labelCount = ref 0
-  val debug = false
+  val debug = true
 
   fun newtemp() =
     let

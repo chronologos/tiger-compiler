@@ -13,8 +13,7 @@ struct
             (*val _ = print("IGRAPH\n")
             val _ = Liveness.show(iG,moveList) *)
             
-            val _ = print("Printing ALLOCATION")
-        
+            (*val _ = print("Printing ALLOCATION")*)
             val (regAlloc, spillList) =  Color.color(iG, Frame.regTable)
         in
             (instrs, regAlloc)
@@ -39,19 +38,3 @@ struct
           chooseColor
         end
 end
-
-
-
-(*signature COLOR =
-sig
-  structure Frame : FRAME
-  
-  type allocation = Frame.register Temp.Table.table
-
-  val color: {interference: FlowGraph.igraph,
-              moves: (Temp.temp * Temp.temp) list,
-              initial: allocation,
-              spillCost: Graph.node -> int,
-              registers: Frame.register list}
-              -> allocation * Temp.temp list
-  end*)

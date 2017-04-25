@@ -105,6 +105,7 @@ end
                 A.OPER({assem = ass, dst = dst, src = src, jump = jmp}) =>
                     (case jmp of 
                         NONE => addNextInsEdge(myID,graphSoFar) 
+                      | SOME([]) => graphSoFar
                       | SOME(jList) => 
                             let 
                                 (*val (_) = print("My ID is " ^ Int.toString(myID) ^ "\n")*)
@@ -117,7 +118,7 @@ end
                                 else(
                                     case jumpNodeIDOpt of 
                                         NONE => (print("NODE NOT FOUND " ^
-                                        Symbol.name(List.hd(jList)) ^ "GG"); graphWithNextLine)
+                                        Symbol.name(List.hd(jList)) ^ "\n"); graphWithNextLine)
                                       | SOME(x) => 
                                             fg.addEdge(graphWithNextLine, {from = myID, to=x})
                                 )

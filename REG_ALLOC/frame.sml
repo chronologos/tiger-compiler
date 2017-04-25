@@ -4,7 +4,7 @@ struct
   structure A = Assem
   type temp = A.temp
   datatype access = InFrame of int | InReg of Temp.temp
-  type frame = {name:Temp.label, formals:access list, fpMaxOffset:int ref, procEntryExit1list: Tree.stm list, maxCallArgs: int}
+  type frame = {name:Temp.label, formals:access list, fpMaxOffset:int ref, saveArgs:Assem.instr list, procEntryExit1list: Assem.instr list, maxCallArgs: int}
 
   datatype frag =  PROC of {body:Tree.stm, frame:frame}
                  | STRING of Temp.label * string
@@ -20,7 +20,7 @@ struct
   val ZERO = Temp.newNamedTempTrue("ZERO")
   val RA = Temp.newNamedTempTrue("RA")
   val ERROR = Temp.newNamedTemp("ERROR")
-
+  fun getMaxOffset(f:frame) = !(#fpMaxOffset f )
   fun initRegs (0,someLetter) = []
   | initRegs(i, someLetter) = initRegs(i-1,someLetter) @ [Temp.newNamedTempTrue(someLetter^Int.toString(i-1))]
     
@@ -45,10 +45,10 @@ struct
   
   fun maxCallArgs({name=_, formals=_, fpMaxOffset=_, procEntryExit1list=_, maxCallArgs=mca}) = mca
   
-  fun setCallArgs({name=n, formals=f, fpMaxOffset=fp, procEntryExit1list=l, maxCallArgs=mca}, calls) =
+  fun setCallArgs({name=n, formals=f, fpMaxOffset=fp,saveArgs=saveArgs, procEntryExit1list=l, maxCallArgs=mca}, calls) =
     if calls > mca 
-    then {name=n, formals=f, fpMaxOffset=fp, procEntryExit1list=l, maxCallArgs=calls}
-    else {name=n, formals=f, fpMaxOffset=fp, procEntryExit1list=l, maxCallArgs=mca}
+    then {name=n, formals=f, fpMaxOffset=fp, saveArgs=saveArgs, procEntryExit1list=l, maxCallArgs=calls}
+    else {name=n, formals=f, fpMaxOffset=fp, saveArgs=saveArgs, procEntryExit1list=l, maxCallArgs=mca}
     
   fun getInitialAlloc(regs, startTable) =
     let fun foldFn(nextReg, tab) = Temp.Map.insert(tab, nextReg, nextReg)
@@ -76,9 +76,35 @@ struct
   end
     
   fun string(label,s) =
-     Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"
-      (* 7 implemented by translate *)
-  fun procEntryExit1 (frame:frame, body:T.stm ) = 
+    Symbol.name(label) ^ ": .ascii \"" ^ (String.toCString(s)) ^ "\"\n"
+    (* 7 implemented by translate *)
+    
+  fun procEntryExit4(frame:frame) = #saveArgs frame
+     
+  fun procEntryExit1(frame:frame) =
+    let val regsToSave = RA :: FP :: calleesaves
+        fun saveFoldFn(nextReg, (pos,stmlist)) =
+          let
+            val stm = A.OPER{assem="sw `s0, " ^  intToAssemStr(pos) ^ "(`d0)\n", src=[nextReg], dst=[FP], jump=NONE}
+          in
+            (pos - wordSize, (stm::stmlist))
+          end
+          
+        fun loadFoldFn(nextReg, (pos, stmlist)) = 
+            let
+              val stm = A.OPER{assem="lw `d0, " ^ intToAssemStr(pos) ^ "(`s0)\n", src=[FP], dst=[nextReg], jump=NONE}
+            in
+               (pos - wordSize, (stm::stmlist))
+            end 
+        val (_, saveStmList) = foldr saveFoldFn (!(#fpMaxOffset frame), []) regsToSave;
+        val (_, loadStmList) =  foldr loadFoldFn (!(#fpMaxOffset frame), []) regsToSave 
+    in (
+        {params=(#procEntryExit1list frame),saves=saveStmList, loads=loadStmList}
+        )
+    end
+        
+
+(*  fun procEntryExit1 (frame:frame, body:T.stm ) = 
     (* Save the s registers and RA*)
     let val regsToSave = RA :: FP :: calleesaves
         fun saveFoldFn(nextReg, (pos,stmlist)) =
@@ -97,11 +123,11 @@ struct
           
         val (_, saveStmList) = foldr saveFoldFn (!(#fpMaxOffset frame), []) regsToSave
         val (_, loadStmList) =  foldr loadFoldFn (!(#fpMaxOffset frame), []) regsToSave
-        val stm = seq((#procEntryExit1list frame) @ saveStmList @ (body::loadStmList),123)
+        val stm = seq((#procEntryExit1list frame) @ saveStmList @ [body] @ loadStmList),123)
     in
         stm
     end
-    
+*)
     
   (*  
   fun findMaxArgs(funcStm:Tree.stm) =
@@ -116,11 +142,11 @@ struct
     instrlist @ [A.OPER{assem="", src=[ZERO,RA,SP]@calleesaves, dst=[], jump=SOME[]}]
   (* sink liveness *)
 
-  fun procEntryExit3({name=_, formals=_, fpMaxOffset=fpMaxOffset, procEntryExit1list=_, maxCallArgs=maxCallArgs}) =
+  fun procEntryExit3({name=_, formals=_, fpMaxOffset=fpMaxOffset,saveArgs=_, procEntryExit1list=_, maxCallArgs=maxCallArgs}) =
        
        let 
            val numSavedRegs = List.length(RA::FP::calleesaves)
-           val maxFrameSize = maxCallArgs*wordSize - !fpMaxOffset + numSavedRegs * wordSize
+           val maxFrameSize = maxCallArgs*wordSize - !fpMaxOffset + numSavedRegs * wordSize 
            val saveFPStm = Assem.OPER{assem="addi `d0, `s0 " ^ intToAssemStr(~4) ^ "\n", src=[SP], dst=[FP], jump=NONE}
            val changeSPStm = Assem.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(~maxFrameSize) ^ "\n", src=[SP], dst=[SP], jump=NONE} 
             (* epilog *)
@@ -148,41 +174,48 @@ struct
   fun newFrame(label:Temp.label, formals: bool list) =
   let
     val maxOffset = ref 0
-    fun foldFn (boo, (idx,stmList,accessList))= (
-      maxOffset := !maxOffset+wordSize;
+    fun foldFn (boo, (idx,saveArgs,stmList,accessList))= (
+      maxOffset := !maxOffset-wordSize;
       (* code to move *)
       if (idx < k) then (
         (* if escapes move from reg to frame *) 
         if List.nth(true::formals,idx) 
           then (
-            let val stm = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST (!maxOffset-wordSize), T.TEMP(FP))), T.TEMP(List.nth(argregs, idx)))
-                val access = InFrame((!maxOffset-wordSize)) 
+            let 
+                (*val stm = T.MOVE(T.MEM
+                                          (T.BINOP(T.PLUS, T.CONST (!maxOffset+wordSize), T.TEMP(FP))), 
+                                          T.TEMP(List.nth(argregs, idx)))*)
+                val fpOffset = !maxOffset+wordSize
+                val argReg = List.nth(argregs, idx)
+                val stm = A.OPER{assem="sw `s0, "^intToAssemStr(fpOffset)^"(`d0)\n",src=[argReg], dst=[FP],jump=NONE}
+                val access = InFrame((!maxOffset+wordSize)) 
             in
-              (idx+1,(stm :: stmList), (access :: accessList))
+              (idx+1,saveArgs,(stm :: stmList), (access :: accessList))
             end
           )
         else (
           let 
             val newtemp = Temp.newtemp()
-            val stm = T.MOVE(T.TEMP(newtemp), T.TEMP (List.nth(argregs,idx)))
+            (* val stm = T.MOVE(T.TEMP(newtemp), T.TEMP (List.nth(argregs,idx))) *)
+            val stmSaveArg = A.OPER{assem="move `d0, `s0\n", src=[List.nth(argregs,idx)], dst = [newtemp], jump=NONE}
             val access = InReg(newtemp) 
           in  
-            (idx+1, (stm::stmList), (access::accessList))  
+            (idx+1,(stmSaveArg::saveArgs), stmList, (access::accessList))  
           end
         )
         (* in procEntryExit: if doesnt escape move from aReg to sReg *)
     ) else (
       (* access from parent's frame *)
       (* idx >= k *)
-      (idx+1, stmList, InFrame(!maxOffset-wordSize)::accessList)
+      (idx+1, saveArgs , stmList, InFrame(!maxOffset+wordSize)::accessList)
     )
   )
 
-    val (_, stmList, access) = foldr foldFn (0,[],[]) (true::formals)
+    val (_,saveArgs, stmList, access) = foldr foldFn (0,[],[],[]) (true::formals)
     val _ = debugPrint("formal list for function label "^Symbol.name(label)^" \n",0)
     val ptBools = map(fn x => debugPrint(Bool.toString(x),0)) (formals)
   in
-    {name=label, formals=access, fpMaxOffset=ref (0-wordSize), procEntryExit1list=stmList, maxCallArgs=0}
+    {name=label, formals=access, fpMaxOffset=ref (~4), saveArgs=saveArgs, procEntryExit1list=stmList, maxCallArgs=k}
   end 
 
   fun name (f:frame) = #name f
@@ -195,16 +228,18 @@ struct
         else List.drop(#formals f,1)
     end
 
-  fun allocLocal ({name=label:Temp.label, formals=formals:access list, fpMaxOffset=offset: int ref, procEntryExit1list: Tree.stm list, maxCallArgs: int}) =
+  fun allocLocal ({name=label:Temp.label, saveArgs=saveArgs, formals=formals:access list, fpMaxOffset=offset: int ref, procEntryExit1list: Assem.instr list, maxCallArgs: int}) =
     let
       fun allocLocalBool ecp =
         if ecp
         then (
+            print ("escape!\n\n\n");
           offset := !offset-wordSize;
           
           InFrame(!offset+wordSize)
         )
         else (
+          print ("NO escape!\n\n\n");
           InReg(Temp.newNamedTemp("localVarTemp"))
         )
     in

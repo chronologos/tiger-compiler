@@ -12,7 +12,7 @@ sig
           FlowGraph.graph -> (FlowGraph.iGraph * (Temp.temp * Temp.temp) list)
           
     val show:
-      (FlowGraph.iGraph * (Temp.temp * Temp.temp) list) -> unit
+      (FlowGraph.iGraph ) -> unit
 end
 =
 struct
@@ -108,8 +108,8 @@ struct
       then fixedPointLoop(graphRes)
       else (
         (*fg.printGraph nodeToString stringify graphRes;*)
-        print("Printing graph without interference");
-        fg.printGraph nodeToString graphRes;
+        (*print("Printing graph without interference");*)
+        (*fg.printGraph nodeToString graphRes;*)
         graphRes
       )
     end
@@ -218,7 +218,7 @@ struct
       (iGraph', moveList)
     end
     
-  fun show(g,list) = 
+  fun show(g) = 
     let
         val nodes = tg.nodes(g)
         fun println x = print(x ^"\n")

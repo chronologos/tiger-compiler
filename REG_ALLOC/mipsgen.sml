@@ -71,7 +71,7 @@ structure MipsGen :> CODEGEN = struct
     and munchStm(T.EXP(T.CALL(T.NAME l, args:Tree.exp list))) =
       let val munchArgList = munchArgs(0, args)
       in
-        emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves), src=munchArgList, jump=SOME([l])})
+        emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=SOME([l])})
       end
 
     (* save to mem *)
@@ -250,13 +250,13 @@ structure MipsGen :> CODEGEN = struct
       let
         val munchE1 = munchExp(e1)
       in
-        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0 )\n", src = [munchE1], dst=[r], jump = NONE}))
+        result("T.MEM(T.BINOP(T.PLUS,e1,T.CONST i)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0)\n", src = [munchE1], dst=[r], jump = NONE}))
       end
     | munchExp(T.MEM(T.BINOP(T.PLUS,T.CONST i,e1))) =
         let
           val munchE1 = munchExp(e1)
         in
-          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0 )\n", src = [munchE1], dst=[r], jump = NONE}))
+          result("T.MEM(T.BINOP(T.PLUS,T.CONST i,e1)",fn r => emit(A.OPER{assem="lw `d0, " ^ intToAssemStr(i) ^ "(`s0)\n", src = [munchE1], dst=[r], jump = NONE}))
         end
 
     | munchExp(T.MEM(T.CONST i)) =
@@ -352,14 +352,14 @@ structure MipsGen :> CODEGEN = struct
       end
 
     | munchExp(T.CONST i) =
-      result("T.CONST i",fn r=> emit(A.OPER{assem="addi `d0, $zero,"^intToAssemStr(i)^"  \n",src=[],dst=[r],jump=NONE}) )
+      result("T.CONST i",fn r=> emit(A.OPER{assem="addi `d0, $zero,"^intToAssemStr(i)^"\n",src=[],dst=[r],jump=NONE}) )
 
     | munchExp (T.TEMP t) = t
 
     | munchExp (T.CALL(T.NAME l, expList))  =
       let val munchArgList = munchArgs(0, expList)
       in
-          emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves), src=munchArgList, jump=SOME([l])});
+          emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=SOME([l])});
           Frame.RV
       end
 
@@ -379,13 +379,11 @@ structure MipsGen :> CODEGEN = struct
     (*| munchExp (_) = (ErrorMsg.error 0 "Unknown args for munchExp"; Temp.newtemp())*)
 
   in
-    let
-        val {prolog=p, epilog=ep}=Frame.procEntryExit3(frame)
-    in
-        ilist := (!ilist) @ p;
-        munchStm stm;
-        List.rev(ep @ !ilist) (* maximal munch is top down so need to reverse *)
-    end
-
+   (* munchStm stm;
+    !ilist
+    *)
+      munchStm stm;
+      List.rev((!ilist)) (* maximal munch is top down so need to reverse *)
+      (*ilist'*)
   end
 end
