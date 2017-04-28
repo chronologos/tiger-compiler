@@ -84,7 +84,8 @@ struct
 
   fun printLiveSets(set) = (
     let
-      val printStr = FlowGraph.LiveSet.foldl (fn (tmp, str) => str ^ ", " ^ Temp.makestring(tmp) ^ "\n") "" set
+      val printStr = FlowGraph.LiveSet.foldl (fn (tmp, str) => str ^ ", " ^
+      Temp.makestring(tmp) ^ " ") "" set
     in
       if FlowGraph.LiveSet.numItems(set) = 0
       then "empty \n"
@@ -95,8 +96,13 @@ struct
  fun nodeToString (nodeID,nodeData) =
   case nodeData of
       (uses, defs, instr, isMove, liveIns, liveOuts) => (
-        ">>NodeID "^ Int.toString(nodeID) ^ " " ^ instr ^ " \n" ^ "live-in: \n" ^ printLiveSets(liveIns) ^ "live-outs: \n" ^ printLiveSets(liveOuts)
+        ">>NodeID "^ Int.toString(nodeID) ^ " " ^ instr ^ " \n" ^ "\n  -> live-in: "
+        ^ printLiveSets(liveIns) ^ "\n  -> live-outs: " ^ printLiveSets(liveOuts) ^
+        "\n  -> defs: " ^ printLiveSets(defs) ^ "\n  -> uses: " ^ printLiveSets(uses)
       )
+
+ fun nodeToString2 (nodeID,nodeData) =
+        ">>NodeID "^ Int.toString(nodeID) ^ "\n"
 
   (* Perform 1 iteration of the update with live-ins and live-outs *)
   fun fixedPointLoop(graph) =
@@ -109,7 +115,7 @@ struct
       else (
         (*fg.printGraph nodeToString stringify graphRes;*)
         (*print("Printing graph without interference");*)
-        (*fg.printGraph nodeToString graphRes;*)
+        fg.printGraph2 nodeToString nodeToString2 graphRes;
         graphRes
       )
     end

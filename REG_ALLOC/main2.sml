@@ -8,7 +8,7 @@ structure Main = struct
   val strings:(Symbol.symbol * string) list ref = ref []
   fun emitproc out (F.PROC({body,frame})) =
     let
-      val _ = print("Max offset is " ^ Int.toString(F.getMaxOffset(frame)))
+      (*val _ = print("Max offset is " ^ Int.toString(F.getMaxOffset(frame)))*)
       val {prolog=prolog, epilog=epilog}=F.procEntryExit3(frame)
       val {params=pa, loads=l, saves=s}=F.procEntryExit1(frame)
       val saveArgs = F.procEntryExit4(frame)
@@ -29,8 +29,8 @@ structure Main = struct
       val format1 = Assem.makeformat(saytemp)
       
     in (
-      (*app (fn i => TextIO.output(out,format0 i)) instrs*)
-      app (fn i => TextIO.output(out,format1 i)) instrs'''
+      app (fn i => TextIO.output(out,format0 i)) instrs
+      (*app (fn i => TextIO.output(out,format1 i)) instrs'''*)
      ) 
     end
   | emitproc out (F.STRING(lab,s)) = strings:=((lab,s) :: (!strings)) (*TextIO.output(out,F.string(lab,s))*)
