@@ -1,0 +1,4433 @@
+##################test num 1##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   CALL(
+    NAME L12:initArray,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     ESEQ(
+      MOVE(
+       TEMP t103:intExpTemp,
+       CONST 10),
+      TEMP t103:intExpTemp),
+     ESEQ(
+      MOVE(
+       TEMP t104:intExpTemp,
+       CONST 0),
+      TEMP t104:intExpTemp))),
+  TEMP t105:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 2##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   CALL(
+    NAME L12:initArray,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     ESEQ(
+      MOVE(
+       TEMP t103:intExpTemp,
+       CONST 10),
+      TEMP t103:intExpTemp),
+     ESEQ(
+      MOVE(
+       TEMP t104:intExpTemp,
+       CONST 0),
+      TEMP t104:intExpTemp))),
+  TEMP t105:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 3##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   ESEQ(
+    SEQ(
+     SEQ(
+      MOVE(
+       TEMP t104:recordExpHeadPointerTemp,
+       CALL(
+        NAME L13:malloc,
+         CONST 8)),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t104:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4))),
+       ESEQ(
+        MOVE(
+         TEMP t103:intExpTemp,
+         CONST 1000),
+        TEMP t103:intExpTemp))),
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP t104:recordExpHeadPointerTemp,
+        BINOP(MUL,
+         CONST 1,
+         CONST 4))),
+      NAME L12)),
+    TEMP t104:recordExpHeadPointerTemp)),
+  ESEQ(
+   MOVE(
+    MEM(
+     BINOP(PLUS,
+      BINOP(MUL,
+       CONST 0,
+       CONST 4),
+      TEMP t105:localVarTemp)),
+    NAME L14),
+   TEMP t105:localVarTemp)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"Somebody"),STRING (-,"Nobody")]
+  : MipsFrame.frag list
+- 
+##################test num 4##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+in seqseqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t107:intExpTemp,
+     CONST 10),
+    TEMP t107:intExpTemp)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   CJUMP(EQ,
+    MEM(
+     BINOP(PLUS,
+      TEMP t100:FramePointerTEMP,
+      CONST 0)),
+    ESEQ(
+     MOVE(
+      TEMP t103:intExpTemp,
+      CONST 0),
+     TEMP t103:intExpTemp),
+    L14,L15),
+   SEQ(
+    LABEL L14,
+    SEQ(
+     MOVE(
+      TEMP t106:ifExpReturnTemp,
+      ESEQ(
+       MOVE(
+        TEMP t104:intExpTemp,
+        CONST 1),
+       TEMP t104:intExpTemp)),
+     SEQ(
+      JUMP(
+       NAME L16),
+      SEQ(
+       LABEL L15,
+       SEQ(
+        MOVE(
+         TEMP t106:ifExpReturnTemp,
+         BINOP(MUL,
+          MEM(
+           BINOP(PLUS,
+            TEMP t100:FramePointerTEMP,
+            CONST 0)),
+          CALL(
+           NAME L12,
+            MEM(
+             TEMP t100:FramePointerTEMP),
+            BINOP(MINUS,
+             MEM(
+              BINOP(PLUS,
+               TEMP t100:FramePointerTEMP,
+               CONST 0)),
+             ESEQ(
+              MOVE(
+               TEMP t105:intExpTemp,
+               CONST 1),
+              TEMP t105:intExpTemp))))),
+        LABEL L16)))))),
+  TEMP t106:ifExpReturnTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-}]
+  : MipsFrame.frag list
+- 
+##################test num 5##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   ESEQ(
+    SEQ(
+     SEQ(
+      MOVE(
+       TEMP t104:recordExpHeadPointerTemp,
+       CALL(
+        NAME L12:malloc,
+         CONST 8)),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t104:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4))),
+       ESEQ(
+        MOVE(
+         TEMP t103:intExpTemp,
+         CONST 0),
+        TEMP t103:intExpTemp))),
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP t104:recordExpHeadPointerTemp,
+        BINOP(MUL,
+         CONST 1,
+         CONST 4))),
+      CONST 0)),
+    TEMP t104:recordExpHeadPointerTemp)),
+  TEMP t105:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 6##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t104:intExpTemp,
+     CONST 0),
+    TEMP t104:intExpTemp),
+   ESEQ(
+    MOVE(
+     TEMP t105:intExpTemp,
+     CONST 1),
+    TEMP t105:intExpTemp)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   MEM(
+    BINOP(PLUS,
+     TEMP t100:FramePointerTEMP,
+     CONST ~4)),
+   MEM(
+    BINOP(PLUS,
+     TEMP t100:FramePointerTEMP,
+     CONST 0))))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L13,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   BINOP(PLUS,
+    MEM(
+     BINOP(PLUS,
+      TEMP t100:FramePointerTEMP,
+      CONST ~4)),
+    ESEQ(
+     MOVE(
+      TEMP t103:intExpTemp,
+      CONST 1),
+     TEMP t103:intExpTemp)),
+   MEM(
+    BINOP(PLUS,
+     TEMP t100:FramePointerTEMP,
+     CONST 0))))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-},
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 7##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test7.tig:4.1:Function return type mismatch.
+testcases/test7.tig0.0:Fundecs do not type check
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t105:intExpTemp,
+     CONST 0),
+    TEMP t105:intExpTemp),
+   NAME L15))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  EXP(
+   CALL(
+    NAME L13,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     BINOP(PLUS,
+      MEM(
+       BINOP(PLUS,
+        TEMP t100:FramePointerTEMP,
+        CONST ~4)),
+      ESEQ(
+       MOVE(
+        TEMP t104:intExpTemp,
+        CONST 1),
+       TEMP t104:intExpTemp)))),
+  ESEQ(
+   MOVE(
+    TEMP t103:intExpTemp,
+    CONST 0),
+   TEMP t103:intExpTemp)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"str2"),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 8##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexpin seq
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   CJUMP(GT,
+    ESEQ(
+     MOVE(
+      TEMP t103:intExpTemp,
+      CONST 10),
+     TEMP t103:intExpTemp),
+    ESEQ(
+     MOVE(
+      TEMP t104:intExpTemp,
+      CONST 20),
+     TEMP t104:intExpTemp),
+    L12,L13),
+   SEQ(
+    LABEL L12,
+    SEQ(
+     MOVE(
+      TEMP t107:ifExpReturnTemp,
+      ESEQ(
+       MOVE(
+        TEMP t105:intExpTemp,
+        CONST 30),
+       TEMP t105:intExpTemp)),
+     SEQ(
+      JUMP(
+       NAME L14),
+      SEQ(
+       LABEL L13,
+       SEQ(
+        MOVE(
+         TEMP t107:ifExpReturnTemp,
+         ESEQ(
+          MOVE(
+           TEMP t106:intExpTemp,
+           CONST 40),
+          TEMP t106:intExpTemp)),
+        LABEL L14)))))),
+  TEMP t107:ifExpReturnTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 9##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test9.tig:3.1:Branches have non-matching types
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-," ")] : MipsFrame.frag list
+- 
+##################test num 10##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test10.tig:2.1:While expression has non-unit body type
+
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 11##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test11.tig:2.1:ForExp upper bound is not int type
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-," ")] : MipsFrame.frag list
+- 
+##################test num 12##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexpin seqseqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 0),
+    TEMP t103:intExpTemp)),
+  ESEQ(
+   SEQ(
+    MOVE(
+     TEMP t109:for_lo,
+     ESEQ(
+      MOVE(
+       TEMP t105:intExpTemp,
+       CONST 0),
+      TEMP t105:intExpTemp)),
+    SEQ(
+     MOVE(
+      TEMP t110:for_hi,
+      ESEQ(
+       MOVE(
+        TEMP t106:intExpTemp,
+        CONST 100),
+       TEMP t106:intExpTemp)),
+     SEQ(
+      CJUMP(LE,
+       TEMP t109:for_lo,
+       TEMP t110:for_hi,
+       L13:for_true_branch,L14:for_end),
+      SEQ(
+       LABEL L12:for_true_init_branch,
+       SEQ(
+        EXP(
+         BINOP(PLUS,
+          TEMP t109:for_lo,
+          CONST 1)),
+        SEQ(
+         LABEL L13:for_true_branch,
+         SEQ(
+          EXP(
+           TEMP t108),
+          SEQ(
+           CJUMP(LT,
+            TEMP t109:for_lo,
+            TEMP t110:for_hi,
+            L12:for_true_init_branch,L14:for_end),
+           LABEL L14:for_end)))))))),
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 13##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test13.tig:3.3:Both operands must be either int or string
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"df")]
+  : MipsFrame.frag list
+- 
+##################test num 14##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test14.tig:12.9:Both operands must be of the same type
+in seqseqexpin seq
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   MOVE(
+    TEMP t108:localVarTemp,
+    CALL(
+     NAME L14:initArray,
+      MEM(
+       TEMP t100:FramePointerTEMP),
+      ESEQ(
+       MOVE(
+        TEMP t106:intExpTemp,
+        CONST 3),
+       TEMP t106:intExpTemp),
+      ESEQ(
+       MOVE(
+        TEMP t107:intExpTemp,
+        CONST 0),
+       TEMP t107:intExpTemp))),
+   MOVE(
+    TEMP t105:localVarTemp,
+    ESEQ(
+     SEQ(
+      SEQ(
+       MOVE(
+        TEMP t104:recordExpHeadPointerTemp,
+        CALL(
+         NAME L13:malloc,
+          CONST 8)),
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          TEMP t104:recordExpHeadPointerTemp,
+          BINOP(MUL,
+           CONST 0,
+           CONST 4))),
+        ESEQ(
+         MOVE(
+          TEMP t103:intExpTemp,
+          CONST 0),
+         TEMP t103:intExpTemp))),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t104:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 1,
+          CONST 4))),
+       NAME L12)),
+     TEMP t104:recordExpHeadPointerTemp))),
+  ESEQ(
+   SEQ(
+    JUMP(
+     NAME L16),
+    SEQ(
+     LABEL L15,
+     SEQ(
+      MOVE(
+       TEMP t111:ifExpReturnTemp,
+       ESEQ(
+        MOVE(
+         TEMP t109:intExpTemp,
+         CONST 3),
+        TEMP t109:intExpTemp)),
+      SEQ(
+       JUMP(
+        NAME L17),
+       SEQ(
+        LABEL L16,
+        SEQ(
+         MOVE(
+          TEMP t111:ifExpReturnTemp,
+          ESEQ(
+           MOVE(
+            TEMP t110:intExpTemp,
+            CONST 4),
+           TEMP t110:intExpTemp)),
+         LABEL L17)))))),
+   TEMP t111:ifExpReturnTemp)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"aname")]
+  : MipsFrame.frag list
+- 
+##################test num 15##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test15.tig:3.1:if-then statements must return unit.
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 16##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test16.tig:7.8:Illegal cycle in type declaration!
+testcases/test16.tig:7.8:Illegal cycle in type declaration!
+testcases/test16.tig:4.8:Illegal cycle in type declaration!
+testcases/test16.tig:6.8:Illegal cycle in type declaration!
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ NAME L12)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"")] : MipsFrame.frag list
+- 
+##################test num 17##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test17.tig:4.23:[GET FIELDS] Symbol is not found in local tenv or decList
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 0),
+    TEMP t103:intExpTemp)),
+  TEMP t104:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 18##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test18.tig:5.4:Tried to call undeclared function
+seqexpseqexptestcases/test18.tig:9.1:Function return type mismatch.
+testcases/test18.tig0.0:Fundecs do not type check
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t106:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t105:intExpTemp,
+     CONST 0),
+    TEMP t105:intExpTemp)),
+  CALL(
+   NAME L12,
+    MEM(
+     TEMP t100:FramePointerTEMP),
+    ESEQ(
+     MOVE(
+      TEMP t107:intExpTemp,
+      CONST 0),
+     TEMP t107:intExpTemp),
+    NAME L18)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  EXP(
+   CALL(
+    NAME L12,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     MEM(
+      BINOP(PLUS,
+       TEMP t100:FramePointerTEMP,
+       CONST 0)),
+     NAME L17)),
+  NAME L16))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  EXP(
+   CONST 0),
+  ESEQ(
+   MOVE(
+    TEMP t103:intExpTemp,
+    CONST 0),
+   TEMP t103:intExpTemp)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"str2"),
+   PROC {body=MOVE (#,#),frame=-},STRING (-,"str"),STRING (-," "),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 19##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test19.tig:4.1:Function return type mismatch.
+testcases/test19.tig0.0:Fundecs do not type check
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t105:intExpTemp,
+     CONST 0),
+    TEMP t105:intExpTemp),
+   NAME L15))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  EXP(
+   CALL(
+    NAME L13,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     BINOP(PLUS,
+      MEM(
+       BINOP(PLUS,
+        TEMP t100:FramePointerTEMP,
+        CONST ~4)),
+      ESEQ(
+       MOVE(
+        TEMP t104:intExpTemp,
+        CONST 1),
+       TEMP t104:intExpTemp)))),
+  ESEQ(
+   MOVE(
+    TEMP t103:intExpTemp,
+    CONST 0),
+   TEMP t103:intExpTemp)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"str2"),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 20##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test20.tig:3.18:var was not declared
+testcases/test20.tig:3.19:Integer required in OpExp.
+seqexpin seq
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   JUMP(
+    NAME L13),
+   SEQ(
+    LABEL L14,
+    SEQ(
+     EXP(
+      ESEQ(
+       EXP(
+        CONST 0),
+       TEMP t105)),
+     SEQ(
+      LABEL L13,
+      SEQ(
+       CJUMP(GT,
+        ESEQ(
+         MOVE(
+          TEMP t103:intExpTemp,
+          CONST 10),
+         TEMP t103:intExpTemp),
+        ESEQ(
+         MOVE(
+          TEMP t104:intExpTemp,
+          CONST 5),
+         TEMP t104:intExpTemp),
+        L14,L12),
+       LABEL L12))))),
+  CONST 0))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 21##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test21.tig:8.11:Integer required in OpExp.
+in seqseqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t107:intExpTemp,
+     CONST 10),
+    TEMP t107:intExpTemp)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   CJUMP(EQ,
+    MEM(
+     BINOP(PLUS,
+      TEMP t100:FramePointerTEMP,
+      CONST 0)),
+    ESEQ(
+     MOVE(
+      TEMP t103:intExpTemp,
+      CONST 0),
+     TEMP t103:intExpTemp),
+    L14,L15),
+   SEQ(
+    LABEL L14,
+    SEQ(
+     MOVE(
+      TEMP t106:ifExpReturnTemp,
+      ESEQ(
+       MOVE(
+        TEMP t104:intExpTemp,
+        CONST 1),
+       TEMP t104:intExpTemp)),
+     SEQ(
+      JUMP(
+       NAME L16),
+      SEQ(
+       LABEL L15,
+       SEQ(
+        MOVE(
+         TEMP t106:ifExpReturnTemp,
+         CONST 0),
+        LABEL L16)))))),
+  TEMP t106:ifExpReturnTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-}]
+  : MipsFrame.frag list
+- 
+##################test num 22##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test22.tig:7.6:nonexistent field
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   ESEQ(
+    SEQ(
+     SEQ(
+      MOVE(
+       TEMP t104:recordExpHeadPointerTemp,
+       CALL(
+        NAME L13:malloc,
+         CONST 8)),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t104:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4))),
+       ESEQ(
+        MOVE(
+         TEMP t103:intExpTemp,
+         CONST 0),
+        TEMP t103:intExpTemp))),
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP t104:recordExpHeadPointerTemp,
+        BINOP(MUL,
+         CONST 1,
+         CONST 4))),
+      NAME L12)),
+    TEMP t104:recordExpHeadPointerTemp)),
+  ESEQ(
+   MOVE(
+    CONST 0,
+    NAME L14),
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"asd"),STRING (-,"Name")]
+  : MipsFrame.frag list
+- 
+##################test num 23##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test23.tig:8.10:AssignExp lvalue type and exp type don't match
+testcases/test23.tig:7.12:AssignExp lvalue type and exp type don't match
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   ESEQ(
+    SEQ(
+     SEQ(
+      MOVE(
+       TEMP t104:recordExpHeadPointerTemp,
+       CALL(
+        NAME L13:malloc,
+         CONST 8)),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t104:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4))),
+       ESEQ(
+        MOVE(
+         TEMP t103:intExpTemp,
+         CONST 0),
+        TEMP t103:intExpTemp))),
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP t104:recordExpHeadPointerTemp,
+        BINOP(MUL,
+         CONST 1,
+         CONST 4))),
+      NAME L12)),
+    TEMP t104:recordExpHeadPointerTemp)),
+  ESEQ(
+   EXP(
+    CONST 0),
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,""),STRING (-,"aname")]
+  : MipsFrame.frag list
+- 
+##################test num 24##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test24.tig:5.3:subscript var on nonarray type.
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 0),
+    TEMP t103:intExpTemp)),
+  CONST 0))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 25##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test25.tig:5.3:accessing field of non-fieldVar
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 0),
+    TEMP t103:intExpTemp)),
+  CONST 0))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 26##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test26.tig:3.3:Integer required in OpExp.
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"var")]
+  : MipsFrame.frag list
+- 
+##################test num 27##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 0),
+    TEMP t103:intExpTemp)),
+  CALL(
+   NAME L12,
+    MEM(
+     TEMP t100:FramePointerTEMP),
+    ESEQ(
+     MOVE(
+      TEMP t105:intExpTemp,
+      CONST 2),
+     TEMP t105:intExpTemp))))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-}]
+  : MipsFrame.frag list
+- 
+##################test num 28##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test28.tig:7.2:Different record types, unique refs dont match
+testcases/test28.tig:9.2:var was not declared
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-,"Name")]
+  : MipsFrame.frag list
+- 
+##################test num 29##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test29.tig:7.2:Different array types, unique refs dont match
+testcases/test29.tig:9.2:var was not declared
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 30##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t105:localVarTemp,
+   CALL(
+    NAME L12:initArray,
+     MEM(
+      TEMP t100:FramePointerTEMP),
+     ESEQ(
+      MOVE(
+       TEMP t103:intExpTemp,
+       CONST 10),
+      TEMP t103:intExpTemp),
+     ESEQ(
+      MOVE(
+       TEMP t104:intExpTemp,
+       CONST 0),
+      TEMP t104:intExpTemp))),
+  MEM(
+   BINOP(PLUS,
+    TEMP t105:localVarTemp,
+    BINOP(MUL,
+     ESEQ(
+      MOVE(
+       TEMP t106:intExpTemp,
+       CONST 2),
+      TEMP t106:intExpTemp),
+     CONST 4)))))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 31##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test31.tig:3.2:Declared type does not match exp type.
+testcases/test31.tig:5.2:var was not declared
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-," ")] : MipsFrame.frag list
+- 
+##################test num 32##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test32.tig:6.11:Type mismatch in arrayexp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   CONST 0),
+  ESEQ(
+   MOVE(
+    TEMP t105:intExpTemp,
+    CONST 0),
+   TEMP t105:intExpTemp)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-," ")] : MipsFrame.frag list
+- 
+##################test num 33##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test33.tig:3.10:Unknown record type instantiated
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:localVarTemp,
+   CONST 0),
+  ESEQ(
+   MOVE(
+    TEMP t104:intExpTemp,
+    CONST 0),
+   TEMP t104:intExpTemp)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 34##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test34.tig:5.2:Illegal argument types passed to CallExp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST ~4)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"two"),STRING (-,"one"),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 35##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test35.tig:5.2:Illegal argument types passed to CallExp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST ~4)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"one"),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 36##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test36.tig:5.2:Illegal argument types passed to CallExp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CONST 0)
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST ~4)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"one"),
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 37##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexpin seq
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   MOVE(
+    TEMP t105:localVarTemp,
+    NAME L12),
+   MOVE(
+    TEMP t104:localVarTemp,
+    ESEQ(
+     MOVE(
+      TEMP t103:intExpTemp,
+      CONST 0),
+     TEMP t103:intExpTemp))),
+  ESEQ(
+   MOVE(
+    TEMP t106:intExpTemp,
+    CONST 0),
+   TEMP t106:intExpTemp)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},STRING (-," ")] : MipsFrame.frag list
+- 
+##################test num 38##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test38.tig:6.2:Duplicate declaration in type declist.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:intExpTemp,
+   CONST 0),
+  TEMP t103:intExpTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 39##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test39.tig:6.2:Duplicate declaration in fun declist.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:intExpTemp,
+   CONST 0),
+  TEMP t103:intExpTemp))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-},
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 40##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test40.tig:3.2:Function return type mismatch.
+testcases/test40.tig0.0:Fundecs do not type check
+
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ CALL(
+  NAME L12,
+   MEM(
+    TEMP t100:FramePointerTEMP),
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 2),
+    TEMP t103:intExpTemp)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-}]
+  : MipsFrame.frag list
+- 
+##################test num 41##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexpseqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:intExpTemp,
+   CONST 0),
+  TEMP t103:intExpTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 42##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexpin seqin seq
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  SEQ(
+   MOVE(
+    TEMP t120:localVarTemp,
+    ESEQ(
+     SEQ(
+      SEQ(
+       MOVE(
+        TEMP t119:recordExpHeadPointerTemp,
+        CALL(
+         NAME L24:malloc,
+          CONST 8)),
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          TEMP t119:recordExpHeadPointerTemp,
+          BINOP(MUL,
+           CONST 0,
+           CONST 4))),
+        CALL(
+         NAME L22:initArray,
+          MEM(
+           TEMP t100:FramePointerTEMP),
+          ESEQ(
+           MOVE(
+            TEMP t117:intExpTemp,
+            CONST 3),
+           TEMP t117:intExpTemp),
+          ESEQ(
+           MOVE(
+            TEMP t118:intExpTemp,
+            CONST 1900),
+           TEMP t118:intExpTemp)))),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP t119:recordExpHeadPointerTemp,
+         BINOP(MUL,
+          CONST 1,
+          CONST 4))),
+       NAME L23)),
+     TEMP t119:recordExpHeadPointerTemp)),
+   SEQ(
+    MOVE(
+     TEMP t116:localVarTemp,
+     ESEQ(
+      SEQ(
+       SEQ(
+        SEQ(
+         SEQ(
+          MOVE(
+           TEMP t115:recordExpHeadPointerTemp,
+           CALL(
+            NAME L21:malloc,
+             CONST 16)),
+          MOVE(
+           MEM(
+            BINOP(PLUS,
+             TEMP t115:recordExpHeadPointerTemp,
+             BINOP(MUL,
+              CONST 0,
+              CONST 4))),
+           NAME L19)),
+         MOVE(
+          MEM(
+           BINOP(PLUS,
+            TEMP t115:recordExpHeadPointerTemp,
+            BINOP(MUL,
+             CONST 1,
+             CONST 4))),
+          ESEQ(
+           MOVE(
+            TEMP t113:intExpTemp,
+            CONST 44),
+           TEMP t113:intExpTemp))),
+        MOVE(
+         MEM(
+          BINOP(PLUS,
+           TEMP t115:recordExpHeadPointerTemp,
+           BINOP(MUL,
+            CONST 2,
+            CONST 4))),
+         ESEQ(
+          MOVE(
+           TEMP t114:intExpTemp,
+           CONST 2432),
+          TEMP t114:intExpTemp))),
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          TEMP t115:recordExpHeadPointerTemp,
+          BINOP(MUL,
+           CONST 3,
+           CONST 4))),
+        NAME L20)),
+      TEMP t115:recordExpHeadPointerTemp)),
+    SEQ(
+     MOVE(
+      TEMP t112:localVarTemp,
+      CALL(
+       NAME L18:initArray,
+        MEM(
+         TEMP t100:FramePointerTEMP),
+        ESEQ(
+         MOVE(
+          TEMP t111:intExpTemp,
+          CONST 100),
+         TEMP t111:intExpTemp),
+        NAME L17)),
+     SEQ(
+      MOVE(
+       TEMP t110:localVarTemp,
+       CALL(
+        NAME L16:initArray,
+         MEM(
+          TEMP t100:FramePointerTEMP),
+         ESEQ(
+          MOVE(
+           TEMP t106:intExpTemp,
+           CONST 5),
+          TEMP t106:intExpTemp),
+         ESEQ(
+          SEQ(
+           SEQ(
+            SEQ(
+             SEQ(
+              MOVE(
+               TEMP t109:recordExpHeadPointerTemp,
+               CALL(
+                NAME L15:malloc,
+                 CONST 16)),
+              MOVE(
+               MEM(
+                BINOP(PLUS,
+                 TEMP t109:recordExpHeadPointerTemp,
+                 BINOP(MUL,
+                  CONST 0,
+                  CONST 4))),
+               NAME L13)),
+             MOVE(
+              MEM(
+               BINOP(PLUS,
+                TEMP t109:recordExpHeadPointerTemp,
+                BINOP(MUL,
+                 CONST 1,
+                 CONST 4))),
+              ESEQ(
+               MOVE(
+                TEMP t107:intExpTemp,
+                CONST 0),
+               TEMP t107:intExpTemp))),
+            MOVE(
+             MEM(
+              BINOP(PLUS,
+               TEMP t109:recordExpHeadPointerTemp,
+               BINOP(MUL,
+                CONST 2,
+                CONST 4))),
+             ESEQ(
+              MOVE(
+               TEMP t108:intExpTemp,
+               CONST 0),
+              TEMP t108:intExpTemp))),
+           MOVE(
+            MEM(
+             BINOP(PLUS,
+              TEMP t109:recordExpHeadPointerTemp,
+              BINOP(MUL,
+               CONST 3,
+               CONST 4))),
+            NAME L14)),
+          TEMP t109:recordExpHeadPointerTemp))),
+      MOVE(
+       TEMP t105:localVarTemp,
+       CALL(
+        NAME L12:initArray,
+         MEM(
+          TEMP t100:FramePointerTEMP),
+         ESEQ(
+          MOVE(
+           TEMP t103:intExpTemp,
+           CONST 10),
+          TEMP t103:intExpTemp),
+         ESEQ(
+          MOVE(
+           TEMP t104:intExpTemp,
+           CONST 0),
+          TEMP t104:intExpTemp))))))),
+  ESEQ(
+   SEQ(
+    MOVE(
+     MEM(
+      BINOP(PLUS,
+       TEMP t105:localVarTemp,
+       BINOP(MUL,
+        ESEQ(
+         MOVE(
+          TEMP t131:intExpTemp,
+          CONST 0),
+         TEMP t131:intExpTemp),
+        CONST 4))),
+     ESEQ(
+      MOVE(
+       TEMP t132:intExpTemp,
+       CONST 1),
+      TEMP t132:intExpTemp)),
+    SEQ(
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP t105:localVarTemp,
+        BINOP(MUL,
+         ESEQ(
+          MOVE(
+           TEMP t129:intExpTemp,
+           CONST 9),
+          TEMP t129:intExpTemp),
+         CONST 4))),
+      ESEQ(
+       MOVE(
+        TEMP t130:intExpTemp,
+        CONST 3),
+       TEMP t130:intExpTemp)),
+     SEQ(
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4),
+         MEM(
+          BINOP(PLUS,
+           TEMP t110:localVarTemp,
+           BINOP(MUL,
+            ESEQ(
+             MOVE(
+              TEMP t128:intExpTemp,
+              CONST 3),
+             TEMP t128:intExpTemp),
+            CONST 4))))),
+       NAME L27),
+      SEQ(
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          BINOP(MUL,
+           CONST 0,
+           CONST 4),
+          MEM(
+           BINOP(PLUS,
+            TEMP t110:localVarTemp,
+            BINOP(MUL,
+             ESEQ(
+              MOVE(
+               TEMP t126:intExpTemp,
+               CONST 1),
+              TEMP t126:intExpTemp),
+             CONST 4))))),
+        ESEQ(
+         MOVE(
+          TEMP t127:intExpTemp,
+          CONST 23),
+         TEMP t127:intExpTemp)),
+       SEQ(
+        MOVE(
+         MEM(
+          BINOP(PLUS,
+           TEMP t112:localVarTemp,
+           BINOP(MUL,
+            ESEQ(
+             MOVE(
+              TEMP t125:intExpTemp,
+              CONST 34),
+             TEMP t125:intExpTemp),
+            CONST 4))),
+         NAME L26),
+        SEQ(
+         MOVE(
+          MEM(
+           BINOP(PLUS,
+            BINOP(MUL,
+             CONST 0,
+             CONST 4),
+            TEMP t116:localVarTemp)),
+          NAME L25),
+         MOVE(
+          MEM(
+           BINOP(PLUS,
+            MEM(
+             BINOP(PLUS,
+              BINOP(MUL,
+               CONST 0,
+               CONST 4),
+              TEMP t120:localVarTemp)),
+            BINOP(MUL,
+             ESEQ(
+              MOVE(
+               TEMP t123:intExpTemp,
+               CONST 0),
+              TEMP t123:intExpTemp),
+             CONST 4))),
+          ESEQ(
+           MOVE(
+            TEMP t124:intExpTemp,
+            CONST 2323),
+           TEMP t124:intExpTemp)))))))),
+   ESEQ(
+    MOVE(
+     MEM(
+      BINOP(PLUS,
+       MEM(
+        BINOP(PLUS,
+         BINOP(MUL,
+          CONST 0,
+          CONST 4),
+         TEMP t120:localVarTemp)),
+       BINOP(MUL,
+        ESEQ(
+         MOVE(
+          TEMP t121:intExpTemp,
+          CONST 2),
+         TEMP t121:intExpTemp),
+        CONST 4))),
+     ESEQ(
+      MOVE(
+       TEMP t122:intExpTemp,
+       CONST 2323),
+      TEMP t122:intExpTemp)),
+    CONST 0))))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},STRING (-,"kati"),STRING (-,"sfd"),
+   STRING (-,"sdf"),STRING (-,"Allos"),STRING (-,"Kapoios"),
+   STRING (-,"Kapou"),STRING (-,""),STRING (-,"aname"),STRING (-,"somewhere")]
+  : MipsFrame.frag list
+- 
+##################test num 43##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexptestcases/test43.tig:6.4:Integer required in OpExp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   TEMP t103),
+  CONST 0))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 44##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:localVarTemp,
+   CONST 0),
+  ESEQ(
+   MOVE(
+    MEM(
+     BINOP(PLUS,
+      TEMP t100:FramePointerTEMP,
+      CONST ~12)),
+    CONST 0),
+   CONST 0)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 45##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:localVarTemp,
+   CONST 0),
+  TEMP t103:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 46##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+in seqin seqseqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:localVarTemp,
+   CONST 0),
+  ESEQ(
+   EXP(
+    ESEQ(
+     SEQ(
+      CJUMP(EQ,
+       BINOP(PLUS,
+        TEMP t100:FramePointerTEMP,
+        CONST ~12),
+       CONST 0,
+       L15,L16),
+      SEQ(
+       LABEL L15,
+       SEQ(
+        MOVE(
+         TEMP t105:refCompResultTemp,
+         CONST 1),
+        SEQ(
+         JUMP(
+          NAME L17),
+         SEQ(
+          LABEL L16,
+          SEQ(
+           MOVE(
+            TEMP t105:refCompResultTemp,
+            CONST 0),
+           LABEL L17)))))),
+     TEMP t105:refCompResultTemp)),
+   ESEQ(
+    SEQ(
+     CJUMP(EQ,
+      BINOP(PLUS,
+       TEMP t100:FramePointerTEMP,
+       CONST ~12),
+      CONST 0,
+      L12,L13),
+     SEQ(
+      LABEL L12,
+      SEQ(
+       MOVE(
+        TEMP t104:refCompResultTemp,
+        CONST 1),
+       SEQ(
+        JUMP(
+         NAME L14),
+        SEQ(
+         LABEL L13,
+         SEQ(
+          MOVE(
+           TEMP t104:refCompResultTemp,
+           CONST 0),
+          LABEL L14)))))),
+    TEMP t104:refCompResultTemp))))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 47##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t104:localVarTemp,
+   ESEQ(
+    MOVE(
+     TEMP t103:intExpTemp,
+     CONST 4),
+    TEMP t103:intExpTemp)),
+  ESEQ(
+   MOVE(
+    TEMP t105:intExpTemp,
+    CONST 0),
+   TEMP t105:intExpTemp)))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 48##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:intExpTemp,
+   CONST 0),
+  TEMP t103:intExpTemp))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ MEM(
+  BINOP(PLUS,
+   TEMP t100:FramePointerTEMP,
+   CONST 0)))
+
+-----------
+val it =
+  [PROC {body=MOVE (#,#),frame=-},PROC {body=MOVE (#,#),frame=-},
+   PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 
+##################test num 49##################
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+testcases/test49.tig:5.18:syntax error: inserting  PLUS
+testcases/test49.tig:5.10:var was not declared
+testcases/test49.tig:5.18:Integer required in OpExp.
+seqexp
+FUNCTION:
+
+MOVE(
+ TEMP t102:RVTEMP,
+ ESEQ(
+  MOVE(
+   TEMP t103:localVarTemp,
+   CONST 0),
+  TEMP t103:localVarTemp))
+
+-----------
+val it = [PROC {body=MOVE (#,#),frame=-}] : MipsFrame.frag list
+- 

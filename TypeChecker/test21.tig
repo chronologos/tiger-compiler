@@ -1,0 +1,14 @@
+let 
+    type a = int
+    type b = {A: a}
+    var x : b := b{A=6}
+    type c = {A:a}
+    type a = string
+    var y : c := c{A="bounty"}
+    
+    in
+    
+    x.A + 1
+    y.A := "noid"
+    
+    end

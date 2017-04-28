@@ -1,0 +1,59 @@
+LABEL L21
+MOVE(
+ TEMP t109:intExpTemp,
+ CONST 1)
+MOVE(
+ TEMP t102:RV,
+ TEMP t109:intExpTemp)
+JUMP(
+ NAME L20)
+LABEL L20
+LABEL L23
+EXP(
+ CALL(
+  NAME L13,
+   MEM(
+    TEMP t100:FP),
+   TEMP t108:functionParamTemp,
+   NAME L18))
+MOVE(
+ TEMP t102:RV,
+ CONST 0)
+JUMP(
+ NAME L22)
+LABEL L22
+L18: .ascii "str"
+LABEL L25
+MOVE(
+ TEMP t111,
+ MEM(
+  TEMP t100:FP))
+MOVE(
+ TEMP t110,
+ TEMP t106:functionParamTemp)
+MOVE(
+ TEMP t107:intExpTemp,
+ CONST 1)
+EXP(
+ CALL(
+  NAME L14,
+   TEMP t111,
+   BINOP(PLUS,
+    TEMP t110,
+    TEMP t107:intExpTemp)))
+MOVE(
+ TEMP t102:RV,
+ CONST 0)
+JUMP(
+ NAME L24)
+LABEL L24
+LABEL L27
+MOVE(
+ TEMP t104:intExpTemp,
+ CONST 999)
+MOVE(
+ TEMP t102:RV,
+ TEMP t104:intExpTemp)
+JUMP(
+ NAME L26)
+LABEL L26

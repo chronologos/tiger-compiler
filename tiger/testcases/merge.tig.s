@@ -595,7 +595,9 @@ mflo $a0
 add $a0, $a0, $s2
 move $s0, $a0 
 move $a0,$fp 
-lw $a1, 0($fp)
+lw $a2, 0($fp)
+addi $a1, $zero,4
+sub $a1, $a2, $a1
 lw $a1, -4($a1)
 move $a1,$a1 
 jal L3
@@ -603,7 +605,9 @@ move $a0, $v0
 sw $a0, 0($s0)
 L26:
 move $a0,$fp 
-lw $a1, 0($fp)
+lw $a2, 0($fp)
+addi $a1, $zero,4
+sub $a1, $a2, $a1
 lw $a1, -4($a1)
 move $a1,$a1 
 jal L3
@@ -624,7 +628,9 @@ addi $a0, $zero,10
 mult $s1, $a0
 mflo $a0
 move $s0, $a0 
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 move $a0,$a0 
 jal tig_ord
@@ -637,7 +643,9 @@ jal tig_ord
 move $a0, $v0 
 sub $a0, $s0, $a0
 move $s1, $a0 
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 addi $a0, $a0, -4
 move $s0, $a0 
 jal tig_getchar
@@ -677,7 +685,9 @@ sw $s7, -8($fp)
 sw $t0, -4($fp)
 L20:
 lw $a0, 0($fp)
-lw $a0, 0($a0)
+lw $a1, 0($a0)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 move $a0,$a0 
 la $a1, L13
@@ -688,7 +698,9 @@ beq $v0, $a0, L17
 L18:
 li $s0, 1
 lw $a0, 0($fp)
-lw $a0, 0($a0)
+lw $a1, 0($a0)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 move $a0,$a0 
 la $a1, L14
@@ -709,7 +721,9 @@ li $v0, 0
 j L103
 L21:
 lw $a0, 0($fp)
-lw $a0, 0($a0)
+lw $a1, 0($a0)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 addi $a0, $a0, -4
 move $s0, $a0 
 jal tig_getchar
@@ -752,7 +766,9 @@ sw $s7, -8($fp)
 sw $t0, -4($fp)
 move $a0, $a1
 lw $a0, 0($fp)
-lw $a0, 0($a0)
+lw $a1, 0($a0)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 move $a0,$a0 
 jal tig_ord
@@ -772,7 +788,9 @@ j L104
 L9:
 li $s0, 1
 lw $a0, 0($fp)
-lw $a0, 0($a0)
+lw $a1, 0($a0)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 move $a0,$a0 
 jal tig_ord

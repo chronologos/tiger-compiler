@@ -1,0 +1,16 @@
+let var i : string := "string_noid"
+
+    function testNoid() =
+    (for i := 0 to 3 do (print("NOID!\n")))
+    
+    function testNoid2() : int = 
+        (i := "bount;
+        let var i := 5 in 
+        i + 1
+        end)
+    in
+   
+    testNoid();
+    testNoid2();
+    i = "booya"
+end

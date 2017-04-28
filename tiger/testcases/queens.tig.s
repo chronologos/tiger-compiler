@@ -118,12 +118,16 @@ sw $s6, -12($fp)
 sw $s7, -8($fp)
 sw $t0, -4($fp)
 move $s3, $a1
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a0, -4($a0)
 beq $s3, $a0, L58 
 L59:
 li $s2, 0
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -4($a0)
 addi $a0, $zero,1
 sub $a0, $a1, $a0
@@ -145,7 +149,9 @@ L56:
 addi $a0, $s2, 1
 move $s2, $a0 
 L57:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -158,7 +164,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L21:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 mult $s2, $a0
@@ -186,7 +194,9 @@ L64:
 j L19
 L26:
 li $s1, 1
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -16($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -200,7 +210,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L23:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -16($a0)
 add $a1, $s2, $s3
 addi $a0, $zero,4
@@ -218,7 +230,9 @@ j L28
 L31:
 L35:
 li $s1, 1
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -20($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -233,7 +247,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L30:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -20($a0)
 addi $a0, $s2, 7
 sub $a1, $a0, $s3
@@ -251,7 +267,9 @@ move $a1, $s1
 j L37
 L52:
 L54:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -264,7 +282,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L51:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 mult $s2, $a0
@@ -272,7 +292,9 @@ mflo $a0
 add $a1, $a1, $a0
 addi $a0, $zero,1
 sw $a0, 0($a1)
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -16($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -286,7 +308,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L49:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -16($a0)
 add $a1, $s2, $s3
 addi $a0, $zero,4
@@ -295,7 +319,9 @@ mflo $a0
 add $a1, $a2, $a0
 addi $a0, $zero,1
 sw $a0, 0($a1)
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -20($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -310,7 +336,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L47:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -20($a0)
 addi $a0, $s2, 7
 sub $a1, $a0, $s3
@@ -320,7 +348,9 @@ mflo $a0
 add $a1, $a2, $a0
 addi $a0, $zero,1
 sw $a0, 0($a1)
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -12($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -333,7 +363,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L45:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -12($a0)
 addi $a0, $zero,4
 mult $s3, $a0
@@ -345,7 +377,9 @@ move $a0,$a0
 addi $a1, $s3, 1
 move $a1,$a1 
 jal L3
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -358,7 +392,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L43:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -8($a0)
 addi $a0, $zero,4
 mult $s2, $a0
@@ -366,7 +402,9 @@ mflo $a0
 add $a1, $a1, $a0
 addi $a0, $zero,0
 sw $a0, 0($a1)
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -16($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -380,7 +418,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L41:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -16($a0)
 add $a1, $s2, $s3
 addi $a0, $zero,4
@@ -389,7 +429,9 @@ mflo $a0
 add $a1, $a2, $a0
 addi $a0, $zero,0
 sw $a0, 0($a1)
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -20($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -404,7 +446,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L39:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a2, -20($a0)
 addi $a0, $s2, 7
 sub $a1, $a0, $s3
@@ -445,7 +489,9 @@ sw $s6, -12($fp)
 sw $s7, -8($fp)
 sw $t0, -4($fp)
 li $s3, 0
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -4($a0)
 addi $a0, $zero,1
 sub $a0, $a1, $a0
@@ -456,6 +502,7 @@ L5:
 la $a0, L4
 move $a0,$a0 
 jal tig_print
+jal tig_flush
 li $v0, 0
 j L65
 L17:
@@ -463,7 +510,9 @@ addi $a0, $s3, 1
 move $s3, $a0 
 L18:
 li $s2, 0
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -4($a0)
 addi $a0, $zero,1
 sub $a0, $a1, $a0
@@ -482,7 +531,9 @@ L15:
 addi $a0, $s2, 1
 move $s2, $a0 
 L16:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -12($a0)
 addi $a0, $zero,4
 sub $a0, $a1, $a0
@@ -495,7 +546,9 @@ addi $a0, $zero,1
 move $a0,$a0 
 jal exit
 L9:
-lw $a0, 0($fp)
+lw $a1, 0($fp)
+addi $a0, $zero,4
+sub $a0, $a1, $a0
 lw $a1, -12($a0)
 addi $a0, $zero,4
 mult $s3, $a0

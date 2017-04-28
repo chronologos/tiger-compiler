@@ -1,0 +1,22 @@
+let type intArray = array of int
+    type stringArray = array of string
+    type xArray = array of x
+    type recArray = array of rec2Array
+    type rec2Array = array of recArray
+    type x = int
+    var intArray1 := intArray [10] of 0
+    var xArray1 := xArray [20] of 5
+    var stringArray1 := stringArray [50] of "yo mama"
+    var recArray1 := recArray [25] of 5
+    var recArray2 := rec2Array [25] of 10
+    
+    in
+    
+    "yo noid!";
+    xArray1[5] = 10;
+    intArray1[6] = 4;
+    stringArray1[4] = "bounty";
+    recArray1[3] = 90
+    end
+    
+    
