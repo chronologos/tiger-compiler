@@ -9,8 +9,8 @@ structure MipsGen :> CODEGEN = struct
 
     fun binopToString(T.PLUS) = "add"
     | binopToString(T.MINUS) = "sub"
-    | binopToString(T.MUL) = "mult"
     | binopToString(T.DIV) = "div"
+    | binopToString(T.MUL) = "mult"
     | binopToString(T.AND) = "and"
     | binopToString(T.OR) = "or"
     | binopToString(T.LSHIFT) = "sll"
@@ -36,10 +36,11 @@ structure MipsGen :> CODEGEN = struct
     fun munchArgs(i:int, args: Tree.exp list) =
 
       let
-
+      (*  val args = List.drop(args, 1) (* drop static link *) *)
+        val (_) = print("munchargs len is " ^ Int.toString(List.length(args)) ^ "\n")
         (* according to MIPS calling convention we ALWAYS save at least k word sizes of space in caller frame *)
-        val numStackArgs = if List.length(args) > Frame.k then (List.length(args)) else Frame.k
-        val stackArgs = if numStackArgs > Frame.k then List.drop(args,Frame.k) else []
+        val numStackArgs = if List.length(args) > (Frame.k + 1) then (List.length(args)) else (Frame.k + 1)
+        val stackArgs = if numStackArgs > (Frame.k + 1) then List.drop(args,Frame.k + 1) else []
 
         fun shrinkStack(num) =
           munchStm(T.MOVE(T.TEMP(Frame.SP),
@@ -71,7 +72,7 @@ structure MipsGen :> CODEGEN = struct
     and munchStm(T.EXP(T.CALL(T.NAME l, args:Tree.exp list))) =
       let val munchArgList = munchArgs(0, args)
       in
-        emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=SOME([l])})
+        emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=NONE})
       end
 
     (* save to mem *)
@@ -345,7 +346,12 @@ structure MipsGen :> CODEGEN = struct
           val t = munchExp(e2)
           val opstr = binopToString(oper)
       in
-        result("T.BINOP(oper, e1, e2)",fn r => emit(A.OPER{assem=opstr ^ " `d0, `s0, `s1\n",
+        case oper of 
+          T.MUL => result("", fn r => (emit(A.OPER{assem="mult `s0, `s1\n", src=[s, t], dst=[], jump=NONE}); 
+                                      emit(A.OPER{assem="mflo `d0\n", src=[], dst=[r], jump=NONE})))
+        | T.DIV => result("", fn r => (emit(A.OPER{assem="div `s0, `s1\n", src=[s, t], dst=[], jump=NONE}); 
+                                                          emit(A.OPER{assem="mflo `d0\n", src=[], dst=[r], jump=NONE})))
+        | _ =>  result("T.BINOP(oper, e1, e2)",fn r => emit(A.OPER{assem=opstr ^ " `d0, `s0, `s1\n",
                     src=[s,t],
                     dst=[r],
                     jump=NONE}))
@@ -359,7 +365,7 @@ structure MipsGen :> CODEGEN = struct
     | munchExp (T.CALL(T.NAME l, expList))  =
       let val munchArgList = munchArgs(0, expList)
       in
-          emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=SOME([l])});
+          emit(A.OPER{assem="jal " ^ Symbol.name(l) ^ "\n", dst=(Frame.RV::Frame.RA::Frame.callersaves @ Frame.argregs), src=munchArgList, jump=NONE});
           Frame.RV
       end
 

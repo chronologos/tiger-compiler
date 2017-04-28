@@ -14,7 +14,8 @@ sig type frame
     val ERROR: Temp.temp
     val regsMap: Temp.temp StringMap.map
     val maxCallArgs : frame -> int
-    val setCallArgs : frame * int -> frame
+    val setCallArgs : frame * int -> unit
+    val printAccessList : string * access list -> unit
     
     datatype frag =  PROC of {body:Tree.stm, frame:frame}
                    | STRING of Temp.label * string

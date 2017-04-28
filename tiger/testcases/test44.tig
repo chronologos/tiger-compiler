@@ -5,7 +5,6 @@ let
 	var b:rectype := nil
 
 in
-
-	b := nil
-
+	(b := nil;
+	b.name)
 end

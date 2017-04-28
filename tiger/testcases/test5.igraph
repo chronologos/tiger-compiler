@@ -1,0 +1,97 @@
+Standard ML of New Jersey v110.80 [built: Sat Feb 25 17:13:25 2017]
+- [autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):table.sig]
+[loading (sources.cm):table.sml]
+[loading (sources.cm):symbol.sml]
+[loading (sources.cm):temp.sig]
+[loading (sources.cm):temp.sml]
+[loading (sources.cm):tree.sml]
+[loading (sources.cm):absyn.sml]
+[loading (sources.cm):errormsg.sml]
+[loading (sources.cm):assem.sml]
+[loading (sources.cm):frame.sig]
+[loading (sources.cm):frame.sml]
+[loading (sources.cm):translate.sig]
+[loading (sources.cm):translate.sml]
+[loading (sources.cm):funcgraph.sig]
+[loading (sources.cm):funcgraph.sml]
+[loading (sources.cm):intfuncgraph.sml]
+[loading (sources.cm):prabsyn.sml]
+[loading (sources.cm):printtree.sml]
+[loading (sources.cm):codegen.sig]
+[loading (sources.cm):mipsgen.sml]
+[loading (sources.cm):tiger.grm.sig]
+[loading (sources.cm):findescape.sml]
+[loading (sources.cm):tiger.lex.sml]
+[loading (sources.cm):types.sml]
+[loading (sources.cm):tiger.grm.sml]
+[loading (sources.cm):parse.sml]
+[loading (sources.cm):canon.sml]
+[loading (sources.cm):liveness2.sml]
+[loading (sources.cm):env.sig]
+[loading (sources.cm):semant.sml]
+[loading (sources.cm):makegraph.sml]
+[loading (sources.cm):main2.sml]
+[New bindings added.]
+val it = true : bool
+= emit L0
+t100:FP->
+t101:SP->t105:a0 t106:a1 t131 t132 t133 
+t102:RV->t104:RA t117:t0 t118:t1 t119:t2 t120:t3 t121:t4 t122:t5 t123:t6 t124:t7 t125:t8 t126:t9 
+t104:RA->t102:RV 
+t105:a0->t101:SP t106:a1 t132 t133 t134 
+t106:a1->t101:SP t105:a0 t133 t134 
+t117:t0->t102:RV 
+t118:t1->t102:RV 
+t119:t2->t102:RV 
+t120:t3->t102:RV 
+t121:t4->t102:RV 
+t122:t5->t102:RV 
+t123:t6->t102:RV 
+t124:t7->t102:RV 
+t125:t8->t102:RV 
+t126:t9->t102:RV 
+t127->t128 t130 
+t128->t127 t130 t135 t136 t137 t138 t139 t140 t141 t142 t143 
+t129->
+t130->t127 t128 
+t131->t101:SP 
+t132->t101:SP t105:a0 
+t133->t101:SP t105:a0 t106:a1 
+t134->t105:a0 t106:a1 
+t135->t128 t136 
+t136->t128 t135 
+t137->t128 
+t138->t128 
+t139->t128 t140 
+t140->t128 t139 
+t141->t128 
+t142->t128 t143 
+t143->t128 t142 
+val it = () : unit
+

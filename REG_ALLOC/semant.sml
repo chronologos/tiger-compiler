@@ -21,17 +21,17 @@ struct
   (**** functions and vars *******)
   fun initValues() =
     let val emptyTable = Symbol.empty
-      val printFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING], result = Types.UNIT})
-      val flushFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[], result=Types.UNIT})
-      val getcharFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [], result = Types.STRING})
-      val ordFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.STRING], result = Types.INT})
-      val charFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.INT], result=Types.STRING})
-      val sizeFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING], result=Types.INT})
-      val substringFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING, Types.INT, Types.INT], result = Types.STRING})
-      val concatFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.STRING, Types.STRING], result=Types.STRING})
-      val notFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals = [Types.INT], result = Types.INT})
-      val exitFunEntry = FunEntry({level=Translate.outermost,label=Temp.newlabel(),formals=[Types.INT], result=Types.UNIT})
-      val nilEntry = VarEntry({access=Translate.allocLocal(Translate.outermost)(true) ,ty=Types.NIL})
+      val printFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_print"),formals=[Types.STRING], result = Types.UNIT})
+      val flushFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_flush"),formals=[], result=Types.UNIT})
+      val getcharFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_getchar"),formals = [], result = Types.STRING})
+      val ordFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_ord"),formals = [Types.STRING], result = Types.INT})
+      val charFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_chr"),formals = [Types.INT], result=Types.STRING})
+      val sizeFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_size"),formals=[Types.STRING], result=Types.INT})
+      val substringFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_substring"),formals=[Types.STRING, Types.INT, Types.INT], result = Types.STRING})
+      val concatFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_concat"),formals=[Types.STRING, Types.STRING], result=Types.STRING})
+      val notFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_not"),formals = [Types.INT], result = Types.INT})
+      val exitFunEntry = FunEntry({level=Translate.outermost,label=Temp.namedlabel("tig_exit"),formals=[Types.INT], result=Types.UNIT})
+      (*val nilEntry = VarEntry({access=Translate.allocLocal(Translate.outermost)(false) ,ty=Types.NIL})*)
       val t1 = Symbol.enter(emptyTable, Symbol.symbol("print"), printFunEntry)
       val t2 = Symbol.enter(t1, Symbol.symbol("flush"), flushFunEntry)
       val t3 = Symbol.enter(t2, Symbol.symbol("getchar"), getcharFunEntry)
@@ -42,11 +42,11 @@ struct
       val t8 = Symbol.enter(t7, Symbol.symbol("concat"), concatFunEntry)
       val t9 = Symbol.enter(t8, Symbol.symbol("not"), notFunEntry)
       val t10 = Symbol.enter(t9, Symbol.symbol("exit"), exitFunEntry)
-      val t11 = Symbol.enter(t10, Symbol.symbol("nil"), nilEntry)
+      (*val t11 = Symbol.enter(t10, Symbol.symbol("nil"), nilEntry)*)
      (* val unitEntry = VarEntry({ty=Types.UNIT})
-      val t12 = Symbol.enter(t11, Symbol.symbol("unit"), unitEntry) *)
+      val t12 = Symbol.enter(t10, Symbol.symbol("unit"), unitEntry) *)
     in
-      t11
+      t10
     end
   val base_tenv = initTypes()
   val base_venv = initValues()
@@ -853,7 +853,7 @@ struct
                          )
                     | (Types.NIL,Types.RECORD(sym2, reff2)) => (
                       let
-                        val thisVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(true),ty=expectedType})
+                        val thisVarEntry = Env.VarEntry({access=Translate.allocLocal(level)(false),ty=expectedType})
                         val venv = Symbol.enter(venv, name, thisVarEntry)
                         val res = Translate.varDecAlloc(newAlloc, #exp actual) (* actual will be T.CONST 0 *)
                       in
@@ -1067,6 +1067,7 @@ struct
     (*pattern match on Absyn.var*)
     case var of Absyn.SimpleVar(sym, pos) =>
       let val varTypOpt = Symbol.look(venv, sym)
+          val (_) = print("simplevar translating..." ^ Symbol.name(sym) ^ "\n")
       in
         (if isSome varTypOpt
         then (

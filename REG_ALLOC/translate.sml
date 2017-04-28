@@ -1,7 +1,3 @@
-(*
-  level should monotonically increase, store pointer to parent level (new hash table),
-  frameTable map not actually updated ; replace intBinaryMap with HashTable
- *)
 structure Translate :> TRANSLATE =
 struct
   structure H = HashTable
@@ -24,14 +20,17 @@ struct
 
   (* val currentLevel = ref 0 *)
   val outermost = (0,ref ())
-  val outermostFrame = SOME(Frame.newFrame(Temp.newlabel(), []))
+  val f = Frame.newFrame(Temp.newlabel(), [])
+  val outermostFrame = SOME(f)
   val sizeHintFrameTable = 16
   val sizeHintLevelTable = 128
   val frameTable : (level,Frame.frame) H.hash_table =
   		H.mkTable(fn (x,xref) => Word.fromInt(x), op = ) (sizeHintFrameTable,Translate)
+  val sysLib = ["tig_initArray","tig_stringCompare","tig_stringEqual",
+                "tig_chr","tig_concat","tig_exit","tig_flush","tig_not","tig_ord","tig_size","tig_substring","tig_getchar","tig_print"]
+                (* need this to check if called function is system defined so we don't pass them static link in callexp *)
 
   val _ = H.insert frameTable (outermost,(valOf outermostFrame))
-
 
   fun isRelop(oper) =
     case oper of
@@ -63,7 +62,6 @@ struct
         (*foldl foldStmFn [] stmList*)
     end
 
-
   fun unEx (Ex e) = e
   | unEx (Cx genstm) =
       let val r = Temp.newNamedTemp("unExResultTemp")
@@ -79,7 +77,7 @@ struct
 
   fun unNx (Ex e) = T.EXP e
     | unNx (Cx genstm) =
-        let val l1 = Temp.namedlabel("unNx_Cx")
+        let val l1 = Temp.newlabel()
         in  T.SEQ(genstm(l1,l1),
                  T.LABEL l1)
         end
@@ -147,9 +145,8 @@ struct
   fun intExp(intExp:Absyn.exp) =
     let
         (*val tmp = Temp.newtemp()*)
-        val tmp = Temp.newNamedTemp("intExpTemp")
         val const = case intExp of Absyn.IntExp constant => constant
-    in  Ex(T.ESEQ(T.MOVE(T.TEMP tmp, T.CONST const),T.TEMP(tmp)))
+    in  Ex(T.CONST const)
     end
 
   fun stringExp(strExp:A.exp) =
@@ -177,18 +174,19 @@ struct
       val (callLevInt,callLevRef) = callLev
       val (dLevInt,dLevRef) = declaredLev
       val levDiff = callLevInt - dLevInt
+      val (_) = print("calcSL called with callLevInt = " ^ Int.toString(callLevInt) ^ "declaredLevInt = " ^ Int.toString(dLevInt) ^ "\n")
       fun getfp(diff, tExp) =
         if diff=0
         then tExp
         else getfp(diff-1, T.MEM (tExp))
     in
-      if levDiff > 0
-      then Ex(getfp(levDiff, currentFramePtr))
-      else (
-            if levDiff=0
-            then Ex(T.MEM (currentFramePtr))
-            else Ex (currentFramePtr)
-            )
+      if callLev = outermost then ( Ex(T.TEMP (List.nth(Frame.callersaves,0)))) else (
+        case (callLev, levDiff, levDiff > 0) of 
+         (_, _, true) => (* calling (grand)*parent *) Ex(getfp(levDiff, currentFramePtr))
+        | (_, 0, false) => (* calling child *) Ex(currentFramePtr) 
+        | (_, ~1, false) => (* calling self or sibling *)  Ex(T.MEM(currentFramePtr)) 
+        | (_, _, _) => (ErrorMsg.error 0 "Illegal call to descendant"; Ex(T.CONST 1))
+      )
     end
     
   fun callExp(dLevel:level, cLevel:level, lab:Temp.label, expList:exp list, procedure: bool) =
@@ -196,20 +194,21 @@ struct
       let
         val slExp = calcSL(cLevel,dLevel)
         val texpList = map(fn x => unEx(x)) expList
-        val frame = case (H.find frameTable dLevel) of  
+        val frame = case (H.find frameTable cLevel) of  
                         SOME(f) => f
                       | NONE => ((ErrorMsg.error 0 ("frame lev= "^ Int.toString(#1 dLevel) ^" not found in Translate.callExp\n")); valOf (outermostFrame))
         
-        val updatedFrame = Frame.setCallArgs(frame, List.length(expList))
+        val _ = Frame.setCallArgs(frame, List.length(expList))
+        val (_) = print("callexp explist length is " ^ Int.toString(List.length(expList)) ^ "\n")
+        (*val (_) = print(Int.toString(Frame.maxCallArgs(updatedFrame)) ^ " - is the maxcallargs after update\n")*)
+        val (_) = print(Int.toString(Frame.maxCallArgs(valOf outermostFrame)) ^ " - is the outermostframe maxcallargs after update\n")
+        val (_) = if cLevel = outermost then (print("is outermost")) else (print("is not outermost"))
       in
-        H.insert frameTable (dLevel,updatedFrame);
-        if procedure
-        then
-          Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
-        else (
-         (* Nx(T.MOVE(T.TEMP (Temp.newtemp()),T.CALL (T.NAME lab, unEx(slExp)::texpList) ))*)
-          Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList) )
-        )
+        case (procedure, isSome (List.find(fn(a)=>Symbol.name(lab)=a) (sysLib))) of 
+          (true, true) => Nx(T.EXP(T.CALL (T.NAME lab, texpList)))
+        | (true, false) => Nx(T.EXP(T.CALL (T.NAME lab, unEx(slExp)::texpList)))
+        | (false, true) => Ex(T.CALL (T.NAME lab, texpList)) 
+        | (false, false) => Ex(T.CALL (T.NAME lab, unEx(slExp)::texpList))
       end
 
   fun strcmp(str1:exp,str2:exp,oper:A.oper,callLevel:level): exp =
@@ -222,7 +221,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq(
-                  [T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringEqual")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  [T.EXP (T.CALL(T.NAME(Temp.namedlabel("tig_stringEqual")), [s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP(Frame.RV), T.CONST 1, t,f)],2
                   )
             in
@@ -233,7 +232,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq([
-                  T.EXP(T.CALL(T.NAME(Temp.namedlabel("stringEqual")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  T.EXP(T.CALL(T.NAME(Temp.namedlabel("tig_stringEqual")), [s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST 0, t,f)
                   ],3)
 
@@ -245,7 +244,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq([
-                  T.EXP(T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  T.EXP(T.CALL(T.NAME(Temp.namedlabel("tig_stringCompare")), [s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST (0-1), t,f)
                   ],4)
             in
@@ -256,7 +255,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq([
-                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("tig_stringCompare")), [s1, s2])),
                   T.CJUMP(T.LE,T.TEMP (Frame.RV), T.CONST 0, t,f)
                   ],5)
             in
@@ -267,7 +266,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq([
-                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx (calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("tig_stringCompare")), [s1, s2])),
                   T.CJUMP(T.EQ, T.TEMP (Frame.RV), T.CONST 1, t,f)
                   ],6)
             in
@@ -278,7 +277,7 @@ struct
             let
               fun cxFn (t,f) =
                   seq([
-                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("stringCompare")), [unEx(calcSL(callLevel,(0,ref ()))),s1, s2])),
+                  T.EXP (T.CALL(T.NAME(Temp.namedlabel("tig_stringCompare")), [s1, s2])),
                   T.CJUMP(T.GE, T.TEMP (Frame.RV), T.CONST 0, t,f)
                   ],7)
             in
@@ -376,7 +375,7 @@ struct
         val tmp = Temp.newNamedTemp("recordExpHeadPointerTemp")
         val len = (List.length sortedFields)
         val ctr = ref 0
-        val addressExp = T.MOVE(T.TEMP tmp,T.CALL(T.NAME (Temp.namedlabel("malloc")), [unEx (calcSL(cLevel,(0,ref ()))), T.CONST (len*Frame.wordSize)]))
+        val addressExp = T.MOVE(T.TEMP tmp,T.CALL(T.NAME (Temp.namedlabel("malloc")), [T.CONST (len*Frame.wordSize)]))
         fun foldExpFn ((s,e),seqExp) =
           if !ctr = len
           then
@@ -396,8 +395,8 @@ struct
     let val r = Temp.newNamedTemp("mallocReturnAddressTemp")
     in Ex (
         T.ESEQ(seq([T.EXP(T.CALL(
-            T.NAME (Temp.namedlabel("initArray")),
-            [unEx (calcSL(cLevel,(0,ref ()))),
+            T.NAME (Temp.namedlabel("tig_initArray")),
+            [
              T.BINOP(T.PLUS, unEx sizeExp,
              (T.CONST 1)),
              unEx initExp
@@ -426,49 +425,51 @@ struct
 
     end
   fun fieldVar(varAccess:exp, fieldOffset:int) =
-    Ex (T.MEM(
-          T.BINOP(T.PLUS,
-                  T.BINOP(T.MUL,
-                          T.CONST fieldOffset,
-                          T.CONST Frame.wordSize),
-                  unEx varAccess
-                  )
-             )
-       )
+    let val addressTemp = Temp.newNamedTemp("fieldVar nil temp")
+        val trueLab = Temp.newlabel()
+        val exitLab = Temp.newlabel()
+    in (
+        Ex (
+          T.ESEQ(
+            seq([
+            T.MOVE(T.TEMP(addressTemp),
+                   unEx varAccess
+                  ),
+            T.CJUMP(T.EQ, T.TEMP(addressTemp), T.CONST 0, trueLab, exitLab),
+            T.LABEL(trueLab),
+            T.EXP( (T.CALL (T.NAME (Temp.namedlabel("exit")), [T.CONST 1]))),
+            T.LABEL(exitLab)
+            ], 3372)
+          , T.MEM(
+                T.BINOP(T.PLUS,
+                      T.BINOP(T.MUL,
+                              T.CONST fieldOffset,
+                              T.CONST Frame.wordSize),
+                      unEx varAccess
+                      )
+                 )
+          ) (* end ESEQ *)
+        )  
+    )
+    end
 
   fun subscriptVar(varAccess:exp, offsetExp:exp) =
-    let val expLabel = Temp.namedlabel("array idx out of bound label")
-        val sizeTemp = Temp.newNamedTemp("arraySizeTemp")
-        val okLabel = Temp.namedlabel("array idx ok label")
-        val doneLabel = Temp.namedlabel("subscriptVar done label")
-        val rTemp = Temp.newNamedTemp("subscriptVarResultTemp")
-    in (
-      (* this IR fragment checks for array out-of-bounds exceptions as well *)
-      1+1;
-      Ex (
+    let val expLabel = Temp.newlabel()
+        val sizeTemp = Temp.newtemp()
+        val okLabel = Temp.newlabel()
+        val rTemp = Temp.newtemp()
+    in  
+       Ex (
         T.ESEQ(
         seq([
           T.MOVE(T.TEMP(sizeTemp), T.MEM(T.BINOP(T.MINUS, unEx varAccess, T.CONST 4))),
           T.CJUMP(T.GT, T.TEMP(sizeTemp), unEx (offsetExp), okLabel,expLabel),
-          T.LABEL(okLabel),
-          T.MOVE(T.TEMP rTemp,
-            T.MEM(
-              T.BINOP(T.PLUS,
-                    unEx varAccess,
-                    T.BINOP(T.MUL,
-                      unEx offsetExp,
-                      T.CONST Frame.wordSize
-                    )
-              )
-            )
-          ),
-          T.JUMP (T.NAME doneLabel, [doneLabel]),
           T.LABEL(expLabel),
-          T.EXP( (T.CALL (T.NAME (Temp.namedlabel("exit")), [T.CONST 1]))),
-          T.MOVE(T.TEMP rTemp, T.CONST 1),
-          T.LABEL(doneLabel)
+          T.EXP((T.CALL (T.NAME (Temp.namedlabel("exit")), [T.CONST 1]))),
+          T.LABEL(okLabel)
         ], 3371
-        ), T.MEM(
+        ), 
+        T.MEM(
               T.BINOP(T.PLUS,
                     unEx varAccess,
                     T.BINOP(T.MUL,
@@ -477,9 +478,10 @@ struct
                     )
               )
             )
-         )
+         ) (* end of ESEQ *)
       )
-    ) end
+      
+  end
 
   fun varDecAlloc(varAccess:access,initExp:exp) =
     let val (level,fAccess) = varAccess
@@ -487,6 +489,7 @@ struct
                         SOME(f) => f
                        |NONE => (debugPrint("vardec access does not exist\n",0);valOf outermostFrame)
         val fpExp = T.TEMP Frame.FP
+        val (_) =  Frame.printAccessList("Translate.vardecAlloc",[fAccess])
     in
       Nx (T.MOVE(Frame.exp(fAccess)(fpExp), unEx initExp))
     end
@@ -530,8 +533,8 @@ struct
       val loopVar' = Frame.exp frameaccess (T.TEMP Frame.FP) (* need to make sure this is in register *)
       val loopVar'' = Temp.newNamedTemp("for_lo")
       val hi'= Temp.newNamedTemp("for_hi")
-      val l1 = Temp.namedlabel("for_true_init_branch")
-      val l2 = Temp.namedlabel("for_true_branch")
+      val l1 = Temp.newlabel()
+      val l2 = Temp.newlabel()
       val l3 = donelabel
     in
       Nx (seq(
@@ -603,21 +606,7 @@ struct
         val parentFrameOpt = H.find frameTable lev
         val nextFrame = Frame.newFrame(label,formals)
         
-(*                  if List.length(formals) <= k
-                        then Frame.newFrame({name=label, kFormals=formals, moreFormals=[]})
-                        else  case parentFrameOpt of
-                                SOME(parentFrame) => (
-                                  let
-                                    val moreFormals = List.drop(formals,k)
-                                    fun foldFormalsFn (bool,accessList) =
-                                        (Frame.allocLocal parentFrame true) :: accessList
-                                    val accessMoreFormals = List.drop(foldr foldFormalsFn [] formals,k)
-                                  in
-                                    Frame.newFrame({name=label, kFormals=List.take(formals,k), moreFormals=accessMoreFormals})
-                                  end
-                                )
-                              | NONE => (ErrorMsg.error 0 ("[ TRANSLATE ] Parent frame at level "^levelToString(lev)^" not found.\n"); Frame.newFrame({name=label,kFormals=[],moreFormals=[]}))
-*)    
+
     in
         H.insert frameTable (nextLevel,nextFrame);
         if debug

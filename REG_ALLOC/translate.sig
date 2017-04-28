@@ -11,7 +11,6 @@ sig
   val levelToString : level -> string
   val simpleVar : access * level -> exp
   val getResult: unit -> MipsFrame.frag list
-  
   val stringExp : Absyn.exp -> exp
   val strcmp : exp * exp * Absyn.oper * level -> exp 
   val nilExp : unit -> exp 

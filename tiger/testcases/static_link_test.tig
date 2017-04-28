@@ -1,0 +1,27 @@
+/* lev  0 */
+let
+var x := 1
+function f(n: int): int =
+    /* lev  1 */
+    let 
+        function g (a:int) : int =  x + h(n) + 1 /* n escapes */
+        
+        function nfactor(n: int): int =
+		if  n = 0 
+			then 1
+			else n * nfactor(n-1)
+			
+        function h (a:int) : int = 
+            let function c ():int = 1
+            in
+                   c() /* calling child: callLev=2 decLev=2 */
+                +  nfactor(a)
+                                
+            end 
+    in
+        g(1)
+    end
+
+in 
+    f(2)
+end

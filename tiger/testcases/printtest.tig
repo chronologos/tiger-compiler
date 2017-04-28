@@ -1,7 +1,4 @@
-/* A program to solve the 8-queens problem */
-
 let
-
     function printboard() =
        (for i := 0 to 5-1
 	 do (for j := 0 to 5-1 
@@ -9,8 +6,8 @@ let
 	     print("\n"));
          print("\n"))
 
-    function try(c:int) = 
-        printboard()
+    function try(c:int) = printboard()
+
 
 
  in try(0)

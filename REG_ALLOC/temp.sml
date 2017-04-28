@@ -4,7 +4,7 @@ struct
   type temp = int * string * bool (* TODO *)
   val temps = ref 100
   val labelCount = ref 0
-  val debug = true
+  val debug = false
 
   fun newtemp() =
     let
@@ -69,6 +69,7 @@ struct
       val labs = ref 0
   in
     fun newlabel() = Symbol.symbol(F.format "L%d" [F.INT(postinc labs)])
-    fun namedlabel(title:string) = Symbol.symbol(F.format("L%d") [F.INT(postinc labs)] ^ ":" ^ title)
+    (*fun namedlabel(title:string) = Symbol.symbol(F.format("L%d") [F.INT(postinc labs)] ^ ":" ^ title)*)
+    fun namedlabel(title:string) = Symbol.symbol(title)
   end
 end

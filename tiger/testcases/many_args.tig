@@ -1,0 +1,10 @@
+let
+
+    function manyargs(a: int, b: string, c: int, d: string, e: int): string =
+    if  a = 0 then "nerd" else "bird" 
+
+in
+    manyargs(1,"two",3,"four",5)
+end
+
+
