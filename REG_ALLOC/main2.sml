@@ -29,8 +29,8 @@ structure Main = struct
       val format1 = Assem.makeformat(saytemp)
       
     in (
-      app (fn i => TextIO.output(out,format0 i)) instrs
-      (*app (fn i => TextIO.output(out,format1 i)) instrs'''*)
+      (*app (fn i => TextIO.output(out,format0 i)) instrs*)
+      app (fn i => TextIO.output(out,format1 i)) instrs'''
      ) 
     end
   | emitproc out (F.STRING(lab,s)) = strings:=((lab,s) :: (!strings)) (*TextIO.output(out,F.string(lab,s))*)

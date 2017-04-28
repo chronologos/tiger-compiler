@@ -115,7 +115,7 @@ struct
       else (
         (*fg.printGraph nodeToString stringify graphRes;*)
         (*print("Printing graph without interference");*)
-        fg.printGraph2 nodeToString nodeToString2 graphRes;
+        (*fg.printGraph2 nodeToString nodeToString2 graphRes;*)
         graphRes
       )
     end

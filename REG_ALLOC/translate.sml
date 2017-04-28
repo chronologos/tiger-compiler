@@ -325,7 +325,7 @@ struct
           let val levDiff = useLevInt - dLevInt
               fun getfp(diff, tExp) =
                   if diff=0
-                  then tExp
+                  then T.BINOP(T.MINUS,tExp, T.CONST 4)
                   else getfp(diff-1, T.MEM (tExp))
           in
               Ex(Frame.exp(fAccess)(getfp(levDiff,fpExp)))
