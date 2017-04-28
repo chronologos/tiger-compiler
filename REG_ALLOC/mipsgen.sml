@@ -158,8 +158,7 @@ structure MipsGen :> CODEGEN = struct
         )
       end
 
-
-
+                  
     (* constant to reg *)
     | munchStm(T.MOVE(T.TEMP t, T.CONST i)) =
       emit(A.OPER{assem="li `d0, " ^ intToAssemStr(i) ^ "\n",

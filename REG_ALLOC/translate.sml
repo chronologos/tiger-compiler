@@ -539,14 +539,14 @@ struct
     in
       Nx (seq(
         [ (* in case loopvar' is in MEM. TODO: pattern match would be more efficient *)
-        T.MOVE(T.TEMP loopVar'', unEx lo),
+        T.MOVE(loopVar', unEx lo),
         T.MOVE(T.TEMP hi', unEx hi),
-        T.CJUMP(T.LE, T.TEMP loopVar'', T.TEMP hi', l2, l3),
+        T.CJUMP(T.LE, loopVar', T.TEMP hi', l2, l3),
         T.LABEL l1,
-        T.MOVE(T.TEMP loopVar'', (T.BINOP(T.PLUS, T.TEMP loopVar'', T.CONST 1))),
+        T.MOVE(loopVar', (T.BINOP(T.PLUS, loopVar', T.CONST 1))),
         T.LABEL l2,
         unNx body,
-        T.CJUMP(T.LT, T.TEMP loopVar'', T.TEMP hi', l1, l3),
+        T.CJUMP(T.LT, loopVar', T.TEMP hi', l1, l3),
         T.LABEL l3],10
       ))
     end
