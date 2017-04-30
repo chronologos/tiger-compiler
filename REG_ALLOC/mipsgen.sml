@@ -37,7 +37,7 @@ structure MipsGen :> CODEGEN = struct
 
       let
       (*  val args = List.drop(args, 1) (* drop static link *) *)
-        val (_) = print("munchargs len is " ^ Int.toString(List.length(args)) ^ "\n")
+        (*val (_) = print("munchargs len is " ^ Int.toString(List.length(args)) ^ "\n")*)
         (* according to MIPS calling convention we ALWAYS save at least k word sizes of space in caller frame *)
         val numStackArgs = if List.length(args) > (Frame.k + 1) then (List.length(args)) else (Frame.k + 1)
         val stackArgs = if numStackArgs > (Frame.k + 1) then List.drop(args,Frame.k + 1) else []

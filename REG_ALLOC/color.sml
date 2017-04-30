@@ -35,7 +35,7 @@ structure Color :> COLOR
             end
     end    
 
-    fun SelectPotentialSpill(graph, stack:Temp.temp TG.node list) =
+    fun SelectPotentialSpill(graph, stack:Temp.temp TG.node list, igraph) =
     let
         (* Check graph for non pre-colored nodes with high degree, add them to a list *)
         val spillWorklist = List.filter (fn x => (
@@ -50,8 +50,10 @@ structure Color :> COLOR
         ) else
             let val newStackHead = hd spillWorklist
             in (
-                print("spilling\n");
-                app (fn x =>print(Temp.makestring(TG.nodeInfo(x)))) spillWorklist;
+                print("SPILL:\n");
+                app (fn x =>print(Temp.makestring(TG.nodeInfo(x))^",")) spillWorklist;
+                print("\n");
+                Liveness.show(graph);
                 (TG.removeNode(graph, TG.getNodeID(newStackHead)), newStackHead::stack, true)
                 )
             end
@@ -60,7 +62,7 @@ structure Color :> COLOR
     fun colorLoop(iG:FlowGraph.iGraph, stack:Temp.temp TG.node list) =
         let
             val (iG',stack) = simplify(iG,[])
-            val (graphWithSpill, stackWithSpill, spilled) = SelectPotentialSpill(iG', stack) 
+            val (graphWithSpill, stackWithSpill, spilled) = SelectPotentialSpill(iG', stack, iG) 
         in
             if spilled then colorLoop(graphWithSpill, stackWithSpill) 
             else (graphWithSpill, stackWithSpill)
@@ -131,7 +133,7 @@ structure Color :> COLOR
     fun color(iG, initial) =
         let
             val (iG',stack) = colorLoop(iG, [])
-            val _ = Liveness.show(iG)
+            (*val _ = Liveness.show(iG)*)
         in
             (allocColors(iG, iG', initial, stack), [])
         end

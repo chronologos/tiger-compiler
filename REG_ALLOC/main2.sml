@@ -8,7 +8,6 @@ structure Main = struct
   val strings:(Symbol.symbol * string) list ref = ref []
   fun emitproc out (F.PROC({body,frame})) =
     let
-      (*val _ = print("Max offset is " ^ Int.toString(F.getMaxOffset(frame)))*)
       val {prolog=prolog, epilog=epilog}=F.procEntryExit3(frame)
       val {params=pa, loads=l, saves=s}=F.procEntryExit1(frame)
       val saveArgs = F.procEntryExit4(frame)

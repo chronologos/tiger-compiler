@@ -46,7 +46,7 @@ struct
   fun maxCallArgs({name=_, formals=_, fpMaxOffset=_, procEntryExit1list=_, maxCallArgs=mca}) = !mca
   
   fun setCallArgs({name=n, formals=f, fpMaxOffset=fp,saveArgs=saveArgs, procEntryExit1list=l, maxCallArgs=mca}, calls) =
-    ( print("!!!!!!!!!!!setcallargs\n");
+    ( 
     if calls > !mca 
     then mca := calls
     else ()
@@ -129,8 +129,7 @@ struct
 
            val numSavedRegs = List.length(RA::FP::calleesaves)
            val maxFrameSize = !maxCallArgs*wordSize - !fpMaxOffset + numSavedRegs * wordSize
-           val (_) = print("maxOffset=" ^ Int.toString(!fpMaxOffset) ^ "\n")
-           val (_) = print("maxcallargs=" ^ Int.toString(!maxCallArgs) ^ "\n")
+          
            val saveFPStm = Assem.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(~4) ^ "\n", src=[SP], dst=[FP], jump=NONE}
            val changeSPStm = Assem.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(~maxFrameSize) ^ "\n", src=[SP], dst=[SP], jump=NONE} 
             (* epilog *)
@@ -163,12 +162,10 @@ struct
   fun exp (a) (tExp) =
     case a of
       InFrame(k) =>(
-        print("In Frame.\n");
         T.MEM(T.BINOP(T.PLUS,tExp,T.CONST(k)))
       )
     | InReg(tmp) =>
       (
-        print("In Reg\n");
         T.TEMP tmp
         )
 
@@ -213,7 +210,6 @@ struct
             val newtemp = Temp.newtemp()
             val stmSaveArg = A.OPER{assem="move `d0, `s0\n", src=[List.nth(argregs,idx)], dst = [newtemp], jump=NONE}
             val access = InReg(newtemp) 
-            val (_) = print("shifting...")
           in  
             (idx+1,(saveArgs@[stmSaveArg]), stmList, (accessList@[access]))  
           end
@@ -256,12 +252,10 @@ struct
       fun allocLocalBool ecp =
         if ecp
         then (
-          print ("escape!\n\n\n");
           offset := !offset-wordSize;
           InFrame(!offset+wordSize)
         )
         else (
-          print ("NO escape!\n\n\n");
           InReg(Temp.newNamedTemp("localVarTemp"))
         )
     in
@@ -318,7 +312,7 @@ struct
   fun maxCallArgs({name=_, formals=_, fpMaxOffset=_, procEntryExit1list=_, maxCallArgs=mca}) = !mca
   
   fun setCallArgs({name=n, formals=f, fpMaxOffset=fp,saveArgs=saveArgs, procEntryExit1list=l, maxCallArgs=mca}, calls) =
-    ( print("!!!!!!!!!!!setcallargs\n");
+    ( 
     if calls > !mca 
     then mca := calls
     else ()
@@ -401,8 +395,7 @@ struct
 
            val numSavedRegs = List.length(RA::FP::calleesaves)
            val maxFrameSize = !maxCallArgs*wordSize - !fpMaxOffset + numSavedRegs * wordSize
-           val (_) = print("maxOffset=" ^ Int.toString(!fpMaxOffset) ^ "\n")
-           val (_) = print("maxcallargs=" ^ Int.toString(!maxCallArgs) ^ "\n")
+
            val saveFPStm = Assem.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(~4) ^ "\n", src=[SP], dst=[FP], jump=NONE}
            val changeSPStm = Assem.OPER{assem="addi `d0, `s0, " ^ intToAssemStr(~maxFrameSize) ^ "\n", src=[SP], dst=[SP], jump=NONE} 
             (* epilog *)
@@ -435,12 +428,10 @@ struct
   fun exp (a) (tExp) =
     case a of
       InFrame(k) =>(
-        print("In Frame.\n");
         T.MEM(T.BINOP(T.PLUS,tExp,T.CONST(k)))
       )
     | InReg(tmp) =>
       (
-        print("In Reg\n");
         T.TEMP tmp
         )
 
@@ -463,7 +454,6 @@ struct
       maxOffset := !maxOffset+wordSize;
       (* code to move *)
       if (idx < k) then (
-        print(Bool.toString(List.nth(true::formals,idx))^"\n");
         (* if escapes move from reg to frame *) 
         if List.nth((true::formals),idx) = true 
           then (
@@ -485,7 +475,6 @@ struct
             val newtemp = Temp.newtemp()
             val stmSaveArg = A.OPER{assem="move `d0, `s0\n", src=[List.nth(argregs,idx)], dst = [newtemp], jump=NONE}
             val access = InReg(newtemp) 
-            val (_) = print("shifting...")
           in  
             (idx+1,(saveArgs@[stmSaveArg]), stmList, (accessList@[access]))  
           end
@@ -528,12 +517,10 @@ struct
       fun allocLocalBool ecp =
         if ecp
         then (
-          print ("escape!\n\n\n");
           offset := !offset-wordSize;
           InFrame(!offset+wordSize)
         )
         else (
-          print ("NO escape!\n\n\n");
           InReg(Temp.newNamedTemp("localVarTemp"))
         )
     in

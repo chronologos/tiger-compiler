@@ -15,7 +15,7 @@ struct
 
   exception Translate
 
-  val debug = true
+  val debug = false
   val k = Frame.k 
 
   (* val currentLevel = ref 0 *)
@@ -174,7 +174,6 @@ struct
       val (callLevInt,callLevRef) = callLev
       val (dLevInt,dLevRef) = declaredLev
       val levDiff = callLevInt - dLevInt
-      val (_) = print("calcSL called with callLevInt = " ^ Int.toString(callLevInt) ^ "declaredLevInt = " ^ Int.toString(dLevInt) ^ "\n")
       fun getfp(diff, tExp) =
         if diff=0
         then tExp
@@ -199,10 +198,7 @@ struct
                       | NONE => ((ErrorMsg.error 0 ("frame lev= "^ Int.toString(#1 dLevel) ^" not found in Translate.callExp\n")); valOf (outermostFrame))
         
         val _ = Frame.setCallArgs(frame, List.length(expList))
-        val (_) = print("callexp explist length is " ^ Int.toString(List.length(expList)) ^ "\n")
-        (*val (_) = print(Int.toString(Frame.maxCallArgs(updatedFrame)) ^ " - is the maxcallargs after update\n")*)
-        val (_) = print(Int.toString(Frame.maxCallArgs(valOf outermostFrame)) ^ " - is the outermostframe maxcallargs after update\n")
-        val (_) = if cLevel = outermost then (print("is outermost")) else (print("is not outermost"))
+    
       in
         case (procedure, isSome (List.find(fn(a)=>Symbol.name(lab)=a) (sysLib))) of 
           (true, true) => Nx(T.EXP(T.CALL (T.NAME lab, texpList)))
@@ -489,7 +485,6 @@ struct
                         SOME(f) => f
                        |NONE => (debugPrint("vardec access does not exist\n",0);valOf outermostFrame)
         val fpExp = T.TEMP Frame.FP
-        val (_) =  Frame.printAccessList("Translate.vardecAlloc",[fAccess])
     in
       Nx (T.MOVE(Frame.exp(fAccess)(fpExp), unEx initExp))
     end

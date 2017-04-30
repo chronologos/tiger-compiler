@@ -219,7 +219,7 @@ struct
       val iGraph: FlowGraph.iGraph = makeIGraphNodes(flowGraph)
       val iGraph':FlowGraph.iGraph = foldl interfereNode iGraph (fg.nodes(flowGraph))
     in
-      (*print("************** Printing interference graph ***************");
+      (*print("************** Printing interference graph ***************")
       tg.printGraph2 nodeToStringTemp stringify2Temp iGraph'; *)
       (iGraph', moveList)
     end

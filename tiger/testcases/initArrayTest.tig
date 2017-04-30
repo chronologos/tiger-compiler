@@ -6,9 +6,9 @@ let
     var row := intArray [ N ] of 0
     
     in
-    row[5] := 29;
-    row[6] := 36;
-    row[7] := row[5] + row[6];
-    print(chr(row[7]))
-    print("hey adi!")
+    row[5] := 1;
+    row[6] := 1;
+    row[7] := if row[5]=1 & row[6]=1 & row[1]=0 then 65 else 66;
+    print(chr(row[7]));
+    flush()
     end

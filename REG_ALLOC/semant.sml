@@ -630,7 +630,7 @@ struct
                     val dum = debugPrint("Calling Translate ecp="^Bool.toString(!escape)^" for var "^Symbol.name(var)^" at level "^Translate.levelToString(forLoopLevel)^".\n",pos)
                   in
                     let
-                      val body' = transExp(venv, tenv, body, forLoopLevel,looplabel)
+                      val body' = transExp(venv, tenv, body, forLoopLevel,donelabel)
                       val bodyType = #ty body'
                     in
                       if not (tyEqualTo(bodyType, Types.UNIT))
@@ -1067,7 +1067,6 @@ struct
     (*pattern match on Absyn.var*)
     case var of Absyn.SimpleVar(sym, pos) =>
       let val varTypOpt = Symbol.look(venv, sym)
-          val (_) = print("simplevar translating..." ^ Symbol.name(sym) ^ "\n")
       in
         (if isSome varTypOpt
         then (
