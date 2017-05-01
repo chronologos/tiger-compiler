@@ -1,0 +1,13 @@
+
+let
+    var N := 8
+    type intArray = array of int
+    var row := intArray [ N ] of 0
+    var i := 1
+    var j := 1
+ in (
+  row[1] := 1;
+  row[2] := 1;
+  print(if row[i]=j then "3" else "4")
+  )
+end

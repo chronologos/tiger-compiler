@@ -1,0 +1,20 @@
+/* A program to solve the 8-queens problem */
+
+let
+    var N := 8
+
+    /*function printboard() =*/
+       /*(for i := 0 to N-1*/
+	 /*do (for j := 0 to N-1 */
+		  /*do print(if i=j then " O" else " .");*/
+		 /*print("\n"));*/
+         /*print("\n"))*/
+    
+
+    function try(c:int) = 
+        /*printboard()*/
+        for i := 0 to 5 do print(chr(i))
+
+ in try(0)
+end
+	
