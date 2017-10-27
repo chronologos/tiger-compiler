@@ -5,11 +5,11 @@ Tiger compiler implemented in SML, with backend agnostic IR.
 Each of the following folders represents the compiler at a certain stage. Code within each folder is self-contained.
 
 ## Compiler Frontend
-Lexer 	    -> Transforming tiger into tokens.
-Parser 	    -> Transforming tokens into an abstract syntax tree (AST)
-TypeChecker -> Code that typechecks AST. 
-IR_FA 	    -> Transforming AST into Intermediate Representation + code that does Frame Analysis
+1. Lexer 	      -> Transforming tiger into tokens.
+2. Parser 	    -> Transforming tokens into an abstract syntax tree (AST)
+3. TypeChecker  -> Code that typechecks AST. 
+4. IR_FA 	      -> Transforming AST into Intermediate Representation + code that does Frame Analysis
 ## Compiler Backend
-CA_IS 	    -> Canonicalization and instruction selection code
-DA_LI 	    -> Dataflow and Liveness Analysis and Register Allocation code
-FINAL 	    -> Complete Compiler
+5. CA_IS 	    -> Canonicalization and instruction selection code
+6. DA_LI 	    -> Dataflow and Liveness Analysis and Register Allocation code
+7. FINAL 	    -> Complete Compiler
